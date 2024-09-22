@@ -11,7 +11,7 @@ function App() {
     <>
       <div>
         <h1>Aplicación WebSocket</h1>
-        <WebSocketExample /> {/* Incluye el componente de ejemplo WebSocket */}
+        <WebSocketExample /> 
       </div>
     </>
   )
