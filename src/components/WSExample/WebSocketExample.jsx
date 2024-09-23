@@ -1,7 +1,7 @@
 //hecho por chatgpt
 
 import React, { useState, useEffect } from 'react';
-import { useWebSocket } from './WebsocketContext';
+import { useWebSocket } from '../../contexts/WebsocketContext';
 
 const WebSocketExample = () => {
   const { socket, sendMessage, status } = useWebSocket(); // Accede al socket, enviar mensajes y el estado
