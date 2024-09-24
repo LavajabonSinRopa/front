@@ -4,12 +4,8 @@ import { BASE_WS_ADDRESS } from '../utils/constants';
 /*
   USO:
     import { useWebSocket } from "../../contexts/WebsocketContext";
-    const { socket, sendMessage, connectionState } = useWebSocket();
-    sendMessage(messageData);
-
-    se puede usar
-    socket.send(messageData) en vez de sendMessage(messageData)
-    pero  sendMessage es mas seguro
+    const { socket } = useWebSocket();
+    socket.send(data);
 */
 
 
@@ -17,13 +13,9 @@ export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const [status, setStatus] = useState('connecting');
-
+ 
   useEffect(() => {
     const ws = new WebSocket(`${BASE_WS_ADDRESS}`);
-    ws.onopen = () => setStatus('connected');
-    ws.onclose = () => setStatus('disconnected');
-
     setSocket(ws);
 
     return () => {
@@ -31,14 +23,8 @@ export const WebSocketProvider = ({ children }) => {
     };
   }, []); 
 
-  const sendMessage = (message) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(message);
-    }
-  };
-
   return (
-    <WebSocketContext.Provider value={{ socket, status, sendMessage }}>
+    <WebSocketContext.Provider value={{ socket }}>
       {children}
     </WebSocketContext.Provider>
   );
@@ -48,7 +34,7 @@ export const WebSocketProvider = ({ children }) => {
 export const useWebSocket = () => {
   const context = useContext(WebSocketContext);
   if (!context) {
-    throw new Error('Error: !context (WebsocketContext)');
+    throw new Error('WebsocketContext');
   }
   return context;
 };
