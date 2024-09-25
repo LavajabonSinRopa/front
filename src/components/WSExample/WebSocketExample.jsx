@@ -1,58 +1,45 @@
-//hecho por chatgpt
-
-import React, { useState, useEffect } from 'react';
-import { useWebSocket } from '../../contexts/WebsocketContext';
+import React, { useEffect } from 'react';
+import { useWebSocket } from '../../contexts/WebsocketContext'; 
 
 const WebSocketExample = () => {
-  const { socket } = useWebSocket();
-  const [messages, setMessages] = useState([]); 
-  const [input, setInput] = useState(''); 
+  const socket = useWebSocket('/games'); 
+
   useEffect(() => {
     if (socket) {
-      socket.onmessage = (event) => {
-        const newMessage = event.data;
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+      const handleOpen = () => {
+        socket.send(JSON.stringify({ action: 'GET', endpoint: '/games' }));
+      };
+
+      const handleMessage = (event) => {
+        console.log('Response from server:', event.data);
+      };
+
+      const handleError = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      const handleClose = () => {
+        console.log('WebSocket connection closed');
+      };
+
+      socket.addEventListener('open', handleOpen);
+      socket.addEventListener('message', handleMessage);
+      socket.addEventListener('error', handleError);
+      socket.addEventListener('close', handleClose);
+
+      return () => {
+        socket.removeEventListener('open', handleOpen);
+        socket.removeEventListener('message', handleMessage);
+        socket.removeEventListener('error', handleError);
+        socket.removeEventListener('close', handleClose);
       };
     }
-
-    return () => {
-      if (socket) {
-        socket.onmessage = null;
-      }
-    };
   }, [socket]);
-
-  const handleSendMessage = () => {
-    if (input.trim()) {
-      socket.send(input);
-      setInput(''); 
-    }
-  };
 
   return (
     <div>
-      <h1>WebSocket Example</h1>
-
-      <div>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Escribe un mensaje"
-        />
-        <button onClick={handleSendMessage} >
-          Enviar
-        </button>
-      </div>
-
-      <div>
-        <h2>Mensajes recibidos:</h2>
-        <ul>
-          {messages.map((msg, index) => (
-            <li key={index}>{msg}</li>
-          ))}
-        </ul>
-      </div>
+      <h1>WebSocket Example 2.0</h1>
     </div>
   );
 };
