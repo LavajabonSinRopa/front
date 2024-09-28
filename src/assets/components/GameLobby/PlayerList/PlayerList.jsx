@@ -1,9 +1,13 @@
 import { GenericList } from "../GenericList/GenericList";
 import PlayerItem from "./PlayerItem";
 
-function PlayerList() {
-  const renderPlayer = (Player) => {
-    return <PlayerItem key={player.id} player={player} />;
+/* Recibe una lista de jugadores y el id del owner de la partida,
+le pase ownerId a PlayerItem para que pueda decidir si resalta o no a ese
+usuario
+*/
+function PlayerList({ players, ownerId }) {
+  const renderPlayer = (player) => {
+    return <PlayerItem playerId={player.id} player={player} ownerId={ownerId} />;
   };
 
   return (

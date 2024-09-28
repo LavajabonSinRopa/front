@@ -1,17 +1,31 @@
 import React, {useState} from 'react';
-import GameButtons from "../GameButtons/GameButtons"; 
-import GameInfo from "../GameInfo";
-import PlayerList from "../PlayerList";
+import GameInfo from "./GameInfo";
+import PlayerList from "./PlayerList";
+import GameButtons from './GameButtons';
 
-function GameLobby({gameData, playerList, isOwner, onStartGame, onLeaveGame, onCancelGame}) {
+function GameLobby({gameData, playerList}) {
+  if (!gameData) {
+    return <div>Loading...</div>;
+  }
+  const onStartGame = () => {
+    console.log("Iniciar juego");
+  };
+
+  const onCancelGame = () => {
+    console.log("Cancelar juego");
+  };
+
+  const onLeaveGame = () => {
+    console.log("Abandonar juego");
+  };
   return (
     <div>
       <h1>Game Lobby</h1>
-      <GameInfo gameName={gameData.game_name} gameType="Pública" />
-      {/* Después se cambia gameType = "Pública" por gameType={gameData.game_type*/}
-      <PlayerList players={playerList} ownerId={gameData.owner_id} />
+      <GameInfo gameName={gameData.gameName} gameType="Pública" />
+      {/* Después se cambia gameType = "Pública" por gameType={gameData.gameType*/}
+      <PlayerList players={playerList} ownerId={gameData.ownerId} />
       <GameButtons
-        isOwner={isOwner}
+        ownerId={gameData.ownerId}
         onStartGame={onStartGame}
         onCancelGame={onCancelGame}  
         onLeaveGame={onLeaveGame}

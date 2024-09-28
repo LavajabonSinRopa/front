@@ -1,7 +1,8 @@
 import React from 'react';
 
 // Componente que maneja ambos botones
-const GameButtons = ({ isOwner, onStartGame, onCancelGame, onLeaveGame }) => {
+const GameButtons = ({ ownerId, onStartGame, onCancelGame, onLeaveGame }) => {
+  const isOwner = ownerId === playerId;
   return (
     <div>
       {/* Botón de "Iniciar Partida" solo visible para el owner */}
