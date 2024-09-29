@@ -19,18 +19,17 @@ function GameLobby({ gameData, playerList }) {
 	};
 	return (
 		<div>
-			<h1>{gameData.gameName}</h1>
 			<GameInfo
-				gameName="Lavajabon"
+				gameName={gameData.gameName} //no imprime nada esto
 				gameType="Pública"
 			/>
 			{/* Después se cambia gameType = "Pública" por gameType={gameData.gameType*/}
 			<PlayerList
-				players={["messi", "ronaldo", "neymar", "mbappe"]}
+				playerList= {playerList}
 				ownerId="123"
 			/>
 			<GameButtons
-				playerId="3e4"
+				playerId="123"
 				ownerId="123"
 				onStartGame={onStartGame}
 				onCancelGame={onCancelGame}

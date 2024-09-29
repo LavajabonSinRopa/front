@@ -6,10 +6,9 @@ import { BASE_WS_ADDRESS } from "../../../utils/constants";
    Decide si resaltar el nombre del jugador comparando su id con el del owner.
 */
 function PlayerList({ playerList, ownerId }) {
-	console.log("Hola! Soy PlayerList y estoy funcionando");
 
+	//console.log("Hola! Soy PlayerList y estoy funcionando");
 	const renderPlayer = (player) => {
-		console.log("Hola! Soy RenderPlayer y estoy funcionando");
 		return (
 			<p style={{ fontWeight: ownerId === player.id ? "bold" : "normal" }}>
 				{player.name}
@@ -18,17 +17,17 @@ function PlayerList({ playerList, ownerId }) {
 	};
 	return (
 		<>
-			<h2>Jugadores</h2>
+			<h3>Jugadores</h3>
 
 			<GenericList
 				from={0}
 				to={4}
-				WebSocketUrl={BASE_WS_ADDRESS}
+				WebSocketUrl={"/games"} //probablemente esté mal, BASE_WS_ADDRESS será??
 				renderItem={renderPlayer}
 				typekey="CreatedGames"
-				idKey="id"
+				idKey="unique_id" //??? no sé qué poner
 			/>
-			{console.log("Hola! Soy el return de PlayerList y estoy funcionando")}
+			{console.log(playerList)}
 		</>
 	);
 }

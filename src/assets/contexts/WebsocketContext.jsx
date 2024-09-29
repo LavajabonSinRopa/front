@@ -45,7 +45,8 @@ export const useWebSocket = (url) => {
     };
 
     newSocket.onmessage = (event) => {
-      console.log('WebSocket message received:', event.data);
+      console.log('WebSocket message received: bla bla bla muchos datos');
+      //console.log('WebSocket message received:', event.data);
     };
 
     newSocket.onerror = (error) => {

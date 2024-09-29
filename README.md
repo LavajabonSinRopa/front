@@ -36,4 +36,3 @@
 ### `services/`
 
 * `gameService.js`: Contiene las funciones para llamar a los endpoints de la API para abandonar/cancelar/iniciar la partida.
-* `webSocketService.js`: Establece la conexión, se suscribe al canal de la partida y emite eventos cuando recibe actualizaciones.
