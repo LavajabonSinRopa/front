@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-export const GenericList = ({
-  apiEndpoint,  //obligatorio
-  from, //opcional
-  to,   //opcional
-  websocketUrl, //opcional
-  renderItem, //obligatorio
+export const GenericList = (
+  {
+  from, //OPCIONAL, desde que elemento se muestra
+  to, //OPCIONAL, hasta que elemento se muestra
+  filterBy, //OPCIONAL, en base a que atributo se va a filtrar
+  filterKey, //OPCIONAL, dato por el cual se filtra
+  websocketUrl, //OPCIONAL
+  renderItem, //OBLIGATORIO, como renderizan los elementos
+  typeKey,  //OBLIGATORIO, nombre del atributo del tipo del mensaje
+  idKey = "id", // OBLIGATORIO, nombre del atributo de id
 }) => {
   const [items, setItems] = useState([]);
-
-   // Efecto para cargar los ítems una vez al montar
-   // o al cambiar desde donde hasta donde ver de la lista
-   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await fetch(apiEndpoint);
-        const data = await response.json();
-        setItems(data.slice(from, to));
-      } catch (error) {
-        console.error("Error fetching items:", error);
-      }
-    };
-
-    fetchItems();
-  }, [apiEndpoint, from, to]);
 
   // Efecto para manejar el WebSocket
   useEffect(() => {
@@ -33,23 +21,17 @@ export const GenericList = ({
     socket.onmessage = (event) => {
       console.log(event.data);
       const message = JSON.parse(event.data);
-
-      if (message.type === "new_item") {
-        const newItem = message.data;
-        //Chekeo de que no se repitan IDs
-        setItems((prevItems) => {
-          const existe = prevItems.some((item) => item.id === newItem.id);
-          if (!existe) {
-            return [...prevItems, newItem];
-          } else {
-            console.log(`El item con ID ${newItem.id} ya existe.`);
-            return prevItems; // retornar los elementos existentes si ya existe
-          }
-        });
-      } else if (message.type === "remove_item") {
-        const itemId = message.data.id;
-        //se fija si algun objeto tiene la ID del mensaje para removerlo
-        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+      if (message.type === typeKey) {
+        const data = message.payload;
+        let updatedItems = null;
+        if (filterBy && filterKey) {
+          updatedItems = data
+            .filter((item) => item[filterBy].includes(filterKey))
+            .slice(from, to);
+        } else {
+          updatedItems = data.slice(from, to);
+        }
+        setItems(updatedItems);
       }
     };
 
@@ -57,12 +39,11 @@ export const GenericList = ({
     return () => {
       socket.close();
     };
-  }, [apiEndpoint, websocketUrl]);
-
+  }, [websocketUrl, filterKey, from, to]);
   return (
-    <ul>
+    <ul style={{ listStyleType: "none", padding: 0, margin: 0 }}>
       {items.map((item) => (
-        <li key={item.id}>{renderItem(item)}</li>
+        <li key={item[idKey]}>{renderItem(item)}</li>
       ))}
     </ul>
   );
