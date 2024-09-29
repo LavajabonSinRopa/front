@@ -18,14 +18,13 @@ export const GenericList = ({
     const socket = new WebSocket(websocketUrl);
 
     socket.onmessage = (event) => {
-      console.log(event.data);
       const message = JSON.parse(event.data);
       if (message.type === typeKey) {
         const data = message.payload;
         let updatedItems = null;
         if (filterBy && filterKey) {
           updatedItems = data
-            .filter((item) => item[filterBy].includes(filterKey))
+            .filter((item) => item[filterBy].toLowerCase().includes(filterKey.toLowerCase()))
             .slice(from, to);
         } else {
           updatedItems = data.slice(from, to);
