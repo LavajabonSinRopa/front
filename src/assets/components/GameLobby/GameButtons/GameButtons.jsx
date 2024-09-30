@@ -9,7 +9,6 @@ const GameButtons = ({
 	onLeaveGame,
 }) => {
 	const isOwner = playerId === ownerId;
-	//console.log("Hola! Soy GameButtons y estoy funcionando");
 
 	return (
 		<div>

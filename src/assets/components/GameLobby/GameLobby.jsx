@@ -1,36 +1,36 @@
 import React from "react";
-import GameInfo from "./GameInfo";
-import PlayerList from "./PlayerList";
-import GameButtons from "./GameButtons";
+import GameInfo from "./GameInfo/GameInfo";
+import PlayerList from "./PlayerList/PlayerList";
+import GameButtons from "./GameButtons/GameButtons";
 
-function GameLobby({ gameData, playerList }) {
-	//console.log("Hola! Soy GameLobby y estoy funcionando");
+function GameLobby({ gameData, playerList, playerId }) {
+	const { gameName, gameId, gameState, gameCreator } = gameData; // Destructure gameData
 
 	const onStartGame = () => {
-		console.log("Iniciar juego");
+		console.log(`Iniciar juego para ${gameId}`);
 	};
 
 	const onCancelGame = () => {
-		console.log("Cancelar juego");
+		console.log(`Cancelar juego para ${gameId}`);
 	};
 
 	const onLeaveGame = () => {
-		console.log("Abandonar juego");
+		console.log(`Abandonar juego para ${gameId}`);
 	};
+
 	return (
 		<div>
 			<GameInfo
-				gameName={gameData.gameName} //no imprime nada esto
+				gameName={gameName}
 				gameType="Pública"
 			/>
-			{/* Después se cambia gameType = "Pública" por gameType={gameData.gameType*/}
 			<PlayerList
-				playerList= {playerList}
-				ownerId="123"
+				playerList={playerList}
+				ownerId={gameCreator}
 			/>
 			<GameButtons
-				playerId="123"
-				ownerId="123"
+				playerId={playerId}
+				ownerId={gameCreator}
 				onStartGame={onStartGame}
 				onCancelGame={onCancelGame}
 				onLeaveGame={onLeaveGame}
