@@ -30,3 +30,4 @@ dist-ssr
 src/assets/components/TurnInfo/TurnInfo.jsx
 src/assets/components/TurnInfo/TurnInfo.css
 src/assets/components/TurnInfo/index.jsx
+src/assets/tests/TestCrearPartida.jsx
