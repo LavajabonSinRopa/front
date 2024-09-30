@@ -3,7 +3,7 @@ import ListGamesView from "./components/ListGamesView";
 import { GenericList } from "../GenericList/GenericList";
 import { renderItem } from "./components/renderItem";
 
-function ListGames() {
+function ListGames({sendDataToParent}) {
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
   const [isAtBottom, setIsAtBottom] = useState(false);

@@ -2,9 +2,12 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+import { WebSocketProvider } from "./assets/contexts/WebsocketContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  <WebSocketProvider>
+    <StrictMode>
       <App />
-  </StrictMode>
+    </StrictMode>
+  </WebSocketProvider>
 );

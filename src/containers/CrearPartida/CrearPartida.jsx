@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CrearPartidaView from "./components/CrearPartidaView";
 
-const CrearPartida = () => {
+const CrearPartida = ({sendDataToParent}) => {
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
   const [name, setName] = useState("");
@@ -68,7 +68,8 @@ const CrearPartida = () => {
 
       const result = await response.json();
       const gameId = result.game_id;
-
+      sendDataToParent(result.creator)
+      
       setMessage("Creación de partida exitosa.");
 
       navigate(`/games/${gameId}`);
