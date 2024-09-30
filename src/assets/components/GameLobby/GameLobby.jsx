@@ -1,7 +1,7 @@
 import React from "react";
-import GameInfo from "./GameInfo";
-import PlayerList from "./PlayerList";
-import GameButtons from "./GameButtons";
+import GameInfo from "./GameInfo/GameInfo";
+import PlayerList from "./PlayerList/PlayerList";
+import GameButtons from "./GameButtons/GameButtons";
 
 function GameLobby({ gameData, playerList, playerId }) {
 	const { gameName, gameId, gameState, gameCreator } = gameData; // Destructure gameData

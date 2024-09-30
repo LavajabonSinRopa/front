@@ -6,11 +6,13 @@ import GameInfo from "../../components/GameLobby/GameInfo";
 import PlayerList from "../../components/GameLobby/PlayerList";
 import GameButtons from "../../components/GameLobby/GameButtons";
 
-jest.mock("../../components/GameInfo", () => () => <div>Mock GameInfo</div>);
-jest.mock("../../components/PlayerList", () => () => (
+jest.mock("../../components/GameLobby/GameInfo", () => () => (
+	<div>Mock GameInfo</div>
+));
+jest.mock("../../components/GameLobby/PlayerList", () => () => (
 	<div>Mock PlayerList</div>
 ));
-jest.mock("../../components/GameButtons", () => () => (
+jest.mock("../../components/GameLobby/GameButtons", () => () => (
 	<div>Mock GameButtons</div>
 ));
 

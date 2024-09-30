@@ -1,3 +1,4 @@
+import React from "react";
 function GameInfo({ gameName, gameType }) {
 	return (
 		<div>
