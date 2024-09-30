@@ -1,14 +1,21 @@
-import GameLobbyContainer from "./assets/containers/GameLobbyContainer";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './containers/HomePage/Home';
+import CreatePartida from './containers/CrearPartida/CrearPartida.jsx'
+import ListGames from './containers/ListGames/ListGames.jsx';
+import Lobby from './containers/Lobby/Lobby.jsx';
 
 function App() {
-	return (
-		<>
-			<GameLobbyContainer
-				gameId="a92cf12b-8e27-448a-877f-0325ab1f296c"
-				playerId="186bf3c1-bf11-4af6-aa3d-f39ddf81b5b4"
-			/>
-		</>
-	);
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/creategame" element={<CreatePartida />} />
+        <Route path="/searchgame" element={<ListGames />} />
+        <Route path="/games/:game_id" element={<Lobby />} /> {/* USA UNA RUTA DINAMICA */}
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
