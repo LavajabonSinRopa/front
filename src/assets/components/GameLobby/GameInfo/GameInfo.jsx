@@ -1,6 +1,4 @@
 function GameInfo({ gameName, gameType }) {
-	//console.log("Hola! Soy GameInfo y estoy funcionando");
-
 	return (
 		<div>
 			<p>
