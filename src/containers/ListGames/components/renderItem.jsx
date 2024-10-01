@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ItemComponent = ({ item }) => {
+const ItemComponent = ({item, sendDataToParent }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     const gameId = item.unique_id; // Asegúrate de usar 'item' en lugar de 'result'
+    sendDataToParent(item.creator)
     navigate(`/games/${gameId}`);
   };
 
@@ -44,6 +45,6 @@ const ItemComponent = ({ item }) => {
   );
 };
 
-export const renderItem = (item) => {
-  return <ItemComponent item={item} />;
+export const renderItem = (sendDataToParent, item) => {
+  return <ItemComponent item={item} sendDataToParent={sendDataToParent} />;
 };

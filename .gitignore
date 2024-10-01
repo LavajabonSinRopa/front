@@ -7,6 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+svg
+Card
+PlayerHand
+PlayerHandContainer
 node_modules
 dist
 dist-ssr
@@ -22,3 +26,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+src/assets/components/TurnInfo/TurnInfo.jsx
+src/assets/components/TurnInfo/TurnInfo.css
+src/assets/components/TurnInfo/index.jsx
+src/assets/tests/TestCrearPartida.jsx
