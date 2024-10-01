@@ -10,6 +10,7 @@ export const GenericList = ({
   renderItem, // OBLIGATORIO
   typeKey, // OBLIGATORIO
   idKey = "id", // OBLIGATORIO
+  sendDataToParent,
 }) => {
   const [items, setItems] = useState([]);
 
@@ -35,7 +36,7 @@ export const GenericList = ({
         setItems(updatedItems);
       }
     };
-
+    
     // Cleanup al desmontar el componente
     return () => {
       socket.close();
@@ -43,6 +44,6 @@ export const GenericList = ({
   }, [websocketUrl, filterKey, from, to]);
 
   return (
-    <GenericListView items={items} renderItem={renderItem} idKey={idKey} />
+    <GenericListView items={items} renderItem={renderItem} idKey={idKey} sendDataToParent={sendDataToParent}/>
   );
 };

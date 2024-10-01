@@ -30,6 +30,7 @@ function ListGames({sendDataToParent}) {
         isAtBottom={isAtBottom}
       >
         <GenericList
+          sendDataToParent={sendDataToParent}
           filterBy={"name"}
           filterKey={search}
           websocketUrl={"apiWS/games"} // WEBSOCKET PARA CONECTAR CON EL BACKEND

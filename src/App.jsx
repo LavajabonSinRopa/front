@@ -23,8 +23,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/creategame" element={<CreatePartida />} sendDataToParent={handleDataFromChild} />
-        <Route path="/searchgame" element={<ListGames />} sendDataToParent={handleDataFromChild} />
+        <Route path="/creategame" element={<CreatePartida sendDataToParent={handleDataFromChild}/>}  />
+        <Route path="/searchgame" element={<ListGames sendDataToParent={handleDataFromChild}/>}  />
         <Route
           path="/games/:game_id"
           element={<GameLobbyWrapper />} // Usa el wrapper aquí

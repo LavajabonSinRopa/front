@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ItemComponent = ({ item, sendDataToParent }) => {
+const ItemComponent = ({item, sendDataToParent }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -45,6 +45,6 @@ const ItemComponent = ({ item, sendDataToParent }) => {
   );
 };
 
-export const renderItem = (item) => {
-  return <ItemComponent item={item} />;
+export const renderItem = (sendDataToParent, item) => {
+  return <ItemComponent item={item} sendDataToParent={sendDataToParent} />;
 };
