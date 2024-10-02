@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-
 import Home from "./containers/HomePage/Home";
 import CreatePartida from "./containers/CrearPartida/CrearPartida.jsx";
 import ListGames from "./containers/ListGames/ListGames.jsx";
-import GameLobbyContainer from "./assets/containers/GameLobbyContainer/GameLobbyContainer.jsx";
+import GameLobbyContainer from "./containers/GameLobbyContainer/GameLobbyContainer.jsx";
 
 // Componente wrapper para GameLobbyContainer
 const GameLobbyWrapper = () => {
