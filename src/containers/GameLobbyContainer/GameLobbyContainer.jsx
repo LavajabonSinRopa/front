@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import GameLobby from "../../components/GameLobby/GameLobby";
+import GameLobby from "./components/GameLobby";
 import { useWebSocket } from "../../contexts/WebsocketContext";
 
 function GameLobbyContainer({ gameId, playerId }) {
