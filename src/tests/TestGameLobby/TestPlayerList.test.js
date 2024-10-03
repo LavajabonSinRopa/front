@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import PlayerList from "../../components/GameLobby/PlayerList";
+import PlayerList from "../../containers/GameLobbyContainer/components/PlayerList/PlayerList.jsx"
 
 describe("PlayerList", () => {
   const players = ["Player1", "Player2", "Player3"];

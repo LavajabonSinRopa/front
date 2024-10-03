@@ -3,11 +3,15 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CrearPartida from "../containers/CrearPartida/CrearPartida";
 global.fetch = jest.fn();
+import { MemoryRouter } from "react-router-dom";
 
 describe("CrearPartida", () => {
-  /*
   it("El componente se renderiza correctamente sin errores inicialmente", async () => {
-    render(<CrearPartida playerName="TestPlayer" />);
+    render(
+      <MemoryRouter>
+        <CrearPartida />
+      </MemoryRouter>
+    );
 
     // INPUT
     expect(screen.getByText("Nombre de la Partida:")).toBeInTheDocument();
@@ -23,7 +27,7 @@ describe("CrearPartida", () => {
 
     // CARACTERES USADOS
     let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
-    expect(caracteresUsados).toHaveLength(2);
+    expect(caracteresUsados).toHaveLength(3);
 
     // BOTON
     const button = screen.getByRole("button", { name: "CREAR PARTIDA" });
@@ -39,7 +43,14 @@ describe("CrearPartida", () => {
   });
 
   it("Validacion de nombres correcta", async () => {
-    render(<CrearPartida playerName="TestPlayer" />);
+    render(
+      <MemoryRouter>
+        <CrearPartida />
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
 
     const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
     const createButton = screen.getByText("CREAR PARTIDA");
@@ -87,7 +98,16 @@ describe("CrearPartida", () => {
   });
 
   it("Creación de partida exitosa", async () => {
-    render(<CrearPartida playerName="TestPlayer" />);
+    const mockSendDataToParent = jest.fn();
+
+    render(
+      <MemoryRouter>
+        <CrearPartida sendDataToParent={mockSendDataToParent} />
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
 
     const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
     const createButton = screen.getByText("CREAR PARTIDA");
@@ -106,7 +126,7 @@ describe("CrearPartida", () => {
 
     // Hacer clic en el boton de crear partida
     fireEvent.click(createButton);
-    // Asegúrate de que el boton este deshabilitado mientras se esta cargando
+    // El boton este deshabilitado mientras se esta cargando
     expect(createButton).toBeDisabled();
 
     // Esperar el mensaje de exito
@@ -117,7 +137,7 @@ describe("CrearPartida", () => {
     );
     expect(createButton).not.toBeDisabled();
 
-    // Verifica que fetch fue llamado con la URL y el metodo correcto
+    // Verificar que fetch fue llamado con la URL y el metodo correcto
     expect(fetch).toHaveBeenCalledWith("/api/games", {
       method: "POST",
       headers: {
@@ -125,7 +145,7 @@ describe("CrearPartida", () => {
       },
       body: JSON.stringify({
         game_name: "PartidaTest",
-        player_name: "TestPlayer",
+        player_name: "UsernameValido",
       }),
     });
   });
@@ -138,17 +158,27 @@ describe("CrearPartida", () => {
       })
     );
 
-    render(<CrearPartida playerName="Jugador1" />);
+    const mockSendDataToParent = jest.fn();
 
-    // Escribir un nombre válido
+    render(
+      <MemoryRouter>
+        <CrearPartida sendDataToParent={mockSendDataToParent} />
+      </MemoryRouter>
+    );
+
+    // Escribir un username valido
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "Jugador1" } });
+
+    // Escribir un nombre para la partida valido
     const inputNombre = screen.getByPlaceholderText("Ingresa un Nombre");
     fireEvent.change(inputNombre, { target: { value: "Nombre Valido" } });
 
-    // Asegurarse de que el botón de creación de partida esté habilitado
+    // Asegurarse de que el boton de creacion de partida este habilitado
     const buttonCrear = screen.getByText("CREAR PARTIDA");
     expect(buttonCrear).not.toBeDisabled();
 
-    // Hacer clic en el botón de crear partida
+    // Hacer clic en el boton de crear partida
     fireEvent.click(buttonCrear);
 
     // Esperar que aparezca el mensaje de error
@@ -160,5 +190,4 @@ describe("CrearPartida", () => {
       ).toBeInTheDocument();
     });
   });
-  */
 });

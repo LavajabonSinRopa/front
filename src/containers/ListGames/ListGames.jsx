@@ -34,6 +34,7 @@ function ListGames({sendDataToParent}) {
           filterBy={"name"}
           filterKey={search}
           websocketUrl={"apiWS/games"} // WEBSOCKET PARA CONECTAR CON EL BACKEND
+          //websocketUrl={"ws://localhost:1234"} // WEBSOCKET PARA TESTS
           renderItem={renderItem}
           typeKey={"CreatedGames"}
           idKey={"unique_id"}

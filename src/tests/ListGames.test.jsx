@@ -1,10 +1,11 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import ListGames from "../containers/ListGames/ListGames.jsx";
+import { MemoryRouter } from "react-router-dom";
 import WS from "jest-websocket-mock";
-import App from "../containers/App/App.jsx";
 
-describe("App", () => {
+describe("ListaPartidas", () => {
   const server = new WS("ws://localhost:1234", { jsonProtocol: true });
 
   const message = {
@@ -36,9 +37,13 @@ describe("App", () => {
       },
     ],
   };
-  /*
+
   it("renderiza la lista de items correctamente", async () => {
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <ListGames />
+      </MemoryRouter>
+    );
 
     server.send(message);
 
@@ -82,7 +87,11 @@ describe("App", () => {
   });
 
   test("los items se filtran correctamente segun el input sin distinguir mayusculas de minusculas", async () => {
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <ListGames />
+      </MemoryRouter>
+    );
     // Simula el cambio en el input
     const input = screen.getByPlaceholderText("Ingresa un Nombre");
     fireEvent.change(input, { target: { value: "SwIcHe" } });
@@ -132,10 +141,14 @@ describe("App", () => {
   });
 
   test('muestra "No Hay Más Partidas" solo si está al final del scroll', () => {
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <ListGames />
+      </MemoryRouter>
+    );
     server.send(message);
 
-    const container = screen.getByTestId('scrollable-div');
+    const container = screen.getByTestId("scrollable-div");
 
     expect(screen.queryByText(/No Hay Más Partidas/i)).not.toBeInTheDocument();
     // Establecemos el scrollTop directamente
@@ -146,5 +159,5 @@ describe("App", () => {
     // Verificamos que el mensaje no se muestra
     expect(screen.queryByText(/No Hay Más Partidas/i)).toBeInTheDocument();
   });
-  */
+  
 });

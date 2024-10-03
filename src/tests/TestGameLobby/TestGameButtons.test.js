@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import GameButtons from "../../components/GameLobby/GameButtons";
+import GameButtons from "../../containers/GameLobbyContainer/components/GameButtons/GameButtons.jsx"
 
 describe("GameButtons", () => {
 	const mockOnStartGame = jest.fn();
