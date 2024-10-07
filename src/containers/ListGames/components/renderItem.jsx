@@ -1,50 +1,52 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import ItemComponent from "./ItemComponent.jsx";
+import { UsernameContext } from "../../../contexts/UsernameContext.jsx";
+import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 
-const ItemComponent = ({item, sendDataToParent }) => {
+const ItemContainer = ({ item }) => {
+  const { username, validUsername, handleChangeUser } = useContext(UsernameContext);
+  const {userId, setUserId} = useContext(UserIdContext)
+
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    const gameId = item.unique_id; // Asegúrate de usar 'item' en lugar de 'result'
-    sendDataToParent(item.creator)
-    navigate(`/games/${gameId}`);
+  const handleClick = async () => {
+    if (validUsername) {
+      const gameId = item.unique_id;
+      const data = {
+        player_name: username,
+      };
+      try {
+        const response = await fetch(`/api/games/${gameId}/join`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          console.log(
+            "Hubo un problema al unirse a la partida, intenta de nuevo."
+          );
+          return;
+        }
+        const result = await response.json();
+        setUserId(result.player_id)
+        
+        console.log("Uniéndose a partida:", result);
+        navigate(`/games/${gameId}`);
+      } catch (error) {
+        console.error("Error al unirse a la partida:", error);
+      } finally {
+        console.log("Finalizó la acción.");
+      }
+    }
   };
 
-  return (
-    <div
-      key={item.unique_id}
-      style={{
-        padding: 10,
-        margin: 10,
-        backgroundColor: "#00061a",
-        borderRadius: "30px",
-      }}
-    >
-      <h1>{item.name}</h1>
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}
-      >
-        <div>
-          <h2>{"Cantidad de Jugadores: " + item.players.length + "/4"}</h2>
-          <p>{"Estado: " + item.state}</p>
-          <p>{"Dueño: " + item.creator}</p>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <button onClick={handleClick} style={{ backgroundColor: "#001866" }}>
-            UNIRSE
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  return <ItemComponent item={item} handleClick={handleClick} />;
 };
 
-export const renderItem = (sendDataToParent, item) => {
-  return <ItemComponent item={item} sendDataToParent={sendDataToParent} />;
+export const renderItem = (item) => {
+  return <ItemContainer item={item} />;
 };

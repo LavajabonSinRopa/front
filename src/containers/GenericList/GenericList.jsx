@@ -10,7 +10,6 @@ export const GenericList = ({
   renderItem, // OBLIGATORIO
   typeKey, // OBLIGATORIO
   idKey = "id", // OBLIGATORIO
-  sendDataToParent,
 }) => {
   const [items, setItems] = useState([]);
 
@@ -21,6 +20,7 @@ export const GenericList = ({
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
+      console.log(message)
       if (message.type === typeKey) {
         const data = message.payload;
         let updatedItems;
@@ -44,6 +44,6 @@ export const GenericList = ({
   }, [websocketUrl, filterKey, from, to]);
 
   return (
-    <GenericListView items={items} renderItem={renderItem} idKey={idKey} sendDataToParent={sendDataToParent}/>
+    <GenericListView items={items} renderItem={renderItem} idKey={idKey}/>
   );
 };

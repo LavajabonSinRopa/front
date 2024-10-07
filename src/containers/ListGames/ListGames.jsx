@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import ListGamesView from "./components/ListGamesView";
 import { GenericList } from "../GenericList/GenericList";
 import { renderItem } from "./components/renderItem";
+import { UsernameProvider } from "../../contexts/UsernameContext";
 
-function ListGames({sendDataToParent}) {
+function ListGames() {
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -23,14 +24,13 @@ function ListGames({sendDataToParent}) {
   }, []);
 
   return (
+    <UsernameProvider>
       <ListGamesView
-        search={search}
         setSearch={setSearch}
         containerRef={containerRef}
         isAtBottom={isAtBottom}
       >
         <GenericList
-          sendDataToParent={sendDataToParent}
           filterBy={"name"}
           filterKey={search}
           websocketUrl={"apiWS/games"} // WEBSOCKET PARA CONECTAR CON EL BACKEND
@@ -40,6 +40,7 @@ function ListGames({sendDataToParent}) {
           idKey={"unique_id"}
         />
       </ListGamesView>
+    </UsernameProvider>
   );
 }
 
