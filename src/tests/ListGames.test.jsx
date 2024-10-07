@@ -1,47 +1,91 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ListGames from "../containers/ListGames/ListGames.jsx";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import WS from "jest-websocket-mock";
+import { UsernameProvider } from "../contexts/UsernameContext.jsx";
+import { UserIdProvider } from "../contexts/UserIdContext.jsx";
+import userEvent from "@testing-library/user-event";
+import GameLobbyContainer from "../containers/GameLobbyContainer/GameLobbyContainer.jsx";
+
+const server = new WS("ws://localhost:1234", { jsonProtocol: true });
+
+const message = {
+  type: "CreatedGames",
+  payload: [
+    {
+      board: null,
+      creator: "69843b1e-c13b-4329-baea-4643b68b569a",
+      name: "dragonball",
+      player_names: ["vegetta", "goku", "goten"],
+      players: [
+        "2dfcfde3-1d0f-4019-a5b4-6f3b21da2a1c",
+        "69843b1e-c13b-4329-baea-4643b68b569a",
+        "76c0b47b-ea3b-4f77-825a-177e9785dbfd",
+      ],
+      state: "waiting",
+      turn: 0,
+      unique_id: "aa626969-cf88-43a0-a65d-1e3e54e48b73",
+    },
+    {
+      board: null,
+      creator: "5226c8f1-695a-4bdd-b125-e55769c77afb",
+      name: "scaloneta",
+      player_names: ["messi", "julian"],
+      players: [
+        "5226c8f1-695a-4bdd-b125-e55769c77afb",
+        "5c57800e-488b-4c72-b2d2-01edb2fa4087",
+      ],
+      state: "waiting",
+      turn: 0,
+      unique_id: "22a0f2cd-26fe-426f-b99a-cac457249934",
+    },
+    {
+      board: null,
+      creator: "bdb26ad4-d635-4756-b655-dedf8142c61c",
+      name: "lavajabon",
+      player_names: ["jose", "francisco", "ivo", "marti"],
+      players: [
+        "35c86e23-ea7d-4eca-92bc-8ca2c2f333b6",
+        "ba1d5777-65ca-4bce-b5c9-13f2cc75cb15",
+        "bdb26ad4-d635-4756-b655-dedf8142c61c",
+        "eda962be-073f-4d6f-9187-565325c1197d",
+      ],
+      state: "started",
+      turn: 0,
+      unique_id: "18c90af7-52c5-4f54-bc2e-285ff720fb91",
+    },
+  ],
+};
+
+const mockUsernameContextValue = {
+  username: "testUser",
+  validUsername: true,
+  handleChangeUser: jest.fn(), // Función mockeada
+};
+
+const mockUserIdContextValue = {
+  userId: "12345",
+  setUserId: jest.fn(), // Función mockeada
+};
+
+const mockNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate,
+}));
 
 describe("ListaPartidas", () => {
-  const server = new WS("ws://localhost:1234", { jsonProtocol: true });
-
-  const message = {
-    type: "CreatedGames",
-    payload: [
-      {
-        unique_id: "c1c906df-b66c-44ee-ab45-f900c08bbaa1",
-        name: "swicherneta",
-        state: "waiting",
-        board: null,
-        creator: "jose",
-        players: ["jose"],
-      },
-      {
-        unique_id: "d0457665-b2dd-4ce2-a189-3ad418930332",
-        name: "hola mundo",
-        state: "started",
-        board: null,
-        creator: "francisco",
-        players: ["francisco", "ivo"],
-      },
-      {
-        unique_id: "d3945022-b2dd-4ce2-a189-3ad418930332",
-        name: "Famaf Es Lo Mas",
-        state: "waiting",
-        board: null,
-        creator: "marti",
-        players: ["marti", "franco", "messi"],
-      },
-    ],
-  };
-
   it("renderiza la lista de items correctamente", async () => {
     render(
       <MemoryRouter>
-        <ListGames />
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <ListGames />
+          </UserIdProvider>
+        </UsernameProvider>
       </MemoryRouter>
     );
 
@@ -58,7 +102,7 @@ describe("ListaPartidas", () => {
     expect(itemsH1).toHaveLength(4);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(3);
+    expect(itemsH2).toHaveLength(4);
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -68,17 +112,17 @@ describe("ListaPartidas", () => {
     //Titulo
     expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
-    expect(screen.getByText("swicherneta")).toBeInTheDocument();
-    expect(screen.getByText("Cantidad de Jugadores: 1/4")).toBeInTheDocument();
-    expect(screen.getByText("Dueño: jose")).toBeInTheDocument();
-    //Partida 2
-    expect(screen.getByText("hola mundo")).toBeInTheDocument();
-    expect(screen.getByText("Cantidad de Jugadores: 2/4")).toBeInTheDocument();
-    expect(screen.getByText("Dueño: francisco")).toBeInTheDocument();
-    //Partida 3
-    expect(screen.getByText("Famaf Es Lo Mas")).toBeInTheDocument();
+    expect(screen.getByText("dragonball")).toBeInTheDocument();
     expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
-    expect(screen.getByText("Dueño: marti")).toBeInTheDocument();
+    expect(screen.getByText("Dueño: goku")).toBeInTheDocument();
+    //Partida 2
+    expect(screen.getByText("scaloneta")).toBeInTheDocument();
+    expect(screen.getByText("Cantidad de Jugadores: 2/4")).toBeInTheDocument();
+    expect(screen.getByText("Dueño: messi")).toBeInTheDocument();
+    //Partida 3
+    expect(screen.getByText("lavajabon")).toBeInTheDocument();
+    expect(screen.getByText("Cantidad de Jugadores: 4/4")).toBeInTheDocument();
+    expect(screen.getByText("Dueño: ivo")).toBeInTheDocument();
     //Estado de las partidas
     let estados = screen.getAllByText("Estado: waiting");
     expect(estados).toHaveLength(2);
@@ -86,15 +130,19 @@ describe("ListaPartidas", () => {
     expect(estados).toHaveLength(1);
   });
 
-  test("los items se filtran correctamente segun el input sin distinguir mayusculas de minusculas", async () => {
+  it("los items se filtran correctamente segun el input sin distinguir mayusculas de minusculas", async () => {
     render(
       <MemoryRouter>
-        <ListGames />
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <ListGames />
+          </UserIdProvider>
+        </UsernameProvider>
       </MemoryRouter>
     );
     // Simula el cambio en el input
     const input = screen.getByPlaceholderText("Ingresa un Nombre");
-    fireEvent.change(input, { target: { value: "SwIcHe" } });
+    fireEvent.change(input, { target: { value: "rAgOnB" } });
 
     server.send(message);
 
@@ -109,7 +157,7 @@ describe("ListaPartidas", () => {
     expect(itemsH1).toHaveLength(2);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(1);
+    expect(itemsH2).toHaveLength(2);
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -119,31 +167,35 @@ describe("ListaPartidas", () => {
     //Titulo
     expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
-    expect(screen.getByText("swicherneta")).toBeInTheDocument();
-    expect(screen.getByText("Cantidad de Jugadores: 1/4")).toBeInTheDocument();
-    expect(screen.getByText("Dueño: jose")).toBeInTheDocument();
+    expect(screen.getByText("dragonball")).toBeInTheDocument();
+    expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
+    expect(screen.getByText("Dueño: goku")).toBeInTheDocument();
     //Partida 2
-    expect(screen.queryByText("hola mundo")).not.toBeInTheDocument();
+    expect(screen.queryByText("scaloneta")).not.toBeInTheDocument();
     expect(
       screen.queryByText("Cantidad de Jugadores: 2/4")
     ).not.toBeInTheDocument();
-    expect(screen.queryByText("Dueño: francisco")).not.toBeInTheDocument();
+    expect(screen.queryByText("Dueño: messi")).not.toBeInTheDocument();
     //Partida 3
-    expect(screen.queryByText("Famaf Es Lo Mas")).not.toBeInTheDocument();
+    expect(screen.queryByText("lavajabon")).not.toBeInTheDocument();
     expect(
-      screen.queryByText("Cantidad de Jugadores: 3/4")
+      screen.queryByText("Cantidad de Jugadores: 4/4")
     ).not.toBeInTheDocument();
-    expect(screen.queryByText("Dueño: marti")).not.toBeInTheDocument();
+    expect(screen.queryByText("Dueño: ivo")).not.toBeInTheDocument();
     //Estado de las partidas
     let estados = screen.getAllByText("Estado: waiting");
     expect(estados).toHaveLength(1);
     expect(screen.queryByText("Estado: started")).not.toBeInTheDocument();
   });
 
-  test('muestra "No Hay Más Partidas" solo si está al final del scroll', () => {
+  it('muestra "No Hay Más Partidas" solo si está al final del scroll', () => {
     render(
       <MemoryRouter>
-        <ListGames />
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <ListGames />
+          </UserIdProvider>
+        </UsernameProvider>
       </MemoryRouter>
     );
     server.send(message);
@@ -159,5 +211,39 @@ describe("ListaPartidas", () => {
     // Verificamos que el mensaje no se muestra
     expect(screen.queryByText(/No Hay Más Partidas/i)).toBeInTheDocument();
   });
+
+  it("redirige a /games/game_id al hacer clic en UNIRSE", async () => {
+    render(
+      <MemoryRouter>
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <Routes>
+              <Route path="/searchgame" element={<ListGames />} />
+              <Route path="/games/:game_id" element={<GameLobbyContainer />} />
+            </Routes>
+          </UserIdProvider>
+        </UsernameProvider>
+      </MemoryRouter>
+    );
   
+    // Simula el envío de un mensaje WebSocket
+    server.send(message);
+  
+    await waitFor(() => {
+      const input = screen.getByPlaceholderText("Elige un Nombre");
+      userEvent.type(input, "TestUser");
+  
+      const joinButtons = screen.getAllByRole("button", { name: /UNIRSE/i });
+      expect(joinButtons.length).toBeGreaterThan(0);
+  
+      // Simula el clic en el primer botón "UNIRSE"
+      userEvent.click(joinButtons[0]);
+    });
+  
+    // Verifica la redirección
+    await waitFor(() => {
+      expect(window.location.pathname).toBe('/games/aa626969-cf88-43a0-a65d-1e3e54e48b73'); // Reemplaza 'game_id' con el id esperado
+      expect(screen.getByText(/Nombre de la partida: dragonball/i)).toBeInTheDocument();
+    });
+  });  
 });

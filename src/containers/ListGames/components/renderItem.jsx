@@ -5,8 +5,9 @@ import { UsernameContext } from "../../../contexts/UsernameContext.jsx";
 import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 
 const ItemContainer = ({ item }) => {
-  const { username, validUsername, handleChangeUser } = useContext(UsernameContext);
-  const {userId, setUserId} = useContext(UserIdContext)
+  const { username, validUsername, handleChangeUser } =
+    useContext(UsernameContext);
+  const { userId, setUserId } = useContext(UserIdContext);
 
   const navigate = useNavigate();
 
@@ -32,8 +33,8 @@ const ItemContainer = ({ item }) => {
           return;
         }
         const result = await response.json();
-        setUserId(result.player_id)
-        
+        setUserId(result.player_id);
+
         console.log("Uniéndose a partida:", result);
         navigate(`/games/${gameId}`);
       } catch (error) {
@@ -43,6 +44,7 @@ const ItemContainer = ({ item }) => {
       }
     }
   };
+
 
   return <ItemComponent item={item} handleClick={handleClick} />;
 };

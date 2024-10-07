@@ -4,12 +4,15 @@ import GameLobby from "./components/GameLobby";
 import { UserIdContext } from "../../contexts/UserIdContext";
 
 export const GameLobbyContainer = () => {
+  //obtiene game_id de la url
   const { game_id } = useParams();
+  //contexto global que tiene la userId de la ultima partida a la que entro el usuario
   const { userId, setUserId } = useContext(UserIdContext);
   const [gameData, setGameData] = useState(null);
   const [playerList, setPlayerList] = useState([]);
 
   useEffect(() => {
+    //La logica que hace fetch al principio
     const fetchGameData = async () => {
       if (game_id) {
         try {
@@ -36,11 +39,12 @@ export const GameLobbyContainer = () => {
             gameState: game.state,
             gameCreator: game.creator,
           });
-          setPlayerList(game.players);
 
-          console.log("Partida creada:", result);
+          const { player_names, players } = game;
+          const tuples = player_names.map((name, index) => [players[index], name]);
+          setPlayerList(tuples);
         } catch (error) {
-          console.error("Error al crear la partida:", error);
+          console.error("Error:", error);
         } finally {
           console.log("finaly");
         }
@@ -50,7 +54,8 @@ export const GameLobbyContainer = () => {
     fetchGameData();
   }, [game_id]);
 
-  useEffect( () => {
+  //Aca se maneja la comunicacion por websocket
+  useEffect(() => {
     if (!game_id || !userId) return;
 
     const socket = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
@@ -61,10 +66,10 @@ export const GameLobbyContainer = () => {
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message)
+      console.log(message);
       if (message.type === "PlayerJoined") {
-        const data = message.payload;
-        setPlayerList(prevPlayers => [...prevPlayers, data]);
+        const { player_id, player_name } = message.payload;
+        setPlayerList(prevPlayers => [...prevPlayers, [player_id, player_name]]);
       }
     };
 

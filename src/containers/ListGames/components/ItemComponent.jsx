@@ -3,6 +3,7 @@ import { UsernameContext } from "../../../contexts/UsernameContext";
 
 const ItemComponent = ({ item, handleClick }) => {
   const { username, validUsername, handleChangeUser } = useContext(UsernameContext);
+  const ownerName = item.player_names.find((name, index) => index === item.players.indexOf(item.creator));
 
   return (
     <div
@@ -21,7 +22,7 @@ const ItemComponent = ({ item, handleClick }) => {
         <div>
           <h2>{"Cantidad de Jugadores: " + item.players.length + "/4"}</h2>
           <p>{"Estado: " + item.state}</p>
-          <p>{"Dueño: " + item.creator}</p>
+          <p>{"Dueño: " + ownerName}</p>
         </div>
         <div
           style={{
@@ -34,10 +35,10 @@ const ItemComponent = ({ item, handleClick }) => {
             onClick={handleClick}
             style={{
               color: "white",
-              backgroundColor: validUsername && item.state !== "started" ? "#0059b3" : "red",
-              cursor: validUsername && item.state !== "started" ? "pointer" : "not-allowed",
+              backgroundColor: validUsername && item.state !== "started" && item.players.length !== 4 ? "#0059b3" : "red",
+              cursor: validUsername && item.state !== "started" && item.players.length !== 4 ? "pointer" : "not-allowed",
             }}
-            disabled={!validUsername || item.state === "started"}
+            disabled={!validUsername || item.state === "started" || item.players.length === 4}
           >
             UNIRSE
           </button>
