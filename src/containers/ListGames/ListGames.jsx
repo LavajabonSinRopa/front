@@ -25,7 +25,7 @@ function ListGames() {
   }, []);
 
   const handleNewPlayer = (message, setItems, items) => {
-    if (message.type === "newPlayer") {
+    if (message.type.toLowerCase() === 'newplayer') {
       //Esto el unico efecto que tiene es volver a renderizar genericList
       setNewPlayerFlag(prevFlag => !prevFlag);
     }

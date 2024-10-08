@@ -21,7 +21,6 @@ export const GenericList = ({
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message)
       if (message.type === typeKey) {
         const data = message.payload;
         let updatedItems;
@@ -34,7 +33,8 @@ export const GenericList = ({
           updatedItems = data.slice(from, to);
         }
         setItems(updatedItems);
-      } else if (onCustomMessage) {
+      } 
+      if (onCustomMessage) {
         onCustomMessage(message, setItems, items);
       }
     };

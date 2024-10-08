@@ -4,13 +4,20 @@ import "@testing-library/jest-dom";
 import CrearPartida from "../containers/CrearPartida/CrearPartida";
 global.fetch = jest.fn();
 import { MemoryRouter } from "react-router-dom";
+import { UserIdProvider } from "../contexts/UserIdContext.jsx";
+
+const mockUserIdContextValue = {
+  userId: "12345",
+  setUserId: jest.fn(), // Función mockeada
+};
 
 describe("CrearPartida", () => {
-  /*
   it("El componente se renderiza correctamente sin errores inicialmente", async () => {
     render(
       <MemoryRouter>
-        <CrearPartida />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -46,7 +53,9 @@ describe("CrearPartida", () => {
   it("Validacion de nombres correcta", async () => {
     render(
       <MemoryRouter>
-        <CrearPartida />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -99,11 +108,11 @@ describe("CrearPartida", () => {
   });
 
   it("Creación de partida exitosa", async () => {
-    const mockSendDataToParent = jest.fn();
-
     render(
       <MemoryRouter>
-        <CrearPartida sendDataToParent={mockSendDataToParent} />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -159,11 +168,11 @@ describe("CrearPartida", () => {
       })
     );
 
-    const mockSendDataToParent = jest.fn();
-
     render(
       <MemoryRouter>
-        <CrearPartida sendDataToParent={mockSendDataToParent} />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -190,5 +199,5 @@ describe("CrearPartida", () => {
         )
       ).toBeInTheDocument();
     });
-  });*/
+  });
 });

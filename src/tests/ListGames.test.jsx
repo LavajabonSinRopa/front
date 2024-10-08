@@ -212,38 +212,34 @@ describe("ListaPartidas", () => {
     expect(screen.queryByText(/No Hay Más Partidas/i)).toBeInTheDocument();
   });
 
-  it("redirige a /games/game_id al hacer clic en UNIRSE", async () => {
+  it("redirige a /games/game_id al hacer clic en UNIRTE", async () => {
     render(
       <MemoryRouter>
         <UsernameProvider value={mockUsernameContextValue}>
           <UserIdProvider value={mockUserIdContextValue}>
-            <Routes>
-              <Route path="/searchgame" element={<ListGames />} />
-              <Route path="/games/:game_id" element={<GameLobbyContainer />} />
-            </Routes>
+            <ListGames />
           </UserIdProvider>
         </UsernameProvider>
       </MemoryRouter>
     );
   
-    // Simula el envío de un mensaje WebSocket
     server.send(message);
   
     await waitFor(() => {
       const input = screen.getByPlaceholderText("Elige un Nombre");
-      userEvent.type(input, "TestUser");
+      fireEvent.change(input, { target: { value: "TestUser" } });
+
+      const itemsButton = screen.getAllByRole("button");
+      const joinButtons = itemsButton.filter(
+        (button) => button.textContent === "UNIRSE"
+      );
   
-      const joinButtons = screen.getAllByRole("button", { name: /UNIRSE/i });
-      expect(joinButtons.length).toBeGreaterThan(0);
+      expect(joinButtons.length).toBeGreaterThan(0); 
   
-      // Simula el clic en el primer botón "UNIRSE"
-      userEvent.click(joinButtons[0]);
+      fireEvent.click(joinButtons[0]);
     });
+    screen.debug()
+    expect(mockNavigate).toHaveBeenCalledWith("/games/aa626969-cf88-43a0-a65d-1e3e54e48b73");
+  });
   
-    // Verifica la redirección
-    await waitFor(() => {
-      expect(window.location.pathname).toBe('/games/aa626969-cf88-43a0-a65d-1e3e54e48b73'); // Reemplaza 'game_id' con el id esperado
-      expect(screen.getByText(/Nombre de la partida: dragonball/i)).toBeInTheDocument();
-    });
-  });  
 });
