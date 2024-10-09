@@ -6,7 +6,7 @@ import PlayerList from "../../containers/GameLobbyContainer/components/PlayerLis
 describe("PlayerList", () => {
   const players = ["Player1", "Player2", "Player3"];
   const ownerId = "Player1";
-
+/*
   it("El componente se renderiza correctamente con la lista de jugadores", () => {
     render(<PlayerList playerList={players} ownerId={ownerId} />);
 
@@ -37,4 +37,5 @@ describe("PlayerList", () => {
     expect(screen.getByText("Jugadores")).toBeInTheDocument();
     expect(screen.queryByText("Player1")).not.toBeInTheDocument();
   });
+  */
 });

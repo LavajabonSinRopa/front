@@ -16,7 +16,7 @@ describe("GenericList", () => {
   });
 
   it("renders list items based on WebSocket messages", async () => {
-    const mockRenderItem = jest.fn((_, item) => (
+    const mockRenderItem = jest.fn((item) => (
       <div key={item.id}>{item.name}</div>
     ));
     const websocketUrl = "ws://localhost:1234";
@@ -53,7 +53,7 @@ describe("GenericList", () => {
 
   it("filters items correctly based on props", async () => {
     // MOCKEO DE PROPS
-    const mockRenderItem = jest.fn((_, item) => <div>{item.name}</div>);
+    const mockRenderItem = jest.fn((item) => <div>{item.name}</div>);
     const websocketUrl = "ws://localhost:1234";
     const typeKey = "testType";
     const filterBy = "category";
@@ -89,7 +89,7 @@ describe("GenericList", () => {
 
   it("shows items based on the props 'from' and 'to'", async () => {
     // MOCKEO DE PROPS
-    const mockRenderItem = jest.fn((_, item) => <div>{item.name}</div>);
+    const mockRenderItem = jest.fn((item) => <div>{item.name}</div>);
     const websocketUrl = "ws://localhost:1234";
     const typeKey = "testType";
 
@@ -132,4 +132,5 @@ describe("GenericList", () => {
     expect(screen.queryByText("Item 7")).not.toBeInTheDocument();
     expect(screen.queryByText("Item 8")).not.toBeInTheDocument();
   });
+
 });

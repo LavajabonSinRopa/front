@@ -1,6 +1,13 @@
-import React from "react";
+import React, {useContext} from "react";
+import { UsernameContext } from "../../../contexts/UsernameContext";
 
-const ListGamesView = ({ search, setSearch, containerRef, isAtBottom, children }) => {
+const ListGamesView = ({
+  setSearch,
+  containerRef,
+  isAtBottom,
+  children,
+}) => {
+  const { username, validUsername, handleChangeUser } = useContext(UsernameContext);
   return (
     <div>
       <h1>Partidas disponibles</h1>
@@ -9,6 +16,15 @@ const ListGamesView = ({ search, setSearch, containerRef, isAtBottom, children }
         onChange={(e) => setSearch(e.target.value)}
       />
       <button>Buscar</button>
+      <h2>Usuario:</h2>
+      <input
+        placeholder="Elige un Nombre"
+        value={username}
+        onChange={handleChangeUser}
+      />
+      {!validUsername && username.length > 0 && (
+        <p>El nombre de usuario no es válido.</p>
+      )}
       <div
         data-testid="scrollable-div"
         ref={containerRef}

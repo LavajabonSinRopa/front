@@ -10,7 +10,7 @@ export const GenericList = ({
   renderItem, // OBLIGATORIO
   typeKey, // OBLIGATORIO
   idKey = "id", // OBLIGATORIO
-  sendDataToParent,
+  onCustomMessage, // OPCIONAL, Callback para mensajes personalizados
 }) => {
   const [items, setItems] = useState([]);
 
@@ -32,8 +32,10 @@ export const GenericList = ({
         } else {
           updatedItems = data.slice(from, to);
         }
-
         setItems(updatedItems);
+      } 
+      if (onCustomMessage) {
+        onCustomMessage(message, setItems, items);
       }
     };
     
@@ -41,9 +43,9 @@ export const GenericList = ({
     return () => {
       socket.close();
     };
-  }, [websocketUrl, filterKey, from, to]);
+  }, [websocketUrl, filterKey, from, to, onCustomMessage]);
 
   return (
-    <GenericListView items={items} renderItem={renderItem} idKey={idKey} sendDataToParent={sendDataToParent}/>
+    <GenericListView items={items} renderItem={renderItem} idKey={idKey}/>
   );
 };
