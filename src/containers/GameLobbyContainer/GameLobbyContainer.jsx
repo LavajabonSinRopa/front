@@ -92,7 +92,7 @@ export const GameLobbyContainer = () => {
         <GameLobby
           gameData={gameData}
           playerList={playerList}
-          playerId={gameData.creator}
+          playerId={userId}
         />
       ) : (
         <p>Loading...</p>
