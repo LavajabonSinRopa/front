@@ -25,7 +25,7 @@ const ItemContainer = ({ item }) => {
           },
           body: JSON.stringify(data),
         });
-
+        
         if (!response.ok) {
           console.log(
             "Hubo un problema al unirse a la partida, intenta de nuevo."

@@ -2,12 +2,15 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ListGames from "../containers/ListGames/ListGames.jsx";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import WS from "jest-websocket-mock";
 import { UsernameProvider } from "../contexts/UsernameContext.jsx";
 import { UserIdProvider } from "../contexts/UserIdContext.jsx";
 import userEvent from "@testing-library/user-event";
 import GameLobbyContainer from "../containers/GameLobbyContainer/GameLobbyContainer.jsx";
+
+
+global.fetch = jest.fn();
 
 const server = new WS("ws://localhost:1234", { jsonProtocol: true });
 
@@ -70,14 +73,19 @@ const mockUserIdContextValue = {
   setUserId: jest.fn(), // Función mockeada
 };
 
-const mockNavigate = jest.fn();
+const mockedUsedNavigate = jest.fn();
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
+  useNavigate: () => mockedUsedNavigate,
 }));
 
 describe("ListaPartidas", () => {
+  beforeEach(() => {
+    // Limpia los mocks antes de cada prueba
+    jest.clearAllMocks();
+  });
+  
   it("renderiza la lista de items correctamente", async () => {
     render(
       <MemoryRouter>
@@ -213,6 +221,59 @@ describe("ListaPartidas", () => {
   });
 
   it("redirige a /games/game_id al hacer clic en UNIRTE", async () => {
+    // Mock de la respuesta de la API
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({ message: "Partida creada correctamente" }),
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <ListGames />
+          </UserIdProvider>
+        </UsernameProvider>
+      </MemoryRouter>
+    );
+
+    server.send(message);
+
+    await waitFor(() => {
+      const input = screen.getByPlaceholderText("Elige un Nombre");
+      fireEvent.change(input, { target: { value: "testUser" } });
+
+      const itemsButton = screen.getAllByRole("button");
+      const joinButtons = itemsButton.filter(
+        (button) => button.textContent === "UNIRSE"
+      );
+
+      expect(joinButtons.length).toBeGreaterThan(0);
+      fireEvent.click(joinButtons[0]);
+    });
+
+    expect(fetch).toHaveBeenCalledWith(
+      `/api/games/aa626969-cf88-43a0-a65d-1e3e54e48b73/join`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          player_name: "testUser",
+        }),
+      }
+    );
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      "/games/aa626969-cf88-43a0-a65d-1e3e54e48b73"
+    );
+  });
+
+  it("no te deja unirte si la partida está llena", async () => {
     render(
       <MemoryRouter>
         <UsernameProvider value={mockUsernameContextValue}>
@@ -223,23 +284,25 @@ describe("ListaPartidas", () => {
       </MemoryRouter>
     );
   
+    const inputPartida = screen.getByPlaceholderText("Ingresa un Nombre");
+    fireEvent.change(inputPartida, { target: { value: "lavajabon" } });
     server.send(message);
-  
+    // Espera a que se actualicen los elementos
     await waitFor(() => {
       const input = screen.getByPlaceholderText("Elige un Nombre");
-      fireEvent.change(input, { target: { value: "TestUser" } });
-
+      fireEvent.change(input, { target: { value: "testUser" } });
+  
       const itemsButton = screen.getAllByRole("button");
       const joinButtons = itemsButton.filter(
         (button) => button.textContent === "UNIRSE"
       );
   
-      expect(joinButtons.length).toBeGreaterThan(0); 
-  
+      expect(joinButtons.length).toBeGreaterThan(0);
       fireEvent.click(joinButtons[0]);
     });
-    screen.debug()
-    expect(mockNavigate).toHaveBeenCalledWith("/games/aa626969-cf88-43a0-a65d-1e3e54e48b73");
+  
+    // Verifica que no se ha navegado a otra ruta
+    expect(mockedUsedNavigate).not.toHaveBeenCalled();
   });
   
 });
