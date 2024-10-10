@@ -3,13 +3,34 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CrearPartida from "../containers/CrearPartida/CrearPartida";
 global.fetch = jest.fn();
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router-dom";
+import { UserIdProvider } from "../contexts/UserIdContext.jsx";
+
+const mockUserIdContextValue = {
+  userId: "12345",
+  setUserId: jest.fn(), // Función mockeada
+};
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
 
 describe("CrearPartida", () => {
+  beforeEach(() => {
+    // Limpia los mocks antes de cada prueba
+    jest.clearAllMocks();
+  });
+
   it("El componente se renderiza correctamente sin errores inicialmente", async () => {
     render(
       <MemoryRouter>
-        <CrearPartida />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -45,7 +66,9 @@ describe("CrearPartida", () => {
   it("Validacion de nombres correcta", async () => {
     render(
       <MemoryRouter>
-        <CrearPartida />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -98,11 +121,11 @@ describe("CrearPartida", () => {
   });
 
   it("Creación de partida exitosa", async () => {
-    const mockSendDataToParent = jest.fn();
-
     render(
       <MemoryRouter>
-        <CrearPartida sendDataToParent={mockSendDataToParent} />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -148,9 +171,11 @@ describe("CrearPartida", () => {
         player_name: "UsernameValido",
       }),
     });
+
+    expect(mockedUsedNavigate).toHaveBeenCalled();
   });
 
-  test("Creación de partida fallida", async () => {
+  it("Creación de partida fallida", async () => {
     // Mock de la respuesta de la API
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
@@ -158,11 +183,11 @@ describe("CrearPartida", () => {
       })
     );
 
-    const mockSendDataToParent = jest.fn();
-
     render(
       <MemoryRouter>
-        <CrearPartida sendDataToParent={mockSendDataToParent} />
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
       </MemoryRouter>
     );
 
@@ -189,5 +214,8 @@ describe("CrearPartida", () => {
         )
       ).toBeInTheDocument();
     });
+
+    // Verifica que no se ha navegado a otra ruta
+    expect(mockedUsedNavigate).not.toHaveBeenCalled();
   });
 });
