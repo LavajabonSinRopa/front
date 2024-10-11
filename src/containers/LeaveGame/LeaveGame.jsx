@@ -6,6 +6,8 @@ import LeaveGameView from "./components/LeaveGameView.jsx";
 
 function LeaveGame({playerId, gameId}) {
 
+    //const { updateGameState } = useContext(GamesContext);
+
     const handleLeaveGame = async() => {
         const data = {
             player_id: playerId,
@@ -21,6 +23,7 @@ function LeaveGame({playerId, gameId}) {
     
             if (response.ok) {
                 console.log(`Jugador ${playerId} ha abandonado la partida en curso`);
+                //updateGameState(gameId);
             } else {
                 console.error("Error al intentar abandonar la partida");
             }

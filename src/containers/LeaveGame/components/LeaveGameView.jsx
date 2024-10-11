@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 
-const LeaveGameView = ({
-    onLeaveGame,
-}) => {
+const LeaveGameView = ({ onLeaveGame }) => {
+    const [isLeaving, setIsLeaving] = useState(false);
+
+    const handleClick = async () => {
+        setIsLeaving(true);
+        await onLeaveGame();
+        setIsLeaving(false); 
+    };
+
     return (
         <div>
-            <button onClick={onLeaveGame}>
-                Abandonar
+            <button 
+                onClick={handleClick} 
+                disabled={isLeaving}
+                aria-label="Abandonar la partida"
+            >
+                {isLeaving ? "Saliendo..." : "Abandonar"}
             </button>
         </div>
     );
