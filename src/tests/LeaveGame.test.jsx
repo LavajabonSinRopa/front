@@ -1,8 +1,8 @@
 // LeaveGame.test.jsx
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import '@testing-library/jest-dom/extend-expect';
-import LeaveGame from "./LeaveGame";
+import '@testing-library/jest-dom';
+import LeaveGame from "../containers/LeaveGame/LeaveGame.jsx";
 
 //Mock del fetch
 global.fetch = jest.fn();
@@ -64,9 +64,10 @@ describe("LeaveGame component", () => {
 
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
-        // Verifica que se muestra el mensaje de error
-        const errorMessage = screen.getByText("Error: Error al abandonar la partida");
-        expect(errorMessage).toBeInTheDocument();
+        await waitFor(() => {
+            const errorMessage = screen.getByText(/Error: Error al abandonar la partida/i);
+            expect(errorMessage).toBeInTheDocument();
+        });
     });
 
     test("deberia deshabilitar el boton mientras la solicitud está en curso", async () => {
