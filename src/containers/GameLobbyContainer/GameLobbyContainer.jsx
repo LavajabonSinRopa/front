@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
 import GameLobby from "./components/GameLobby";
 import { UserIdContext } from "../../contexts/UserIdContext";
@@ -10,6 +10,7 @@ export const GameLobbyContainer = () => {
   const { userId, setUserId } = useContext(UserIdContext);
   const [gameData, setGameData] = useState(null);
   const [playerList, setPlayerList] = useState([]);
+  const socketRef = useRef(null);
 
   useEffect(() => {
     //La logica que hace fetch al principio
@@ -54,35 +55,38 @@ export const GameLobbyContainer = () => {
     fetchGameData();
   }, [game_id]);
 
+
+
+  // Inicializacion y Cierre del WebSocket
+  useEffect(() => {
+    if (!game_id || !userId) {
+      return;
+    }
+
+    socketRef.current = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
+    socketRef.current.onopen = () => console.log("ws opened");
+    socketRef.current.onclose = () => console.log("ws closed");
+    socketRef.current.onerror = (event) => {
+      console.error("WebSocket error observed:", event);
+    };
+    const wsCurrent = socketRef.current;
+
+    return () => {
+      wsCurrent.close();
+    };
+  }, []);
+
   //Aca se maneja la comunicacion por websocket
   useEffect(() => {
-    if (!game_id || !userId) return;
+    if (!socketRef.current) return;
 
-    const socket = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
-
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
-    };
-
-    socket.onmessage = (event) => {
+    socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log(message);
       if (message.type === "PlayerJoined") {
         const { player_id, player_name } = message.payload;
         setPlayerList(prevPlayers => [...prevPlayers, [player_id, player_name]]);
       }
-    };
-
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    socket.onclose = () => {
-      console.log("WebSocket de userId connection closed");
-    };
-
-    return () => {
-      socket.close();
     };
   }, [game_id, userId]);
 
