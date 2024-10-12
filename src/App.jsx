@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/creategame" element={<CreatePartida />} />
-          <Route path="/searchgame" element={<ListGames />} />
+          <Route path="/searchgame" element={<ListGames websocketUrl="apiWS/games"/>} />
           <Route path="/games/:game_id" element={<GameLobbyContainer />} />
         </Routes>
       </Router>
