@@ -1,16 +1,20 @@
+//EndTurnView.jsx
 import React from "react";
 
 const EndTurnView = ({
-    playerId,
-    currentTurn,
+    isYourTurn,
     onPassTurn,
+    isLoading,
+    message,
 }) => {
-    const isYourTurn = playerId === playerId;
-
     return (
         <div>
-            <button onClick={onPassTurn} disabled={!isYourTurn}>
-                {isYourTurn ? "Terminar Turno" : "Esperando tu turno"}
+            {message && 
+            <div className="error-message">
+                {message}
+            </div>}
+            <button onClick={onPassTurn} disabled={!isYourTurn || isLoading}>
+                {isLoading ? "Cargando..." : isYourTurn ? "Terminar Turno" : "Esperando tu turno"}
             </button>
         </div>
     );

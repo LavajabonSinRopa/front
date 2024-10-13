@@ -1,15 +1,25 @@
 // EndTurn.jsx
-import React, { useState, useContext} from "react";
-import { GamesContext } from "../../contexts/GamesContext.jsx";
+import React, { useState} from "react";
 import EndTurnView from "./components/EndTurnView.jsx";
 
+function EndTurn({playerId, gameId, players, currentTurn}) {
+    //calculo de si es mi turno o no
+    const turnIndex = (currentTurn - 1) % players.length;
+    const currentPlayerIndex = players.findIndex(player => player.id === playerId);
+    const isYourTurn = currentPlayerIndex === turnIndex;
 
-function EndTurn({playerId, gameId, currentTurn}) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState(null);
+
 
     const handleEndTurn = async() => {
         const data = {
             player_id: playerId,
         };
+
+        setIsLoading(true);
+        setMessage(null);
+
         try {
             const response = await fetch(`api/games/${gameId}/skip`, {
             method: "POST",
@@ -22,18 +32,24 @@ function EndTurn({playerId, gameId, currentTurn}) {
             if (response.ok) {
                 console.log(`Jugador ${playerId} ha terminado su turno`);
             } else {
+                setMessage("Error al intentar terminar el turno");
                 console.error("Error al intentar terminar el turno");
             }
         } catch (error) {
+            setMessage("Error en la solicitud: " + error.message);
             console.error("Error en la solicitud:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
     return ( 
         <div>
             <EndTurnView 
-                playerId={playerId} 
-                currentTurn={currentTurn} 
-                onPassTurn={handleEndTurn}
+                isYourTurn = {isYourTurn}
+                onPassTurn = {handleEndTurn}
+                isLoading = {isLoading}
+                message = {message}
+
             />
         </div>
     );
