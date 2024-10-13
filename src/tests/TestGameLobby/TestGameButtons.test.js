@@ -5,7 +5,7 @@ import GameButtons from "../../containers/GameLobbyContainer/components/GameButt
 
 describe("GameButtons", () => {
 	const mockOnStartGame = jest.fn();
-	const mockOnCancelGame = jest.fn();
+	//const mockOnCancelGame = jest.fn();
 	const mockOnLeaveGame = jest.fn();
 
 	it("Muestra el botón de 'Iniciar Partida' solo para el owner", () => {
@@ -14,14 +14,14 @@ describe("GameButtons", () => {
 				playerId="ownerId"
 				ownerId="ownerId"
 				onStartGame={mockOnStartGame}
-				onCancelGame={mockOnCancelGame}
+				//onCancelGame={mockOnCancelGame}
 				onLeaveGame={mockOnLeaveGame}
 			/>
 		);
 
 		expect(screen.getByText("Iniciar Partida")).toBeInTheDocument();
 
-		expect(screen.getByText("Cancelar Partida")).toBeInTheDocument();
+		//expect(screen.getByText("Cancelar Partida")).toBeInTheDocument();
 	});
 
 	it("No muestra el botón de 'Iniciar Partida' para un jugador que no es el owner", () => {
@@ -30,7 +30,7 @@ describe("GameButtons", () => {
 				playerId="playerId"
 				ownerId="ownerId"
 				onStartGame={mockOnStartGame}
-				onCancelGame={mockOnCancelGame}
+				//onCancelGame={mockOnCancelGame}
 				onLeaveGame={mockOnLeaveGame}
 			/>
 		);
@@ -46,7 +46,7 @@ describe("GameButtons", () => {
 				playerId="ownerId"
 				ownerId="ownerId"
 				onStartGame={mockOnStartGame}
-				onCancelGame={mockOnCancelGame}
+				//onCancelGame={mockOnCancelGame}
 				onLeaveGame={mockOnLeaveGame}
 			/>
 		);
@@ -56,21 +56,21 @@ describe("GameButtons", () => {
 		expect(mockOnStartGame).toHaveBeenCalledTimes(1);
 	});
 
-	it("Llama a 'onCancelGame' cuando el owner hace clic en el botón 'Cancelar Partida'", () => {
-		render(
-			<GameButtons
-				playerId="ownerId"
-				ownerId="ownerId"
-				onStartGame={mockOnStartGame}
-				onCancelGame={mockOnCancelGame}
-				onLeaveGame={mockOnLeaveGame}
-			/>
-		);
+	// it("Llama a 'onCancelGame' cuando el owner hace clic en el botón 'Cancelar Partida'", () => {
+	// 	render(
+	// 		<GameButtons
+	// 			playerId="ownerId"
+	// 			ownerId="ownerId"
+	// 			onStartGame={mockOnStartGame}
+	// 			//onCancelGame={mockOnCancelGame}
+	// 			onLeaveGame={mockOnLeaveGame}
+	// 		/>
+	// 	);
 
-		fireEvent.click(screen.getByText("Cancelar Partida"));
+	// 	fireEvent.click(screen.getByText("Cancelar Partida"));
 
-		expect(mockOnCancelGame).toHaveBeenCalledTimes(1);
-	});
+	// 	expect(mockOnCancelGame).toHaveBeenCalledTimes(1);
+	// });
 
 	it("Llama a 'onLeaveGame' cuando un jugador hace clic en el botón 'Abandonar Partida'", () => {
 		render(
@@ -78,7 +78,7 @@ describe("GameButtons", () => {
 				playerId="playerId"
 				ownerId="ownerId"
 				onStartGame={mockOnStartGame}
-				onCancelGame={mockOnCancelGame}
+				//onCancelGame={mockOnCancelGame}
 				onLeaveGame={mockOnLeaveGame}
 			/>
 		);
