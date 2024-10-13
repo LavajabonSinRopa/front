@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import GameLobby from "../../containers/GameLobbyContainer/components/GameLobby.jsx";
+import { MemoryRouter } from "react-router-dom"; // Import MemoryRouter
 
 jest.mock("../../containers/GameLobbyContainer/components/GameInfo/GameInfo.jsx", () => () => (
   <div>Mock GameInfo</div>
@@ -25,11 +26,13 @@ describe("GameLobby", () => {
 
   it("Se renderizan los componentes internos correctamente", () => {
     render(
+      <MemoryRouter>
       <GameLobby
         gameData={mockGameData}
         playerList={mockPlayerList}
         playerId={mockPlayerId}
       />
+    </MemoryRouter>
     );
 
     expect(screen.getByText("Mock GameInfo")).toBeInTheDocument();
