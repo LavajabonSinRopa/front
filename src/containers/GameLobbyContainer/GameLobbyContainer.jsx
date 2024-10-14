@@ -10,7 +10,6 @@ export const GameLobbyContainer = () => {
 	const { userId, setUserId } = useContext(UserIdContext);
 	const [gameData, setGameData] = useState(null);
 	const [playerList, setPlayerList] = useState([]);
-	const [socket, setSocket] = useState(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -62,7 +61,6 @@ export const GameLobbyContainer = () => {
 		if (!game_id || !userId) return;
 
 		const socket = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
-		setSocket(socket);
 
 		socket.onopen = () => {
 			console.log("WebSocket connection established");
@@ -78,6 +76,7 @@ export const GameLobbyContainer = () => {
 					[player_id, player_name],
 				]);
 			} else if (message.type === "PlayerLeft") {
+				// Actualizar lista cuando sale alguien
 				const { player_id } = message.payload;
 				setPlayerList((prevPlayers) =>
 					prevPlayers.filter(([id]) => id !== player_id)
@@ -107,7 +106,6 @@ export const GameLobbyContainer = () => {
 					gameData={gameData}
 					playerList={playerList}
 					playerId={userId}
-					socket={socket}
 				/>
 			) : (
 				<p>Loading...</p>

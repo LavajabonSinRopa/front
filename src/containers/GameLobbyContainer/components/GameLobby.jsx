@@ -4,7 +4,7 @@ import PlayerList from "./PlayerList/PlayerList";
 import GameButtons from "./GameButtons/GameButtons";
 import { useNavigate } from "react-router-dom";
 
-function GameLobby({ gameData, playerList, playerId, socket }) {
+function GameLobby({ gameData, playerList, playerId }) {
 	const { gameName, gameId, gameState, gameCreator } = gameData; // Destructure gameData
 	const navigate = useNavigate();
 
@@ -24,9 +24,6 @@ function GameLobby({ gameData, playerList, playerId, socket }) {
 
 			if (response.ok) {
 				console.log(`Jugador ${playerId} ha iniciado la partida ${gameId}`);
-				socket.send(
-					JSON.stringify({ type: "GameStarted", payload: { gameId } })
-				);
 				navigate(`/games/${gameId}/start`);
 			} else {
 				console.error("Error al intentar iniciar la partida");
@@ -57,12 +54,6 @@ function GameLobby({ gameData, playerList, playerId, socket }) {
 			if (response.ok) {
 				console.log(
 					`Jugador ${playerId} ha abandonado el lobby de la partida ${gameId}`
-				);
-				socket.send(
-					JSON.stringify({
-						type: "PlayerLeft",
-						payload: { player_id: playerId },
-					})
 				);
 				navigate("/");
 			} else {
