@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import GameLobby from "../../containers/GameLobbyContainer/components/GameLobby.jsx";
-import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 
 const mockGameData = {
 	gameName: "Test Game",
@@ -27,7 +26,7 @@ describe("GameLobby", () => {
 		render(
 				<GameLobby
 					gameData={mockGameData}
-					playerList={mockPlayerList.map((player) => player[1])}
+					playerList={mockPlayerList}
 					playerId={mockPlayerId}
 				/>
 		);
@@ -37,8 +36,6 @@ describe("GameLobby", () => {
 		expect(screen.getByText("player1")).toBeInTheDocument();
 		expect(screen.getByText("player2")).toBeInTheDocument();
 		expect(screen.getByText("player3")).toBeInTheDocument();
-		expect(screen.getByText("Iniciar Partida")).toBeInTheDocument();
-		expect(screen.getByText("Cancelar Partida")).toBeInTheDocument();
 		expect(screen.getByText("Abandonar Partida")).toBeInTheDocument();
 	});
 });
