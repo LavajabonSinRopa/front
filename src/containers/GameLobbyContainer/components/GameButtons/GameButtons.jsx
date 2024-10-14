@@ -9,8 +9,6 @@ const GameButtons = ({
 	onLeaveGame,
 }) => {
 	const isOwner = playerId === ownerId;
-	console.log("PlayerId: ", playerId);
-	console.log("OwnerId: ", ownerId);
 	const playersNumber = playerList.length;
 	return (
 		<div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import GameLobby from "./components/GameLobby";
 import { UserIdContext } from "../../contexts/UserIdContext";
 
@@ -10,6 +10,8 @@ export const GameLobbyContainer = () => {
 	const { userId, setUserId } = useContext(UserIdContext);
 	const [gameData, setGameData] = useState(null);
 	const [playerList, setPlayerList] = useState([]);
+	const [socket, setSocket] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		//La logica que hace fetch al principio
@@ -48,8 +50,6 @@ export const GameLobbyContainer = () => {
 					setPlayerList(tuples);
 				} catch (error) {
 					console.error("Error:", error);
-				} finally {
-					console.log("finaly");
 				}
 			}
 		};
@@ -62,6 +62,7 @@ export const GameLobbyContainer = () => {
 		if (!game_id || !userId) return;
 
 		const socket = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
+		setSocket(socket);
 
 		socket.onopen = () => {
 			console.log("WebSocket connection established");
@@ -71,28 +72,33 @@ export const GameLobbyContainer = () => {
 			const message = JSON.parse(event.data);
 			console.log(message);
 			if (message.type === "PlayerJoined") {
-			  const { player_id, player_name } = message.payload;
-			  setPlayerList(prevPlayers => [...prevPlayers, [player_id, player_name]]);
-			} else if (message.type === "PlayerLeft") { // Actualizar lista cuando sale alguien
-			  const { player_id } = message.payload;
-			  setPlayerList((prevPlayers) => 
-				prevPlayers.filter(([id]) => id !== player_id)
-			  );
+				const { player_id, player_name } = message.payload;
+				setPlayerList((prevPlayers) => [
+					...prevPlayers,
+					[player_id, player_name],
+				]);
+			} else if (message.type === "PlayerLeft") {
+				const { player_id } = message.payload;
+				setPlayerList((prevPlayers) =>
+					prevPlayers.filter(([id]) => id !== player_id)
+				);
+			} else if (message.type === "GameStarted") {
+				navigate(`/games/${game_id}/start`);
 			}
-		  };
+		};
 
 		socket.onerror = (error) => {
 			console.error("WebSocket error:", error);
 		};
 
 		socket.onclose = () => {
-			console.log("WebSocket de userId connection closed");
+			console.log("WebSocket connection closed");
 		};
 
 		return () => {
 			socket.close();
 		};
-	}, [game_id, userId]);
+	}, [game_id, userId, navigate]);
 
 	return (
 		<div>
@@ -101,6 +107,7 @@ export const GameLobbyContainer = () => {
 					gameData={gameData}
 					playerList={playerList}
 					playerId={userId}
+					socket={socket}
 				/>
 			) : (
 				<p>Loading...</p>
