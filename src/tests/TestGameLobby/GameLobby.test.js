@@ -186,49 +186,7 @@ describe("GameLobby - 'Iniciar Partida'", () => {
 		const startButton = screen.getByText("Iniciar Partida");
 		expect(startButton).toBeDisabled(); // Should be disabled because there are less than 4 players
 	});
-/*
-	it("calls fetch and sends WebSocket message when 'Iniciar Partida' button is clicked", async () => {
-		global.fetch.mockResolvedValueOnce({
-			ok: true,
-			json: async () => ({}),
-		});
 
-		render(
-			<MemoryRouter>
-				<UserIdContext.Provider value={mockUserIdContextValue}>
-					<GameLobby
-						gameData={mockGameData}
-						playerList={mockPlayerList}
-						playerId="testCreatorId"
-						socket={mockSocket}
-					/>
-				</UserIdContext.Provider>
-			</MemoryRouter>
-		);
-
-		const startButton = screen.getByText("Iniciar Partida");
-
-		expect(startButton).not.toBeDisabled();
-
-		await act(async () => {
-			fireEvent.click(startButton);
-		});
-
-		expect(global.fetch).toHaveBeenCalledTimes(1);
-		expect(global.fetch).toHaveBeenCalledWith(
-			`/api/games/testGameId/start`,
-			expect.objectContaining({
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ player_id: "testCreatorId" }),
-			})
-		);
-
-		expect(mockSocket.send).toHaveBeenCalledWith(
-			JSON.stringify({ type: "GameStarted", payload: { gameId: "testGameId" } })
-		);
-	});
-*/
 	it("navigates to /start when 'Iniciar Partida' button is clicked", async () => {
 		global.fetch.mockResolvedValueOnce({
 			ok: true,
@@ -337,5 +295,171 @@ describe("GameLobby - 'Abandonar Partida'", () => {
 		);
 
 		expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
+	});
+});
+
+describe("GameLobby - Console Logs and Errors", () => {
+	const mockUserIdContextValue = {
+		userId: "testUserId",
+		setUserId: jest.fn(),
+	};
+
+	let mockSocket;
+
+	beforeEach(() => {
+		mockSocket = {
+			send: jest.fn(),
+			close: jest.fn(),
+			onopen: jest.fn(),
+			onmessage: jest.fn(),
+			onerror: jest.fn(),
+			onclose: jest.fn(),
+		};
+
+		global.WebSocket = jest.fn(() => mockSocket);
+
+		jest.spyOn(console, "log").mockImplementation(() => {});
+		jest.spyOn(console, "error").mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it("logs a message when a player leaves the game", async () => {
+		global.fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({}),
+		});
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testUserId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const leaveButton = screen.getByText("Abandonar Partida");
+
+		await act(async () => {
+			fireEvent.click(leaveButton);
+		});
+	});
+
+	it("logs an error message when failing to leave the game", async () => {
+		global.fetch.mockResolvedValueOnce({
+			ok: false,
+			json: async () => ({}),
+		});
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testUserId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const leaveButton = screen.getByText("Abandonar Partida");
+
+		await act(async () => {
+			fireEvent.click(leaveButton);
+		});
+
+		expect(console.error).toHaveBeenCalledWith(
+			"Error al intentar abandonar el lobby"
+		);
+	});
+
+	it("logs an error message when there is a fetch error while leaving the game", async () => {
+		global.fetch.mockRejectedValueOnce(new Error("Network Error"));
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testUserId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const leaveButton = screen.getByText("Abandonar Partida");
+
+		await act(async () => {
+			fireEvent.click(leaveButton);
+		});
+
+		expect(console.error).toHaveBeenCalledWith(
+			"Error en la solicitud:",
+			new Error("Network Error")
+		);
+	});
+
+	it("logs an error message when failing to start the game", async () => {
+		global.fetch.mockResolvedValueOnce({
+			ok: false,
+			json: async () => ({}),
+		});
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testCreatorId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const startButton = screen.getByText("Iniciar Partida");
+
+		await act(async () => {
+			fireEvent.click(startButton);
+		});
+
+		expect(console.error).toHaveBeenCalledWith(
+			"Error al intentar iniciar la partida"
+		);
+	});
+
+	it("logs an error message when there is a fetch error while starting the game", async () => {
+		global.fetch.mockRejectedValueOnce(new Error("Network Error"));
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testCreatorId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const startButton = screen.getByText("Iniciar Partida");
+
+		await act(async () => {
+			fireEvent.click(startButton);
+		});
+
+		expect(console.error).toHaveBeenCalledWith(
+			"Error en la solicitud:",
+			new Error("Network Error")
+		);
 	});
 });

@@ -23,7 +23,6 @@ function GameLobby({ gameData, playerList, playerId }) {
 			});
 
 			if (response.ok) {
-				//console.log(`Jugador ${playerId} ha iniciado la partida ${gameId}`);
 				navigate(`/games/${gameId}/start`);
 			} else {
 				console.error("Error al intentar iniciar la partida");
@@ -33,9 +32,9 @@ function GameLobby({ gameData, playerList, playerId }) {
 		}
 	};
 
-	const onCancelGame = async () => {
-		console.log(`Cancelar partida`);
-	};
+	// const onCancelGame = async () => {
+	// 	console.log(`Cancelar partida`);
+	// };
 
 	const onLeaveGame = async () => {
 		const data = {
@@ -52,9 +51,6 @@ function GameLobby({ gameData, playerList, playerId }) {
 			});
 
 			if (response.ok) {
-				console.log(
-					`Jugador ${playerId} ha abandonado el lobby de la partida ${gameId}`
-				);
 				navigate("/");
 			} else {
 				console.error("Error al intentar abandonar el lobby");
