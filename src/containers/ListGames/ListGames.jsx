@@ -8,7 +8,6 @@ function ListGames({ websocketUrl }) {
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
-  const [newPlayerFlag, setNewPlayerFlag] = useState(false)
 
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -24,12 +23,6 @@ function ListGames({ websocketUrl }) {
     };
   }, []);
 
-  const handleNewPlayer = (message, setItems, items) => {
-    if (message.type.toLowerCase() === 'newplayer') {
-      //Esto el unico efecto que tiene es volver a renderizar genericList
-      setNewPlayerFlag(prevFlag => !prevFlag);
-    }
-  };
 
   return (
     <UsernameProvider>
@@ -45,7 +38,6 @@ function ListGames({ websocketUrl }) {
           renderItem={renderItem}
           typeKey={"CreatedGames"}
           idKey={"unique_id"}
-          onCustomMessage={handleNewPlayer}
         />
       </ListGamesView>
     </UsernameProvider>
