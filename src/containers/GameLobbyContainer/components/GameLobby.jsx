@@ -23,7 +23,7 @@ function GameLobby({ gameData, playerList, playerId }) {
 			});
 
 			if (response.ok) {
-				console.log(`Jugador ${playerId} ha iniciado la partida ${gameId}`);
+				//console.log(`Jugador ${playerId} ha iniciado la partida ${gameId}`);
 				navigate(`/games/${gameId}/start`);
 			} else {
 				console.error("Error al intentar iniciar la partida");

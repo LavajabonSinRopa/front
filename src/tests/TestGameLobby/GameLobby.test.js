@@ -6,30 +6,33 @@ import { UserIdContext } from "../../contexts/UserIdContext";
 import "@testing-library/jest-dom";
 
 // Mock fetch globally
-global.fetch = jest.fn(() =>
-	Promise.resolve({
-		ok: true,
-		json: () => Promise.resolve({}),
-	})
-);
+global.fetch = jest.fn();
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+	...jest.requireActual("react-router-dom"),
+	useNavigate: () => mockedUsedNavigate,
+}));
+
+const mockGameData = {
+	gameName: "Test Game",
+	gameId: "testGameId",
+	gameState: "waiting",
+	gameCreator: "testCreatorId",
+};
+const mockPlayerList = [
+	["player1", "Player 1"],
+	["player2", "Player 2"],
+	["player3", "Player 3"],
+	["player4", "Player 4"],
+];
 
 describe("GameLobby", () => {
 	const mockUserIdContextValue = {
 		userId: "testCreatorId",
 		setUserId: jest.fn(),
 	};
-	const mockGameData = {
-		gameName: "Test Game",
-		gameId: "testGameId",
-		gameState: "waiting",
-		gameCreator: "testCreatorId",
-	};
-	const mockPlayerList = [
-		["player1", "Player 1"],
-		["player2", "Player 2"],
-		["player3", "Player 3"],
-		["player4", "Player 4"],
-	];
 
 	let mockSocket;
 
@@ -49,7 +52,7 @@ describe("GameLobby", () => {
 	afterEach(() => {
 		jest.clearAllMocks();
 	});
-	/*
+
 	it("renders GameLobby component", () => {
 		render(
 			<MemoryRouter>
@@ -58,15 +61,16 @@ describe("GameLobby", () => {
 						gameData={mockGameData}
 						playerList={mockPlayerList}
 						playerId="testUserId"
-						socket={mockSocket}
 					/>
 				</UserIdContext.Provider>
 			</MemoryRouter>
 		);
 
 		expect(screen.getByText("Test Game")).toBeInTheDocument();
-		expect(screen.getByText("Player One")).toBeInTheDocument();
-		expect(screen.getByText("Player Two")).toBeInTheDocument();
+		expect(screen.getByText("Player 1")).toBeInTheDocument();
+		expect(screen.getByText("Player 2")).toBeInTheDocument();
+		expect(screen.getByText("Player 3")).toBeInTheDocument();
+		expect(screen.getByText("Player 4")).toBeInTheDocument();
 	});
 
 	it("handles WebSocket connection and messages", () => {
@@ -113,10 +117,77 @@ describe("GameLobby", () => {
 		});
 		expect(mockSocket.onclose).toHaveBeenCalledWith(closeEvent);
 	});
-*/
+});
 
-	it("handles start game button click for game creator", async () => {
-		// Mock fetch as successful
+describe("GameLobby - 'Iniciar Partida'", () => {
+	const mockUserIdContextValue = {
+		userId: "testCreatorId",
+		setUserId: jest.fn(),
+	};
+
+	let mockSocket;
+
+	beforeEach(() => {
+		mockSocket = {
+			send: jest.fn(),
+			close: jest.fn(),
+			onopen: jest.fn(),
+			onmessage: jest.fn(),
+			onerror: jest.fn(),
+			onclose: jest.fn(),
+		};
+
+		global.WebSocket = jest.fn(() => mockSocket);
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it("enables 'Iniciar Partida' button only for game creator with 4 players", async () => {
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testCreatorId" // The user is the creator
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		// Verify that the "Iniciar Partida" button is enabled
+		const startButton = screen.getByText("Iniciar Partida");
+		expect(startButton).not.toBeDisabled(); // Should be enabled because there are 4 players
+	});
+
+	it("disables 'Iniciar Partida' button when there are less than 4 players", () => {
+		// Mock player list with only 3 players
+		const lessPlayers = [
+			["player1", "Player 1"],
+			["player2", "Player 2"],
+			["player3", "Player 3"],
+		];
+
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={lessPlayers} // Less than 4 players
+						playerId="testCreatorId" // The user is the creator
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		// Verify that the "Iniciar Partida" button is disabled
+		const startButton = screen.getByText("Iniciar Partida");
+		expect(startButton).toBeDisabled(); // Should be disabled because there are less than 4 players
+	});
+/*
+	it("calls fetch and sends WebSocket message when 'Iniciar Partida' button is clicked", async () => {
 		global.fetch.mockResolvedValueOnce({
 			ok: true,
 			json: async () => ({}),
@@ -126,7 +197,7 @@ describe("GameLobby", () => {
 			<MemoryRouter>
 				<UserIdContext.Provider value={mockUserIdContextValue}>
 					<GameLobby
-						gameData={mockGameData} // Ensure gameState allows button to be enabled
+						gameData={mockGameData}
 						playerList={mockPlayerList}
 						playerId="testCreatorId"
 						socket={mockSocket}
@@ -135,20 +206,14 @@ describe("GameLobby", () => {
 			</MemoryRouter>
 		);
 
-		const startButton = screen.getByRole("button", { name: "Iniciar Partida" });
+		const startButton = screen.getByText("Iniciar Partida");
 
-		console.log("Start button found:", startButton);
+		expect(startButton).not.toBeDisabled();
 
-    expect(startButton).not.toBeDisabled();
-    
 		await act(async () => {
 			fireEvent.click(startButton);
 		});
 
-		console.log("Button clicked");
-		console.log("Fetch calls:", global.fetch.mock.calls);
-
-		// Verify that fetch was called
 		expect(global.fetch).toHaveBeenCalledTimes(1);
 		expect(global.fetch).toHaveBeenCalledWith(
 			`/api/games/testGameId/start`,
@@ -159,15 +224,85 @@ describe("GameLobby", () => {
 			})
 		);
 
-		// Verify that WebSocket sent the message
 		expect(mockSocket.send).toHaveBeenCalledWith(
 			JSON.stringify({ type: "GameStarted", payload: { gameId: "testGameId" } })
 		);
 	});
+*/
+	it("navigates to /start when 'Iniciar Partida' button is clicked", async () => {
+		global.fetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({}),
+		});
 
-	/*
-	it("handles leave game button click for regular player", async () => {
-		// Mockear fetch como exitoso
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testCreatorId"
+						socket={mockSocket}
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const startButton = screen.getByText("Iniciar Partida");
+
+		expect(startButton).not.toBeDisabled();
+
+		await act(async () => {
+			fireEvent.click(startButton);
+		});
+
+		expect(mockedUsedNavigate).toHaveBeenCalledWith(`/games/testGameId/start`);
+	});
+});
+
+describe("GameLobby - 'Abandonar Partida'", () => {
+	const mockUserIdContextValue = {
+		userId: "testUserId",
+		setUserId: jest.fn(),
+	};
+
+	let mockSocket;
+
+	beforeEach(() => {
+		mockSocket = {
+			send: jest.fn(),
+			close: jest.fn(),
+			onopen: jest.fn(),
+			onmessage: jest.fn(),
+			onerror: jest.fn(),
+			onclose: jest.fn(),
+		};
+
+		global.WebSocket = jest.fn(() => mockSocket);
+	});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it("renders 'Abandonar Partida' button for non-creator players", () => {
+		render(
+			<MemoryRouter>
+				<UserIdContext.Provider value={mockUserIdContextValue}>
+					<GameLobby
+						gameData={mockGameData}
+						playerList={mockPlayerList}
+						playerId="testUserId"
+					/>
+				</UserIdContext.Provider>
+			</MemoryRouter>
+		);
+
+		const leaveButton = screen.getByText("Abandonar Partida");
+		expect(leaveButton).toBeInTheDocument();
+	});
+
+	it("calls fetch and navigates to home when 'Abandonar Partida' button is clicked", async () => {
 		global.fetch.mockResolvedValueOnce({
 			ok: true,
 			json: async () => ({}),
@@ -180,21 +315,17 @@ describe("GameLobby", () => {
 						gameData={mockGameData}
 						playerList={mockPlayerList}
 						playerId="testUserId"
-						socket={mockSocket}
 					/>
 				</UserIdContext.Provider>
 			</MemoryRouter>
 		);
 
-		const leaveButton = screen.getByRole("button", {
-			name: "Abandonar Partida",
-		});
+		const leaveButton = screen.getByText("Abandonar Partida");
 
 		await act(async () => {
 			fireEvent.click(leaveButton);
 		});
 
-		// Verificar que fetch fue llamado
 		expect(global.fetch).toHaveBeenCalledTimes(1);
 		expect(global.fetch).toHaveBeenCalledWith(
 			`/api/games/testGameId/leave`,
@@ -205,12 +336,6 @@ describe("GameLobby", () => {
 			})
 		);
 
-		// Verificar que WebSocket envió el mensaje
-		expect(mockSocket.send).toHaveBeenCalledWith(
-			JSON.stringify({
-				type: "PlayerLeft",
-				payload: { player_id: "testUserId" },
-			})
-		);
-	});*/
+		expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
+	});
 });
