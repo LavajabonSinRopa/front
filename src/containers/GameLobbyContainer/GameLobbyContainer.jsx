@@ -15,8 +15,7 @@ export const GameLobbyContainer = () => {
   const reconnectTimeoutRefAPI = useRef(null);
   const reconnectInterval = 150; // Intervalo de reconexion de 5 segundos
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
-	const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {

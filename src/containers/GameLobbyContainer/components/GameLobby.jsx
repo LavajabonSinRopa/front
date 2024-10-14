@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import GameInfo from "./GameInfo/GameInfo";
 import PlayerList from "./PlayerList/PlayerList";
 import GameButtons from "./GameButtons/GameButtons";
