@@ -1,5 +1,5 @@
 module.exports = {
-
+  setupFiles: ["@babel/polyfill"],
   transform: {
     "^.+\\.jsx?$": "babel-jest",
   },

@@ -5,15 +5,15 @@ export const UserIdContext = createContext();
 
 // Proveedor del contexto
 export const UserIdProvider = ({ children }) => {
-  // Inicializa el estado desde localStorage
+  // Inicializa el estado desde sessionStorage
   const [userId, setUserId] = useState(() => {
-    const savedUserId = localStorage.getItem("userId");
+    const savedUserId = sessionStorage.getItem("userId");
     return savedUserId ? savedUserId : "";
   });
 
   useEffect(() => {
     // Guarda el estado en localStorage cada vez que cambia
-    localStorage.setItem("userId", userId);
+    sessionStorage.setItem("userId", userId);
   }, [userId]);
 
   return (
