@@ -8,37 +8,56 @@ function GameLobby({ gameData, playerList, playerId }) {
 	const { gameName, gameId, gameState, gameCreator } = gameData; // Destructure gameData
 	const navigate = useNavigate();
 
-	const onStartGame = () => {
-		console.log(`Iniciar juego para ${gameId}`);
+	const onStartGame = async () => {
+		const data = {
+			player_id: playerId,
+		};
+
+		try {
+			const response = await fetch(`/api/games/${gameId}/start`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (response.ok) {
+				navigate(`/games/${gameId}/start`);
+			} else {
+				console.error("Error al intentar iniciar la partida");
+			}
+		} catch (error) {
+			console.error("Error en la solicitud:", error);
+		}
 	};
 
-	const onCancelGame = () => {
-		console.log(`Cancelar juego para ${gameId}`);
-	};
+	// const onCancelGame = async () => {
+	// 	console.log(`Cancelar partida`);
+	// };
 
-	const onLeaveGame = async () =>{
+	const onLeaveGame = async () => {
 		const data = {
 			player_id: playerId,
 		};
 
 		try {
 			const response = await fetch(`/api/games/${gameId}/leave`, {
-			  method: "POST",
-			  headers: {
-				"Content-Type": "application/json",
-			  },
-			  body: JSON.stringify(data),
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
 			});
-	  
+
 			if (response.ok) {
-			  console.log(`Jugador ${playerId} ha abandonado el juego ${gameId}`);
-			  navigate("/");
+				navigate("/");
 			} else {
-			  console.error("Error al intentar abandonar el juego");
+				console.error("Error al intentar abandonar el lobby");
 			}
 		} catch (error) {
 			console.error("Error en la solicitud:", error);
-		}	
+		}
 	};
 
 	return (
@@ -54,8 +73,10 @@ function GameLobby({ gameData, playerList, playerId }) {
 			<GameButtons
 				playerId={playerId}
 				ownerId={gameCreator}
+				gameId={gameId}
+				playerList={playerList}
 				onStartGame={onStartGame}
-				onCancelGame={onCancelGame}
+				//onCancelGame={onCancelGame}
 				onLeaveGame={onLeaveGame}
 			/>
 		</div>

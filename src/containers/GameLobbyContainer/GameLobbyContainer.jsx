@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import GameLobby from "./components/GameLobby";
 import { UserIdContext } from "../../contexts/UserIdContext";
 
@@ -13,8 +13,9 @@ export const GameLobbyContainer = () => {
   const socketRef = useRef(null);
   const reconnectTimeoutRefWS = useRef(null);
   const reconnectTimeoutRefAPI = useRef(null);
-  const reconnectInterval = 5000; // Intervalo de reconexion de 5 segundos
+  const reconnectInterval = 150; // Intervalo de reconexion de 5 segundos
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
+  const navigate = useNavigate();
 
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
@@ -117,7 +118,15 @@ export const GameLobbyContainer = () => {
           ...prevPlayers,
           [player_id, player_name],
         ]);
-      }
+      } else if (message.type === "PlayerLeft") {
+				// Actualizar lista cuando sale alguien
+				const { player_id } = message.payload;
+				setPlayerList((prevPlayers) =>
+					prevPlayers.filter(([id]) => id !== player_id)
+				);
+			} else if (message.type === "GameStarted") {
+				navigate(`/games/${game_id}/start`);
+			}
     };
   };
 
@@ -138,7 +147,7 @@ export const GameLobbyContainer = () => {
       if (reconnectTimeoutRefWS.current)
         clearTimeout(reconnectTimeoutRefWS.current);
     };
-  }, [game_id, userId]);
+  }, [game_id, userId, navigate]);
 
   return (
     <div>
