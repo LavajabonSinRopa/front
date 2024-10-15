@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import LeaveGame from "../containers/LeaveGame/LeaveGame.jsx";
+import { MemoryRouter } from 'react-router-dom';
 
 //Mock del fetch
 global.fetch = jest.fn();
@@ -17,7 +18,11 @@ describe("LeaveGame component", () => {
     });
 
     test("deberia mostrar el boton para abandonar el juego", () => {
-        render(<LeaveGame playerId={mockPlayerId} gameId={mockGameId} />);
+        render(
+            <MemoryRouter>
+                <LeaveGame playerId={mockPlayerId} gameId={mockGameId} />
+            </MemoryRouter>
+        );
         const button = screen.getByText("Abandonar");
         expect(button).toBeInTheDocument();
     });
@@ -29,7 +34,11 @@ describe("LeaveGame component", () => {
             json: async () => ({ message: "Success" }),
         });
 
-        render(<LeaveGame playerId={mockPlayerId} gameId={mockGameId} />);
+        render(
+            <MemoryRouter>
+                <LeaveGame playerId={mockPlayerId} gameId={mockGameId} />
+            </MemoryRouter>
+        );
         
         const button = screen.getByText("Abandonar");
         fireEvent.click(button);
@@ -37,7 +46,7 @@ describe("LeaveGame component", () => {
         await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
 
         // se llamo a la url
-        expect(fetch).toHaveBeenCalledWith(`api/games/${mockGameId}/leave`, {
+        expect(fetch).toHaveBeenCalledWith(`/api/games/${mockGameId}/leave`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -57,7 +66,11 @@ describe("LeaveGame component", () => {
             json: async () => ({ message: "Error al abandonar la partida" }),
         });
 
-        render(<LeaveGame playerId={mockPlayerId} gameId={mockGameId} />);
+        render(
+            <MemoryRouter>
+                <LeaveGame playerId={mockPlayerId} gameId={mockGameId} />
+            </MemoryRouter>
+        );
 
         const button = screen.getByText("Abandonar");
         fireEvent.click(button);
@@ -77,7 +90,11 @@ describe("LeaveGame component", () => {
             json: async () => ({ message: "Success" }),
         });
 
-        render(<LeaveGame playerId={mockPlayerId} gameId={mockGameId} />);
+        render(
+            <MemoryRouter>
+                <LeaveGame playerId={mockPlayerId} gameId={mockGameId} />
+            </MemoryRouter>
+        );
 
         const button = screen.getByText("Abandonar");
         fireEvent.click(button);
