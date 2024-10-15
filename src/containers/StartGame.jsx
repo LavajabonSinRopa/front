@@ -1,9 +1,19 @@
-//Componente provisorio hasta que tengamos el componente de la partida iniciada, sirve para que el botón Iniciar Partida redirija a algún lado :)
+import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
+import Board from "./Board/Board.jsx";
+import LeaveGame from "./LeaveGame/LeaveGame.jsx";
+import { UserIdContext } from "../contexts/UserIdContext.jsx";
 
-import React from "react";
-import Board from "./Board/Board.jsx"
 
 function StartGame() {
-	return <Board/>;
+	const { game_id } = useParams(); 
+    const { userId } = useContext(UserIdContext); 
+
+	return (
+		<div>
+			<Board />
+			<LeaveGame playerId={userId} gameId={game_id} />
+		</div>
+	);
 }
 export default StartGame;
