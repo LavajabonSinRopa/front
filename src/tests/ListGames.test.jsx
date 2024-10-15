@@ -83,6 +83,22 @@ describe("ListaPartidas", () => {
     jest.clearAllMocks();
   });
 
+  let consoleLogSpy;
+  let consoleErrorSpy;
+
+  beforeEach(() => {
+    // Mockeamos console.log y console.error
+    consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // Restauramos las funciones originales después de cada test
+    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+  });
+
   it("renderiza la lista de items correctamente", async () => {
     render(
       <MemoryRouter>
@@ -312,20 +328,19 @@ describe("ListaPartidas", () => {
         </UsernameProvider>
       </MemoryRouter>
     );
-  
+
     server.send(message);
-  
+
     expect(await screen.findByText("dragonball")).toBeInTheDocument();
     expect(await screen.findByText("scaloneta")).toBeInTheDocument();
     expect(await screen.findByText("lavajabon")).toBeInTheDocument();
 
     server.close();
-    
+
     expect(screen.queryByText("dragonball")).not.toBeInTheDocument();
     expect(screen.queryByText("scaloneta")).not.toBeInTheDocument();
     expect(screen.queryByText("lavajabon")).not.toBeInTheDocument();
-  
+
     expect(screen.getByText("Intentando reconectar...")).toBeInTheDocument();
   });
-  
 });

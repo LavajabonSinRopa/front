@@ -1,18 +1,20 @@
 // LeaveGame.jsx
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { GamesContext } from "../../contexts/GamesContext.jsx";
 import LeaveGameView from "./components/LeaveGameView.jsx";
 
 function LeaveGame({ playerId, gameId }) {
     const [message, setMessage] = useState(null);
     // const { updateGameState } = useContext(GamesContext);
+    const navigate = useNavigate();
 
     const handleLeaveGame = async() => {
         const data = {
             player_id: playerId,
         };
         try {
-            const response = await fetch(`api/games/${gameId}/leave`, {
+            const response = await fetch(`/api/games/${gameId}/leave`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -23,6 +25,7 @@ function LeaveGame({ playerId, gameId }) {
             if (response.ok) {
                 setMessage(`Jugador ${playerId} ha abandonado la partida.`);
                 console.log(`Jugador ${playerId} ha abandonado la partida en curso`);
+                navigate(`/`);
                 //updateGameState(gameId);
             } else {
                 const errorData = await response.json();
