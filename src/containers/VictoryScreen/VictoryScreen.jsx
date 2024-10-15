@@ -1,9 +1,9 @@
+//src/containers/VictoryScreen.jsx
 import React, { useEffect, useState } from 'react';
-import VictoryScreenView from './components/VictoryScreenView.jsx';
 import { useNavigate } from "react-router-dom";
-import './VictoryScreen.css'; // Asegúrate de crear este archivo CSS
+import VictoryScreenView from "./components/VictoryScreenView";
 
-const VictoryScreen = ({ isGameOver, winner }) => {
+const VictoryScreen = ({ isGameOver, winner}) => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
 

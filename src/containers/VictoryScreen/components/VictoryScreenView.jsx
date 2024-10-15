@@ -1,3 +1,4 @@
+//src/containers/components/VictoryScreenView.jsx
 import React from 'react';
 import '../VictoryScreen.css'; 
 
@@ -8,7 +9,7 @@ const VictoryScreenView = ({ winnerName, onMainMenu, isModalOpen, setIsModalOpen
               <div className="modal-overlay">
                   <div className="modal-content">
                       <button className="close-button" onClick={() => setIsModalOpen(false)}>×</button>
-                      <h1> ¡{winnerName} ha ganado! </h1>
+                      <h1 className="win-text"> ¡{winnerName} ha ganado! </h1>
                       <div>
                           <button onClick={onMainMenu}>Volver al Menu Principal</button>
                       </div>
