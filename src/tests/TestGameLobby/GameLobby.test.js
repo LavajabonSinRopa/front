@@ -162,12 +162,10 @@ describe("GameLobby - 'Iniciar Partida'", () => {
 		expect(startButton).not.toBeDisabled(); // Should be enabled because there are 4 players
 	});
 
-	it("disables 'Iniciar Partida' button when there are less than 4 players", () => {
+	it("disables 'Iniciar Partida' button when there are less than 2 players", () => {
 		// Mock player list with only 3 players
 		const lessPlayers = [
-			["player1", "Player 1"],
-			["player2", "Player 2"],
-			["player3", "Player 3"],
+			["player1", "Player 1"]
 		];
 
 		render(
