@@ -1,0 +1,29 @@
+.button {
+  width: 100px; /* Ajusta el tamaño del cuadrado */
+  height: 100px; /* Ajusta el tamaño del cuadrado */
+  border: none;
+  color: white; /* Color del texto */
+  font-size: small;
+  font-weight: bold; /* Negrita para el texto */
+  cursor: grab; /* Cambia el cursor al pasar por encima */
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.isFigure {
+  border: 2px solid #ffffff49;
+}

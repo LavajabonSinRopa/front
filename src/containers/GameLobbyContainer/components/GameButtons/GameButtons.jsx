@@ -16,7 +16,7 @@ const GameButtons = ({
 			{isOwner && (
 				<button
 					onClick={onStartGame}
-					disabled={playersNumber !== 4}
+					disabled={playersNumber < 2 || 4 < playersNumber}
 				>
 					Iniciar Partida
 				</button>
