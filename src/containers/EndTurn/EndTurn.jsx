@@ -2,7 +2,7 @@
 import React, { useState} from "react";
 import EndTurnView from "./components/EndTurnView.jsx";
 
-function EndTurn({playerId, gameId, currentTurn, isYourTurn}) {
+function EndTurn({playerId, gameId, isYourTurn}) {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
 
