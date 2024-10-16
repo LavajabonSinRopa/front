@@ -1,7 +1,7 @@
 module.exports = {
   setupFiles: ["@babel/polyfill"],
   transform: {
-    "^.+\\.jsx?$": "babel-jest",
+    '^.+\\.jsx?$': 'babel-jest',
   },
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {

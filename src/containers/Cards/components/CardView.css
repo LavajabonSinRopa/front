@@ -1,0 +1,19 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  justify-items: center; /* Centra los elementos en cada celda */
+  gap: 6px; /* Espacio entre los elementos */
+  padding: 20px; /* Espacio interno del contenedor */
+}
+
+.grid-item {
+  display: flex; /* Para centrar el contenido dentro de cada celda */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+}
+
+.card {
+  width: 100px; /* Ajusta el tamaño del cuadrado */
+  height: 100px; /* Ajusta el tamaño del cuadrado */
+  cursor: grab; /* Cambia el cursor al pasar por encima */
+}

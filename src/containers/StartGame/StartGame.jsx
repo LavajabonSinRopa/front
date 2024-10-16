@@ -4,7 +4,7 @@ import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
-import Card from "../Card/Card.jsx";
+import Card from "../Cards/Card.jsx";
 
 function StartGame() {
   const { game_id } = useParams();
@@ -13,7 +13,7 @@ function StartGame() {
   const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
   const [movCards, setMovCards] = useState([]);
   const [figCards, setFigCards] = useState([]);
-  const [board, setBoard] = useState([]);
+  const [board, setBoard] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRefWS = useRef(null);
   const reconnectTimeoutRefAPI = useRef(null);
