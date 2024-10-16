@@ -1,63 +1,81 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Board from "./Board/Board.jsx";
 import LeaveGame from "./LeaveGame/LeaveGame.jsx";
-import EndTurn from "./EndTurn/EndTurn.jsx";
 import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
 import { UserIdContext } from "../contexts/UserIdContext.jsx";
-import { useWebSocket } from "../contexts/WebsocketContext.jsx";
 
 function StartGame() {
-	const { game_id } = useParams(); 
-	const { userId } = useContext(UserIdContext); 
-	const { latestMessage, sendMessage } = useWebSocket(`/games/${game_id}/${userId}`); 
-	const [players, setPlayers] = useState([]);
-	const [isGameOver, setIsGameOver] = useState(false);
-	const [winner, setWinner] = useState(null);
-	const [currentTurn, setCurrentTurn] = useState(0);
+    const { game_id } = useParams(); 
+    const { userId } = useContext(UserIdContext); 
+    const [board, setBoard] = useState([]);
+    const [players, setPlayers] = useState([]);
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [winner, setWinner] = useState(null);
+    const [currentTurn, setCurrentTurn] = useState(0);
+    const socketRef = useRef(null);
 
-	useEffect(() => {
-		setIsGameOver(false);
-		setWinner(null);
-		setPlayers([]);
-		setCurrentTurn(0);
-	}, [game_id]);
+    useEffect(() => {
+        setIsGameOver(false);
+        setWinner(null);
+        setPlayers([]);
+        setCurrentTurn(0);
+        setBoard([]);
+    }, [game_id]);
 
-	useEffect(() => {
-		if (latestMessage) {
-			const { type, payload } = latestMessage;
+    useEffect(() => {
+        if (!game_id || !userId) return;
 
-			switch (type) {
-				case 'SUCCESS':
-					setPlayers(payload);
+        socketRef.current = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
+
+        socketRef.current.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log(message);
+
+            if (message) {
+                const { type, payload } = message;
+                switch (type) {
+                    case 'GameStarted':
+                        setBoard(payload.board);
+                        setPlayers(payload.players);
+                        setCurrentTurn(payload.turn);
 					break;
-
-				case 'GameWon':
-					setIsGameOver(true);
-					setWinner(payload.player_name);
+                    
+					case 'TurnSkipped':
+                        setBoard(payload.board);
+                        setPlayers(payload.players);
+                        setCurrentTurn(payload.turn);
 					break;
-
-				case 'PlayerLeft':
-					const { player_id } = payload;
-					setPlayers((prevPlayers) =>
-						prevPlayers.filter(player => player.id !== player_id)
-					);
+                    
+					case 'GameWon':
+                        setIsGameOver(true);
+                        setWinner(payload.player_name);
 					break;
-
-				default:
-					console.warn("Unknown message type:", type);
+                    
+					case 'PlayerLeft':
+                        const { player_id } = payload;
+                        setPlayers((prevPlayers) =>
+                            prevPlayers.filter(player => player.unique_id !== player_id)
+                        );
 					break;
-			}
-		}
-	}, [latestMessage, game_id]);
+                    
+					default:
+                        console.warn("Unknown message type:", type);
+                        break;
+                }
+            }
+        };
+        return () => {
+            if (socketRef.current) socketRef.current.close();
+        };
+    }, [game_id, userId]);
 
-	return (
-		<div>
-			<Board />
-			{isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
-			<EndTurn playerId={userId} gameId={game_id} players={players} currentTurn={currentTurn} />
-			<LeaveGame playerId={userId} gameId={game_id} />
-		</div>
-	);
+    return (
+        <div>
+            <Board board={board} />
+            {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
+            <LeaveGame playerId={userId} gameId={game_id} />
+        </div>
+    );
 }
 export default StartGame;
