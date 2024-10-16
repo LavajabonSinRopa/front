@@ -21,7 +21,7 @@ function EndTurn({playerId, gameId, players, currentTurn}) {
         setMessage(null);
 
         try {
-            const response = await fetch(`api/games/${gameId}/skip`, {
+            const response = await fetch(`/api/games/${gameId}/skip`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -5,6 +5,8 @@ import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
 import Card from "../Cards/Card.jsx";
+import GameInfo from "../GameInfo/GameInfo.jsx";
+import EndTurn from "../EndTurn/EndTurn.jsx";
 
 function StartGame() {
   const { game_id } = useParams();
@@ -19,6 +21,11 @@ function StartGame() {
   const reconnectTimeoutRefAPI = useRef(null);
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
   const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
+  const [turnNumber, setTurnNumber] = useState(1);
+  const [players, setPlayers] = useState([]);
+  const [currentPlayerId, setCurrentPlayerId] = useState(null);
+
+
  
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
@@ -46,6 +53,7 @@ function StartGame() {
           console.log(result);
           setBoard(result.board);
           setReconnectingAPI(false); // Si el fetch es exitoso, cancelar el estado de reconexion
+          setTurnNumber(result["turn"]);
           if (reconnectTimeoutRefAPI.current)
             clearTimeout(reconnectTimeoutRefAPI.current);
         }
@@ -104,6 +112,7 @@ function StartGame() {
       console.log(message);
       if (message.type === "GameStarted") {
         const players = message.payload.players;
+        setPlayers(players);
         const currentPlayer = players.filter(
           (player) => player.unique_id === userId
         )[0];
@@ -111,8 +120,14 @@ function StartGame() {
         setFigCards(currentPlayer.figure_cards.slice(0, 3));
         console.log(figCards);
         setMovCards(currentPlayer.movement_cards);
+        setCurrentPlayerId(message.payload.current_player_id);
+        setTurnNumber(0);
+      } else if (message.type === "TurnSkipped") {
+        setTurnNumber(message.payload["turn"]);
+        setCurrentPlayerId(message.payload["turn"] % message.payload["players"].length);
       }
     };
+  
   };
 
   // Inicializacion y cierre del WebSocket
@@ -141,6 +156,11 @@ function StartGame() {
     <div>Intentando reconectar...</div>
   ) : (
     <div className="gameContainer">
+      <GameInfo 
+        turnNumber={turnNumber}
+        players={players}
+        currentPlayerId={currentPlayerId}
+      />
       <Board className="boardContainer" board={board}/>
       <Card
         className="cardContainer"
@@ -150,6 +170,12 @@ function StartGame() {
         showFigCards={true}
       />
       <LeaveGame playerId={userId} gameId={game_id} />
+      <EndTurn
+        playerId={userId}
+        gameId={game_id}
+        players={players}
+        currentTurn={turnNumber}
+      />
     </div>
   );
 }
