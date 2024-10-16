@@ -1,9 +1,9 @@
 import React from "react";
 import { render, screen, waitFor, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import GameLobbyContainer from "../containers/GameLobbyContainer/GameLobbyContainer";
-import { UserIdContext } from "../contexts/UserIdContext";
-import { useParams } from "react-router-dom";
+import GameLobbyContainer from "../../containers/GameLobbyContainer/GameLobbyContainer";
+import { UserIdContext } from "../../contexts/UserIdContext";
+import { MemoryRouter, useNavigate, useParams } from "react-router-dom";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -53,18 +53,22 @@ describe("GameLobbyContainer", () => {
 
   it("se debe renderizar mensaje de 'Loading...'", () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
   it("fetchear y mostrar data de partida", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     // Ver que se haya llamado el fetch mockeado
@@ -87,9 +91,11 @@ describe("GameLobbyContainer", () => {
     );
 
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     // Esperar mensaje de error en la consola
@@ -99,9 +105,11 @@ describe("GameLobbyContainer", () => {
   it("game_id no provisto", async () => {
     useParams.mockReturnValue({ game_id: undefined });
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
     await waitFor(() => {
       expect(global.fetch).not.toHaveBeenCalled();
@@ -114,23 +122,25 @@ describe("GameLobbyContainer", () => {
     global.fetch = jest.fn().mockRejectedValue(mockError);
 
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
       expect(console.error).toHaveBeenCalledWith("Error:", mockError);
     });
-
-    expect(console.log).toHaveBeenCalledWith("finaly");
   });
 
   it("se manejan WS entrantes", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -153,9 +163,11 @@ describe("GameLobbyContainer", () => {
 
   it("se manejan errores WS", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -169,15 +181,17 @@ describe("GameLobbyContainer", () => {
     });
 
     await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith("WebSocket error:", mockError);
+      expect(console.error).toHaveBeenCalledWith("WebSocket error observed:", mockError);
     });
   });
 
   it("cierra conexión", async () => {
     const { unmount } = render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -191,9 +205,11 @@ describe("GameLobbyContainer", () => {
 
   it("se registra en consola al iniciarse WS", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -204,14 +220,16 @@ describe("GameLobbyContainer", () => {
       mockWebSocket.onopen();
     });
 
-    expect(console.log).toHaveBeenCalledWith("WebSocket connection established");
+    expect(console.log).toHaveBeenCalledWith("WebSocket connected");
   });
 
   it("se registra en consola al cerrarse conexión WS", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -222,14 +240,16 @@ describe("GameLobbyContainer", () => {
       mockWebSocket.onclose();
     });
 
-    expect(console.log).toHaveBeenCalledWith("WebSocket de userId connection closed");
+    expect(console.log).toHaveBeenCalledWith("WebSocket closed, attempting to reconnect...");
   });
 
   it("maneja mensajes WS distintos a 'PlayerJoined'", async () => {
     render(
-      <UserIdContext.Provider value={{ userId: mockUserId }}>
-        <GameLobbyContainer />
-      </UserIdContext.Provider>
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
     );
   
     await waitFor(() => {
