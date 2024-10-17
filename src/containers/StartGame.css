@@ -1,0 +1,12 @@
+.game-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .board-container {
+    flex: 1;
+  }
+  
+  .PM {
+    margin-left: 20px; /* Adjust the margin as needed */
+  }
