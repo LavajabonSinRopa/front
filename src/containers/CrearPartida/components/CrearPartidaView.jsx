@@ -7,10 +7,10 @@ const CrearPartidaView = ({
   validName,
   message,
   loading,
-  password,
+  //password,
   onChangeUser,
   onChangeInput,
-  onChangePassword,
+  //onChangePassword,
   onSubmit,
 }) => {
   return (
@@ -28,14 +28,14 @@ const CrearPartidaView = ({
         value={name}
         onChange={onChangeInput}
       />
-      <p>Caracteres usados: {name.length}/20</p>
+      {/* <p>Caracteres usados: {name.length}/20</p>
       <h2>Contraseña:</h2>
       <input
         placeholder="Ingresa una Contraseña"
         value={password}
         onChange={onChangePassword}
-      />
-      <p>Caracteres usados: {password.length}/10</p>
+      /> */}
+      {/* <p>Caracteres usados: {password.length}/10</p> */}
       <button
         style={{
           color: "white",

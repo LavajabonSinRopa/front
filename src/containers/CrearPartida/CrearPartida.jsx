@@ -10,7 +10,7 @@ const CrearPartida = () => {
   const [validName, setValidName] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState("");
+  //const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const {userId, setUserId} = useContext(UserIdContext)
 
@@ -40,9 +40,9 @@ const CrearPartida = () => {
     }
   };
 
-  const handleChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
+  // const handleChangePassword = (e) => {
+  //   setPassword(e.target.value);
+  // };
 
   const handleSubmit = async () => {
     if (!validName || !validUsername) return;
@@ -93,10 +93,10 @@ const CrearPartida = () => {
       validName={validName}
       message={message}
       loading={loading}
-      password={password}
+      //password={password}
       onChangeUser={handleChangeUser}
       onChangeInput={handleChangeInput}
-      onChangePassword={handleChangePassword}
+      //onChangePassword={handleChangePassword}
       onSubmit={handleSubmit}
     />
   );
