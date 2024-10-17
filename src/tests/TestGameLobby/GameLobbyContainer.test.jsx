@@ -8,15 +8,18 @@ import { MemoryRouter, useNavigate, useParams } from "react-router-dom";
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: jest.fn(),
+  useNavigate: jest.fn()
 }));
 
 describe("GameLobbyContainer", () => {
   const mockUserId = "1";
   const mockGameId = "12345";
   let mockWebSocket;
+  const navigate = jest.fn(); 
 
   beforeEach(() => {
     useParams.mockReturnValue({ game_id: mockGameId });
+    useNavigate.mockReturnValue(navigate); 
     jest.spyOn(console, "log").mockImplementation(() => {});
     jest.spyOn(console, "error").mockImplementation(() => {});
     
@@ -273,4 +276,104 @@ describe("GameLobbyContainer", () => {
     expect(console.log).toHaveBeenCalledWith(mockMessage);
   });
 
+  it("se intenta reconectar cuando falla el fetch", async () => {
+    // Mockear fetch con 1 error en el 
+    global.fetch
+      .mockRejectedValueOnce(new Error("Network error"))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          name: "Prueba",
+          unique_id: "12345",
+          state: "waiting",
+          creator: "54321",
+          player_names: ["jugador"],
+          players: ["1"],
+        }),
+      });
+  
+    render(
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
+    );
+  
+    await waitFor(() => expect(console.error).toHaveBeenCalled());
+  
+    await new Promise((r) => setTimeout(r, 250));
+  
+    await waitFor(() => expect(screen.getByText("Prueba")).toBeInTheDocument());
+  
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("maneja mensajes WS de tipo 'PlayerLeft'", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
+    );
+  
+    await waitFor(() => {
+      expect(global.WebSocket).toHaveBeenCalledWith(`/apiWS/games/${mockGameId}/${mockUserId}`);
+    });
+  
+    // Esperar que carguen los jugadores
+    await waitFor(() => expect(screen.getByText("player1")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("player2")).toBeInTheDocument());
+  
+    const mockMessage = {
+      type: "PlayerLeft",
+      payload: { player_id: "2" }
+    };
+  
+    act(() => {
+      mockWebSocket.onmessage({ data: JSON.stringify(mockMessage) });
+    });
+  
+    // Esperar que se actualice la lista de jugadores
+    await waitFor(() => {
+      expect(screen.queryByText("player2")).not.toBeInTheDocument();
+    });
+  
+    // Ver que player1 sigue en la lista
+    expect(screen.getByText("player1")).toBeInTheDocument();
+    
+    // Ver que se actualizó la lista
+    const playerList = screen.getAllByRole('listitem');
+    expect(playerList).toHaveLength(1);
+  });
+
+  it("se redirige a /start cuando se llega mensaje 'GameStarted' por WS", async () => {
+    const { unmount } = render(
+      <MemoryRouter>
+        <UserIdContext.Provider value={{ userId: mockUserId }}>
+          <GameLobbyContainer />
+        </UserIdContext.Provider>
+      </MemoryRouter>
+    );
+  
+    await waitFor(() => {
+      expect(global.WebSocket).toHaveBeenCalledWith(`/apiWS/games/${mockGameId}/${mockUserId}`);
+    });
+  
+    const mockMessage = {
+      type: "GameStarted",
+      payload: {}
+    };
+  
+    act(() => {
+      mockWebSocket.onmessage({ data: JSON.stringify(mockMessage) });
+    });
+  
+    // Verificar path
+    expect(navigate).toHaveBeenCalledWith(`/games/${mockGameId}/start`);
+  
+    unmount();
+  });
+  
 });
