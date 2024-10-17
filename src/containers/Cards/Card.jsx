@@ -1,20 +1,43 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import CardView from "./components/CardView.jsx";
 
-const Card = ({ movCards, showMovCards, figCards, showFigCards }) => {
+function Card({ allPlayersCards }) {
+  const { userId } = useContext(UserIdContext);
+  const [playerMovCards, setPlayerMovCards] = useState([]);
+  const [playerFigCards, setPlayerFigCards] = useState([]);
+  const [allOponents, setAllOponents] = useState([]);
 
-  //ACA IRIA TODA LA LOGICA PARA USAR LAS CARTAS Y ESAS COSAS
+  useEffect(() => {
+    const currentPlayer = allPlayersCards.find(
+      (player) => player.unique_id === userId
+    );
+    console.log("CURRENT PLAYER:");
+    console.log(currentPlayer);
+
+    if (currentPlayer) {
+      setPlayerFigCards(currentPlayer.figure_cards.slice(0, 3));
+      setPlayerMovCards(currentPlayer.movement_cards);
+    }
+
+    const oponents = allPlayersCards.filter(
+      (player) => player.unique_id !== userId
+    );
+    console.log("OPONENTS:");
+    console.log(oponents);
+
+    if (oponents) {
+      setAllOponents(oponents);
+    }
+  }, [userId, allPlayersCards]); 
 
   return (
     <CardView
-      movCards={movCards}
-      showMovCards={showMovCards}
-      figCards={figCards}
-      showFigCards={showFigCards}
+      movCards={playerMovCards}
+      figCards={playerFigCards}
+      oponents={allOponents}
     />
   );
-};
+}
 
 export default Card;

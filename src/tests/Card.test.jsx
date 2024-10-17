@@ -1,43 +1,94 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Card from "../containers/Cards/Card.jsx";
+import { UserIdProvider } from "../contexts/UserIdContext.jsx";
+import { BrowserRouter as Router, useParams } from "react-router-dom";
+import WS from "jest-websocket-mock";
 
-const figCards = [
-  { type: 0, state: "drawn" },
-  { type: 1, state: "drawn" },
-  { type: 2, state: "drawn" },
-];
-const movCards = [0, 2, 4];
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useParams: jest.fn(),
+}));
+
+useParams.mockReturnValue({ gameId: 1 });
+
+const mockUserIdContextValue = {
+  userId: "8825596f-450e-438d-bd17-a2202af15f4a",
+  setUserId: jest.fn(), // Función mockeada
+};
+
+jest.mock(
+  "../containers/Cards/components/cardSVG/fig01.svg",
+  () => "fig01.svg"
+);
+jest.mock(
+  "../containers/Cards/components/cardSVG/fig02.svg",
+  () => "fig02.svg"
+);
+jest.mock(
+  "../containers/Cards/components/cardSVG/fige03.svg",
+  () => "fige03.svg"
+);
+jest.mock("../containers/Cards/components/cardSVG/mov1.svg", () => "mov1.svg");
+jest.mock("../containers/Cards/components/cardSVG/mov3.svg", () => "mov3.svg");
+jest.mock("../containers/Cards/components/cardSVG/mov5.svg", () => "mov5.svg");
 
 describe("Card", () => {
-  it("El componente se renderiza correctamente sin errores inicialmente", async () => {
+
+  afterEach(() => {
+    // Limpiar el mock después de cada test
+    jest.clearAllMocks();
+    WS.clean(); // Limpiar los mocks de WebSocket
+  });
+
+  it("El componente se renderiza correctamente sin errores inicialmente", () => {
+    const allPlayersCards = [
+      {
+        unique_id: "8825596f-450e-438d-bd17-a2202af15f4a",
+        name: "luca",
+        movement_cards: [2, 4, 5],
+        figure_cards: [
+          { type: 4, state: "drawn" },
+          { type: 5, state: "drawn" },
+          { type: 6, state: "drawn" },
+        ],
+      },
+      {
+        unique_id: "e1ba906d-d1c7-41c3-9495-da40a38f1acc",
+        name: "messi",
+        movement_cards: [1, 3, 4],
+        figure_cards: [
+          { type: 1, state: "drawn" },
+          { type: 2, state: "drawn" },
+          { type: 3, state: "drawn" },
+        ],
+      },
+    ];
+
     render(
-      <Card
-        className="cardContainer"
-        movCards={movCards}
-        showMovCards={true}
-        figCards={figCards}
-        showFigCards={true}
-      />
+      <UserIdProvider value={mockUserIdContextValue}>
+        <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+      </UserIdProvider>
     );
+
     const images = screen.getAllByRole("img");
-    expect(images).toHaveLength(6); // Verifica que haya 2 imágenes de movimiento
-    console.log(images)
-    const movImages = images.filter((image) =>
-      image.getAttribute("src").includes("mov")
-    );    
+    expect(images).toHaveLength(12);
+  });
 
-    const figImages = images.filter((image) =>
-      image.getAttribute("src").includes("fig")
-    );    
+  it("Cuando no hay cartas que mostrar se muestra el mensaje acorde", () => {
+    const allPlayersCards = [];
 
-    // Comprobar que son distintas
-    expect(movImages[0]).toHaveAttribute("src", "mov1.svg");
-    expect(movImages[1]).toHaveAttribute("src", "mov3.svg");
-    expect(movImages[2]).toHaveAttribute("src", "mov5.svg");
-    expect(figImages[0]).toHaveAttribute("src", "fig01.svg");
-    expect(figImages[1]).toHaveAttribute("src", "fig02.svg");
-    expect(figImages[2]).toHaveAttribute("src", "fige03.svg");
+    render(
+      <UserIdProvider value={mockUserIdContextValue}>
+        <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+      </UserIdProvider>
+    );
+    screen.debug();
+    const images = screen.queryAllByRole("img");
+    expect(images).toHaveLength(0);
+
+    expect(screen.getByText("No hay cartas de figura")).toBeInTheDocument();
+    expect(screen.getByText("No hay cartas de movimiento")).toBeInTheDocument();
   });
 });

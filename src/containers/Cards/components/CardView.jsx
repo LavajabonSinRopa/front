@@ -1,6 +1,8 @@
 import React from "react";
-import "./CardView.css"
+import "./CardView.css";
 
+import backMov from "./cardSVG/back-mov.svg";
+import backFig from "./cardSVG/back.svg";
 import fig01 from "./cardSVG/fig01.svg";
 import fig02 from "./cardSVG/fig02.svg";
 import fig03 from "./cardSVG/fig03.svg";
@@ -71,42 +73,85 @@ const movSvgMap = {
   5: mov6,
   6: mov7,
 };
-const CardView = ({ movCards, showMovCards, figCards, showFigCards }) => {
+
+const CardView = ({ movCards, figCards, oponents }) => {
+  function renderOponentsCards({ oponent, index }) {
+    return (
+      <>
+        <h1 style={{ fontSize: "30px" }}>{`CARTAS DE ${oponent.name}`}</h1>
+        <ul
+          style={{ listStyleType: "none", padding: 0, margin: 0 }}
+          className="grid-container"
+        >
+          {oponent.figure_cards.slice(0, 3).map((figCards, index) => (
+            <li key={index} className="grid-item">
+              <img className={"card"} src={figSvgMap[figCards.type]} />
+            </li>
+          ))}
+        </ul>
+        <ul
+          style={{ listStyleType: "none", padding: 0, margin: 0 }}
+          className="grid-container"
+        >
+          {oponent.movement_cards.map((movCards, index) => (
+            <li key={index} className="grid-item">
+              <img className={"card"} src={backMov} />
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  }
+
   return (
     <div className="cardViewContainer">
-      {showMovCards && (
-        <>
-          <h1 style={{ fontSize: "30px" }}>CARTAS DE MOVIMIENTO</h1>
-          {Array.isArray(movCards) && movCards.length > 0 ? (
-            <ul style={{ listStyleType: "none", padding: 0, margin: 0 }} className="grid-container">
-              {movCards.map((card, index) => (
-                <li key={index} className="grid-item">
-                  <img className={"card"} src={movSvgMap[card]} />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No hay cartas de movimiento</p>
-          )}
-        </>
-      )}
+      <div className="player">
+        {movCards && (
+          <>
+            <h1 style={{ fontSize: "30px" }}>TUS CARTAS</h1>
+            {Array.isArray(movCards) && movCards.length > 0 ? (
+              <ul
+                style={{ listStyleType: "none", padding: 0, margin: 0 }}
+                className="grid-container"
+              >
+                {movCards.map((card, index) => (
+                  <li key={index} className="grid-item">
+                    <img className={"card"} src={movSvgMap[card]} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No hay cartas de movimiento</p>
+            )}
+          </>
+        )}
 
-      {showFigCards && (
-        <>
-          <h1 style={{ fontSize: "30px" }}>CARTAS DE FIGURA</h1>
-          {Array.isArray(figCards) && figCards.length > 0 ? (
-            <ul style={{ listStyleType: "none", padding: 0, margin: 0 }} className="grid-container">
-              {figCards.map((card, index) => (
-                <li key={index} className="grid-item">
-                  <img className={"card"} src={figSvgMap[card.type]} />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No hay cartas de figura</p>
-          )}
-        </>
-      )}
+        {figCards && (
+          <>
+            {Array.isArray(figCards) && figCards.length > 0 ? (
+              <ul
+                style={{ listStyleType: "none", padding: 0, margin: 0 }}
+                className="grid-container"
+              >
+                {figCards.map((card, index) => (
+                  <li key={index} className="grid-item">
+                    <img className={"card"} src={figSvgMap[card.type]} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No hay cartas de figura</p>
+            )}
+          </>
+        )}
+      </div>
+      {Array.isArray(oponents) &&
+        oponents.length > 0 &&
+        oponents.map((oponent, index) => (
+          <div key={index} className={`oponents-cards oponent-${index + 1}`}>
+            {oponent && renderOponentsCards({ oponent, index })}
+          </div>
+        ))}
     </div>
   );
 };

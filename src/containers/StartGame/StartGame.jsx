@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useId } from "react";
 import { useParams } from "react-router-dom";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
@@ -11,15 +11,14 @@ function StartGame() {
   const { userId } = useContext(UserIdContext);
   const [reconnectingWS, setReconnectingWS] = useState(false); // Estado para reconexion para WS
   const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
-  const [movCards, setMovCards] = useState([]);
-  const [figCards, setFigCards] = useState([]);
+  const [allPlayersCards, setAllPlayersCards] = useState([]);
   const [board, setBoard] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRefWS = useRef(null);
   const reconnectTimeoutRefAPI = useRef(null);
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
   const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
- 
+
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
     if (game_id) {
@@ -104,13 +103,13 @@ function StartGame() {
       console.log(message);
       if (message.type === "GameStarted") {
         const players = message.payload.players;
-        const currentPlayer = players.filter(
-          (player) => player.unique_id === userId
-        )[0];
-        console.log(currentPlayer);
-        setFigCards(currentPlayer.figure_cards.slice(0, 3));
-        console.log(figCards);
-        setMovCards(currentPlayer.movement_cards);
+        setAllPlayersCards(players);
+      } else if (message.type === "PlayerLeft") {
+        setAllPlayersCards((prevPlayers) => {
+          return prevPlayers.filter(
+            (player) => player.unique_id !== message.payload.player_id
+          );
+        });
       }
     };
   };
@@ -137,18 +136,12 @@ function StartGame() {
     };
   }, [game_id, userId]);
 
-  return (reconnectingWS || reconnectingAPI ) ? (
+  return reconnectingWS || reconnectingAPI ? (
     <div>Intentando reconectar...</div>
   ) : (
     <div className="gameContainer">
-      <Board className="boardContainer" board={board}/>
-      <Card
-        className="cardContainer"
-        movCards={movCards}
-        showMovCards={true}
-        figCards={figCards}
-        showFigCards={true}
-      />
+      <Board className="boardContainer" board={board} />
+      <Card className="cardContainer" allPlayersCards={allPlayersCards} />
       <LeaveGame playerId={userId} gameId={game_id} />
     </div>
   );
