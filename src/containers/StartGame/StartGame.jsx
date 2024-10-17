@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useId } from "react";
 import { useParams } from "react-router-dom";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
-import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
 import Card from "../Cards/Card.jsx";
 import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
@@ -36,9 +35,6 @@ function StartGame() {
     const currentPlayerIndex = players.findIndex(player => player.unique_id === userId);
     return currentPlayerIndex === turnIndex;
   };
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [winner, setWinner] = useState(null);
-  const [currentTurn, setCurrentTurn] = useState(0);
 
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
@@ -157,17 +153,6 @@ function StartGame() {
             (player) => player.unique_id !== message.payload.player_id
           );
         });
-      } else if (message.type === "TurnSkipped") {
-        setBoard(payload.board);
-        setAllPlayersCards((prevPlayers) => {
-          return prevPlayers.filter(
-            (player) => player.unique_id !== message.payload.player_id
-          );
-        });
-        setCurrentTurn(payload.turn);
-      } else if (message.type === "GameWon") {
-        setIsGameOver(true);
-        setWinner(payload.player_name);
       }
     };
   
@@ -224,7 +209,6 @@ function StartGame() {
         currentTurn={turnNumber}
         isYourTurn={isYourTurn} //
       />
-      {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
     </div>
   );
 }
