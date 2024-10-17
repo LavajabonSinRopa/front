@@ -121,6 +121,7 @@ function StartGame() {
       const message = JSON.parse(event.data);
       if (message.type === "GameStarted") {
         const players = message.payload.players;
+        setAllPlayersCards(players);
         setPlayers(players);
         const currentPlayer = players.filter(
           (player) => player.unique_id === userId
@@ -184,6 +185,10 @@ function StartGame() {
         clearTimeout(reconnectTimeoutRefWS.current);
     };
   }, [game_id, userId]);
+
+  console.log(currentPlayerId);
+  console.log(userId);
+  console.log(players);
 
   return reconnectingWS || reconnectingAPI ? (
     <div>Intentando reconectar...</div>
