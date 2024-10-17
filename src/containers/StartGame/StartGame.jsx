@@ -36,6 +36,16 @@ function StartGame() {
     return currentPlayerIndex === turnIndex;
   };
 
+  const calculateCurrentPlayerId = (newTurn, players) => {
+    const playerIndex = newTurn % players.length;
+    const currentPlayer = players[playerIndex];
+  
+    if (currentPlayer) {
+      const currentPlayerId = currentPlayer.unique_id;
+      setCurrentPlayerId(currentPlayerId);
+    }
+  };
+
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
     if (game_id) {
@@ -59,10 +69,10 @@ function StartGame() {
           return;
         } else {
           const result = await response.json();
-          console.log(result);
           setBoard(result.board);
           setReconnectingAPI(false); // Si el fetch es exitoso, cancelar el estado de reconexion
           setTurnNumber(result["turn"]);
+          calculateCurrentPlayerId(turnNumber, result["players"]);
           localStorage.setItem(`game_${game_id}_turn`, result["turn"]);
           if (reconnectTimeoutRefAPI.current)
             clearTimeout(reconnectTimeoutRefAPI.current);
@@ -123,12 +133,8 @@ function StartGame() {
         const players = message.payload.players;
         setAllPlayersCards(players);
         setPlayers(players);
-        const currentPlayer = players.filter(
-          (player) => player.unique_id === userId
-        )[0];
-        setFigCards(currentPlayer.figure_cards.slice(0, 3));
-        setMovCards(currentPlayer.movement_cards);
         setCurrentPlayerId(players[0]?.unique_id);
+        calculateCurrentPlayerId(0, players);
         // setTurnNumber(0);
         // localStorage.setItem(`game_${game_id}_turn`, 0);
       } else if (message.type === "TurnSkipped") {
@@ -136,14 +142,7 @@ function StartGame() {
         setTurnNumber(newTurn); // Update turn state in StartGame
         setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
-      
-        const playerIndex = newTurn % message.payload.players.length;
-        const currentPlayer = message.payload.players[playerIndex];
-      
-        if (currentPlayer) {
-          const currentPlayerId = currentPlayer.unique_id;
-          setCurrentPlayerId(currentPlayerId);
-        }
+        calculateCurrentPlayerId(newTurn, message.payload.players);
       } else if (message.type === "PlayerLeft") {
         setPlayers(prevPlayers => 
           prevPlayers.filter(player => player.unique_id !== message.payload.player_id)
@@ -185,10 +184,6 @@ function StartGame() {
         clearTimeout(reconnectTimeoutRefWS.current);
     };
   }, [game_id, userId]);
-
-  console.log(currentPlayerId);
-  console.log(userId);
-  console.log(players);
 
   return reconnectingWS || reconnectingAPI ? (
     <div>Intentando reconectar...</div>
