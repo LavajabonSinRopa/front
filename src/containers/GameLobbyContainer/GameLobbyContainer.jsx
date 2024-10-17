@@ -30,7 +30,7 @@ export const GameLobbyContainer = () => {
 
         if (!response.ok) {
           console.log(
-            "Hubo un problema al crear la partida, intentando de nuevo..."
+            "Hubo un problema al crear la partida, intenta de nuevo."
           );
           setReconnectingAPI(true); // Iniciar estado de reconexion
           // Reintentar despues del intervalo
@@ -65,8 +65,6 @@ export const GameLobbyContainer = () => {
         reconnectTimeoutRefAPI.current = setTimeout(() => {
           fetchGameData(); // Reintentar el fetch después del intervalo
         }, reconnectInterval);
-      } finally {
-        console.log("finally");
       }
     }
   };
