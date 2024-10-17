@@ -120,18 +120,15 @@ function StartGame() {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
       if (message.type === "GameStarted") {
         const players = message.payload.players;
         setPlayers(players);
         const currentPlayer = players.filter(
           (player) => player.unique_id === userId
         )[0];
-        console.log(currentPlayer);
         setFigCards(currentPlayer.figure_cards.slice(0, 3));
-        console.log(figCards);
         setMovCards(currentPlayer.movement_cards);
-        setCurrentPlayerId(message.payload.current_player_id);
+        setCurrentPlayerId(players[0]?.unique_id);
         // setTurnNumber(0);
         // localStorage.setItem(`game_${game_id}_turn`, 0);
       } else if (message.type === "TurnSkipped") {
@@ -139,6 +136,18 @@ function StartGame() {
         setTurnNumber(newTurn); // Update turn state in StartGame
         setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
+      
+        const playerIndex = newTurn % message.payload.players.length;
+        const currentPlayer = message.payload.players[playerIndex];
+      
+        if (currentPlayer) {
+          const currentPlayerId = currentPlayer.unique_id;
+          setCurrentPlayerId(currentPlayerId);
+        }
+      } else if (message.type === "PlayerLeft") {
+        setPlayers(prevPlayers => 
+          prevPlayers.filter(player => player.unique_id !== message.payload.player_id)
+        );
       }
     };
   
@@ -172,7 +181,6 @@ function StartGame() {
     };
   }, [game_id, userId]);
 
-
   return (reconnectingWS || reconnectingAPI ) ? (
     <div>Intentando reconectar...</div>
   ) : (
@@ -181,6 +189,7 @@ function StartGame() {
         turnNumber={turnNumber}
         players={players}
         currentPlayerId={currentPlayerId}
+        playerId={userId}
       />
       <Board className="boardContainer" board={board}/>
       <Card
