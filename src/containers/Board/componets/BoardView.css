@@ -1,7 +1,10 @@
 .board {
+  position:absolute;
+
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(6, 1fr);
+  width: 680px;
   gap: 10px; /* Mayor separacion entre piezas */
   padding: 20px; /* Espaciado alrededor del tablero */
   background-color: #662c05; /* Fondo del tablero */

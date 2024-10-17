@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useId } from "react";
 import { useParams } from "react-router-dom";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
@@ -13,8 +13,7 @@ function StartGame() {
   const { userId } = useContext(UserIdContext);
   const [reconnectingWS, setReconnectingWS] = useState(false); // Estado para reconexion para WS
   const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
-  const [movCards, setMovCards] = useState([]);
-  const [figCards, setFigCards] = useState([]);
+  const [allPlayersCards, setAllPlayersCards] = useState([]);
   const [board, setBoard] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRefWS = useRef(null);
@@ -148,6 +147,11 @@ function StartGame() {
         setPlayers(prevPlayers => 
           prevPlayers.filter(player => player.unique_id !== message.payload.player_id)
         );
+        setAllPlayersCards((prevPlayers) => {
+          return prevPlayers.filter(
+            (player) => player.unique_id !== message.payload.player_id
+          );
+        });
       }
     };
   
@@ -181,7 +185,7 @@ function StartGame() {
     };
   }, [game_id, userId]);
 
-  return (reconnectingWS || reconnectingAPI ) ? (
+  return reconnectingWS || reconnectingAPI ? (
     <div>Intentando reconectar...</div>
   ) : (
     <div className="gameContainer">
@@ -192,13 +196,7 @@ function StartGame() {
         userId={userId}
       />
       <Board className="boardContainer" board={board}/>
-      <Card
-        className="cardContainer"
-        movCards={movCards}
-        showMovCards={true}
-        figCards={figCards}
-        showFigCards={true}
-      />
+      <Card className="cardContainer" allPlayersCards={allPlayersCards} />
       <LeaveGame playerId={userId} gameId={game_id} />
       <EndTurn
         playerId={userId}

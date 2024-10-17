@@ -6,5 +6,6 @@ module.exports = {
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js",
+    "\\.(svg)$": "<rootDir>/src/__mocks__/fileMock.js",
   },
 };
