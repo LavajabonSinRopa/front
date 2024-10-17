@@ -189,7 +189,7 @@ function StartGame() {
         turnNumber={turnNumber}
         players={players}
         currentPlayerId={currentPlayerId}
-        playerId={userId}
+        userId={userId}
       />
       <Board className="boardContainer" board={board}/>
       <Card
