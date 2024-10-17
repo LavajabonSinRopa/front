@@ -1,6 +1,6 @@
 // EndTurn.test.jsx
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, getByText } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import EndTurn from "../containers/EndTurn/EndTurn.jsx";
 
@@ -16,7 +16,6 @@ describe("EndTurn component", () => {
 
     const playerId = "1";
     const gameId = "game456";
-    const currentTurn = 1;
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -29,7 +28,7 @@ describe("EndTurn component", () => {
         });
         
         render(
-            <EndTurn playerId={playerId} gameId={gameId} players={mockPlayers} currentTurn={currentTurn} />
+            <EndTurn playerId={playerId} gameId={gameId} isYourTurn={true} />
         );
     
         fireEvent.click(screen.getByText("Terminar Turno"));
@@ -47,7 +46,7 @@ describe("EndTurn component", () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         render(
-            <EndTurn playerId={playerId} gameId={gameId} players={mockPlayers} currentTurn={currentTurn} />
+            <EndTurn playerId={playerId} gameId={gameId} isYourTurn={true} />
         );
 
         await act(async () => {
@@ -71,7 +70,7 @@ describe("EndTurn component", () => {
         });
 
         render(
-            <EndTurn playerId={playerId} gameId={gameId} players={mockPlayers} currentTurn={currentTurn} />
+            <EndTurn playerId={playerId} gameId={gameId} isYourTurn={true} />
         );
 
         await act(async () => {
@@ -93,7 +92,7 @@ describe("EndTurn component", () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         render(
-            <EndTurn playerId={playerId} gameId={gameId} players={mockPlayers} currentTurn={currentTurn} />
+            <EndTurn playerId={playerId} gameId={gameId} isYourTurn={true} />
         );
 
         await act(async () => {
@@ -112,7 +111,7 @@ describe("EndTurn component", () => {
         const currentTurnNotPlayer = 2; // simulamos que es el turno de otro jugador
         
         render(
-            <EndTurn playerId={playerId} gameId={gameId} players={mockPlayers} currentTurn={currentTurnNotPlayer} />
+            <EndTurn playerId={playerId} gameId={gameId} isYourTurn={false} />
         );
 
         expect(screen.getByText("Esperando tu turno")).toBeInTheDocument();
