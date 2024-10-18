@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useId } from "react";
 import { useParams } from "react-router-dom";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
-import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
 import Card from "../Cards/Card.jsx";
+import GameInfo from "../GameInfo/GameInfo.jsx";
+import EndTurn from "../EndTurn/EndTurn.jsx";
+import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx"
 
 function StartGame() {
   const { game_id } = useParams();
@@ -19,9 +21,33 @@ function StartGame() {
   const reconnectTimeoutRefAPI = useRef(null);
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
   const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
+  const [turnNumber, setTurnNumber] = useState(() => {
+    const savedTurn = localStorage.getItem(`game_${game_id}_turn`);
+    return savedTurn !== null ? parseInt(savedTurn, 10) : 1;
+  });
+  const [players, setPlayers] = useState([]);
+  const [currentPlayerId, setCurrentPlayerId] = useState(null);
+  const [isYourTurn, setIsYourTurn] = useState(false); 
   const [isGameOver, setIsGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
-  const [currentTurn, setCurrentTurn] = useState(0);
+
+
+  // Verificar si es el turno del jugador actual
+  const calculateIsYourTurn = (turn, players, userId) => {
+    const turnIndex = (turn % players.length);
+    const currentPlayerIndex = players.findIndex(player => player.unique_id === userId);
+    return currentPlayerIndex === turnIndex;
+  };
+
+  const calculateCurrentPlayerId = (newTurn, players) => {
+    const playerIndex = newTurn % players.length;
+    const currentPlayer = players[playerIndex];
+  
+    if (currentPlayer) {
+      const currentPlayerId = currentPlayer.unique_id;
+      setCurrentPlayerId(currentPlayerId);
+    }
+  };
 
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
@@ -46,9 +72,11 @@ function StartGame() {
           return;
         } else {
           const result = await response.json();
-          console.log(result);
           setBoard(result.board);
           setReconnectingAPI(false); // Si el fetch es exitoso, cancelar el estado de reconexion
+          setTurnNumber(result["turn"]);
+          calculateCurrentPlayerId(turnNumber, result["players"]);
+          localStorage.setItem(`game_${game_id}_turn`, result["turn"]);
           if (reconnectTimeoutRefAPI.current)
             clearTimeout(reconnectTimeoutRefAPI.current);
         }
@@ -104,30 +132,43 @@ function StartGame() {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
       if (message.type === "GameStarted") {
         const players = message.payload.players;
         setAllPlayersCards(players);
-      } else if (message.type === "PlayerLeft") {
-        setAllPlayersCards((prevPlayers) => {
-          return prevPlayers.filter(
-            (player) => player.unique_id !== message.payload.player_id
-          );
-        });
+        setPlayers(players);
+        setCurrentPlayerId(players[0]?.unique_id);
+        calculateCurrentPlayerId(0, players);
+        // setTurnNumber(0);
+        // localStorage.setItem(`game_${game_id}_turn`, 0);
       } else if (message.type === "TurnSkipped") {
-        setBoard(payload.board);
+        const newTurn = message.payload["turn"];
+        setTurnNumber(newTurn); // Update turn state in StartGame
+        setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
+        localStorage.setItem(`game_${game_id}_turn`, newTurn);
+        calculateCurrentPlayerId(newTurn, message.payload.players);
+      } else if (message.type === "PlayerLeft") {
+        setPlayers(prevPlayers => 
+          prevPlayers.filter(player => player.unique_id !== message.payload.player_id)
+        );
         setAllPlayersCards((prevPlayers) => {
           return prevPlayers.filter(
             (player) => player.unique_id !== message.payload.player_id
           );
         });
-        setCurrentTurn(payload.turn);
-      } else if (message.type === "GameWon") {
+      }
+      else if (message.type === "GameWon") {
         setIsGameOver(true);
-        setWinner(payload.player_name);
+        setWinner(message.payload.player_name);
       }
     };
+  
   };
+
+  useEffect(() => {
+    if (game_id && players.length > 0) {
+      setIsYourTurn(calculateIsYourTurn(turnNumber, players, userId));
+    }
+  }, [turnNumber, players, userId]);
 
   // Inicializacion y cierre del WebSocket
   useEffect(() => {
@@ -155,10 +196,22 @@ function StartGame() {
     <div>Intentando reconectar...</div>
   ) : (
     <div className="gameContainer">
-      <Board className="boardContainer" board={board} />
+      <GameInfo 
+        turnNumber={turnNumber}
+        players={players}
+        currentPlayerId={currentPlayerId}
+        userId={userId}
+      />
+      <Board className="boardContainer" board={board}/>
       <Card className="cardContainer" allPlayersCards={allPlayersCards} />
       <LeaveGame playerId={userId} gameId={game_id} />
-      {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
+      <EndTurn
+        playerId={userId}
+        gameId={game_id}
+        currentTurn={turnNumber}
+        isYourTurn={isYourTurn} //
+      />
+       {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
     </div>
   );
 }

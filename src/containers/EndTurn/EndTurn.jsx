@@ -2,12 +2,7 @@
 import React, { useState} from "react";
 import EndTurnView from "./components/EndTurnView.jsx";
 
-function EndTurn({playerId, gameId, players, currentTurn}) {
-    //calculo de si es mi turno o no
-    const turnIndex = (currentTurn - 1) % players.length;
-    const currentPlayerIndex = players.findIndex(player => player.id === playerId);
-    const isYourTurn = currentPlayerIndex === turnIndex;
-
+function EndTurn({playerId, gameId, isYourTurn}) {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
 
@@ -21,7 +16,7 @@ function EndTurn({playerId, gameId, players, currentTurn}) {
         setMessage(null);
 
         try {
-            const response = await fetch(`api/games/${gameId}/skip`, {
+            const response = await fetch(`/api/games/${gameId}/skip`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -42,6 +37,7 @@ function EndTurn({playerId, gameId, players, currentTurn}) {
             setIsLoading(false);
         }
     };
+
     return ( 
         <div>
             <EndTurnView 
