@@ -7,6 +7,7 @@ import "./components/StartGameView.css";
 import Card from "../Cards/Card.jsx";
 import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
+import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx"
 
 function StartGame() {
   const { game_id } = useParams();
@@ -27,6 +28,8 @@ function StartGame() {
   const [players, setPlayers] = useState([]);
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false); 
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [winner, setWinner] = useState(null);
 
 
   // Verificar si es el turno del jugador actual
@@ -153,6 +156,10 @@ function StartGame() {
           );
         });
       }
+      else if (message.type === "GameWon") {
+        setIsGameOver(true);
+        setWinner(message.payload.player_name);
+      }
     };
   
   };
@@ -204,6 +211,7 @@ function StartGame() {
         currentTurn={turnNumber}
         isYourTurn={isYourTurn} //
       />
+       {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
     </div>
   );
 }
