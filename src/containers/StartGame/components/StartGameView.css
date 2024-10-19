@@ -4,11 +4,40 @@ body {
   margin: 0;
 }
 
+.gameScreenContainer {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-column-gap: 30px;
+  grid-row-gap: 0px;
+}
+
 .gameContainer {
   display: flex;
   flex-direction: column;
   justify-content: center; /* Espacio entre el tablero y las cartas */
   height: 100vh; /* Altura completa de la ventana */
+}
+
+.cardContainer {
+  display: flex;
+  justify-content: center; /* Centra las cartas horizontalmente */
+  margin-bottom: 20px; /* Espacio entre las cartas y el borde inferior */
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.sideBar {
+  grid-area: 1 / 2 / 2 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: top; 
+  align-items: center; 
+}
+
+.buttons {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  margin-top: 20px; /* Espacio entre los botones y el borde superior */
+  gap: 10px; /* Espacio entre los botones */
 }
 
 .boardContainer {
@@ -17,10 +46,5 @@ body {
   align-items: center; /* Centra el tablero verticalmente (si tiene altura definida) */
   height: 100vh; /* O cualquier altura que desees */
   flex: 1; /* Permite que el tablero ocupe el espacio disponible */
-}
-
-.cardContainer {
-  display: flex;
-  justify-content: center; /* Centra las cartas horizontalmente */
-  margin-bottom: 20px; /* Espacio entre las cartas y el borde inferior */
+  
 }

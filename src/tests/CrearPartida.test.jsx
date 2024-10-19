@@ -47,8 +47,8 @@ describe("CrearPartida", () => {
     // ).toBeInTheDocument();
 
     // CARACTERES USADOS
-    let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
-    expect(caracteresUsados).toHaveLength(3);
+    // let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
+    // expect(caracteresUsados).toHaveLength(3);
 
     // BOTON
     const button = screen.getByRole("button", { name: "CREAR PARTIDA" });

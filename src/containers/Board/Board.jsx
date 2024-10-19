@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import BoardView from "./componets/BoardView";
+import BoardView from "./components/BoardView";
 import { useParams } from "react-router-dom";
 
 const Board = ({board}) => {

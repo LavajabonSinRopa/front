@@ -4,8 +4,10 @@ import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
-import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
+import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import Card from "../Cards/Card.jsx";
+import VerInfoTurno from "../VerInfoTurno.jsx";
+import SaltarTurno from "../SaltarTurno.jsx";
 
 function StartGame() {
   const { game_id } = useParams();
@@ -154,12 +156,26 @@ function StartGame() {
   return reconnectingWS || reconnectingAPI ? (
     <div>Intentando reconectar...</div>
   ) : (
-    <div className="gameContainer">
-      <Board className="boardContainer" board={board} />
-      <Card className="cardContainer" allPlayersCards={allPlayersCards} />
-      <LeaveGame playerId={userId} gameId={game_id} />
-      {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
-    </div>
+    <>
+      <div className="gameScreenContainer">
+        <div className="gameContainer">
+          <Board className="boardContainer" board={board} />
+          <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+        </div>
+        <div className="sideBar">
+          <div className="turnInfo">
+            <VerInfoTurno />
+          </div>
+          <div className="buttons">
+            <LeaveGame playerId={userId} gameId={game_id} />
+            {isGameOver && (
+              <VictoryScreen isGameOver={isGameOver} winner={winner} />
+            )}
+            <SaltarTurno />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 export default StartGame;

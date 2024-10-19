@@ -1,6 +1,5 @@
 .board {
-  position:absolute;
-
+  position: absolute;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(6, 1fr);
@@ -33,5 +32,3 @@
   transform: scale(1.05); /* Efecto de aumento al pasar el raton */
   cursor: pointer; /* Cambia el cursor al pasar el raton */
 }
-
-
