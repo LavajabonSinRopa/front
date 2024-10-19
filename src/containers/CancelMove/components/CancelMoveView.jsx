@@ -6,7 +6,8 @@ const CancelMoveView = ({
     onCancelMove,
     isLoading,
     message,
-}) => {
+}) => //TODO: deshabilitar boton si no hay movimientos hechos aun 
+    {
     return (
         <div>
             {message && 
