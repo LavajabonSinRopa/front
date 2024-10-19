@@ -131,8 +131,9 @@ describe("CrearPartida", () => {
 
     server.send(message);
     // Esperar a que los botones se rendericen
+    // Cuenta tanto las fichas del tablero como el botón de abandonar y el de saltear turno
     const pieces = await screen.findAllByRole("button");
-    expect(pieces).toHaveLength(37);
+    expect(pieces).toHaveLength(38);
 
     const redPieces = pieces.filter((piece) => piece.className.includes("red"));
     expect(redPieces).toHaveLength(9);
