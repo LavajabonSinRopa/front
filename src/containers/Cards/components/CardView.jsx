@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 import "./CardView.css";
 
 import backMov from "./cardSVG/back-mov.svg";
@@ -74,41 +75,13 @@ const movSvgMap = {
   6: mov7,
 };
 
-const CardView = ({ movCards, figCards, oponents }) => {
-  function renderOponentsCards({ oponent, index }) {
-    return (
-      <>
-        <h1 style={{ fontSize: "30px" }}>{`CARTAS DE ${oponent.name}`}</h1>
-        <ul
-          style={{ listStyleType: "none", padding: 0, margin: 0 }}
-          className="grid-container"
-        >
-          {oponent.figure_cards.slice(0, 3).map((figCards, index) => (
-            <li key={index} className="grid-item">
-              <img className={"card"} src={figSvgMap[figCards.type]} />
-            </li>
-          ))}
-        </ul>
-        <ul
-          style={{ listStyleType: "none", padding: 0, margin: 0 }}
-          className="grid-container"
-        >
-          {oponent.movement_cards.map((movCards, index) => (
-            <li key={index} className="grid-item">
-              <img className={"card"} src={backMov} />
-            </li>
-          ))}
-        </ul>
-      </>
-    );
-  }
+const CardView = ({ movCards, figCards, playerId }) => {
+  const { userId } = useContext(UserIdContext);
 
   return (
     <div className="cardViewContainer">
-      <div className="player">
         {movCards && (
           <>
-            <h1 style={{ fontSize: "30px" }}>TUS CARTAS</h1>
             {Array.isArray(movCards) && movCards.length > 0 ? (
               <ul
                 style={{ listStyleType: "none", padding: 0, margin: 0 }}
@@ -116,7 +89,10 @@ const CardView = ({ movCards, figCards, oponents }) => {
               >
                 {movCards.map((card, index) => (
                   <li key={index} className="grid-item">
-                    <img className={"card"} src={movSvgMap[card]} />
+                    <img
+                      className={"card"}
+                      src={userId === playerId ? movSvgMap[card.type] : backMov}
+                    />
                   </li>
                 ))}
               </ul>
@@ -144,14 +120,6 @@ const CardView = ({ movCards, figCards, oponents }) => {
             )}
           </>
         )}
-      </div>
-      {Array.isArray(oponents) &&
-        oponents.length > 0 &&
-        oponents.map((oponent, index) => (
-          <div key={index} className={`oponents-cards oponent-${index + 1}`}>
-            {oponent && renderOponentsCards({ oponent, index })}
-          </div>
-        ))}
     </div>
   );
 };

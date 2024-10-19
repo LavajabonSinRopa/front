@@ -1,85 +1,28 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
-import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/StartGameView.css";
-import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
-import Card from "../Cards/Card.jsx";
+import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
+import Cards from "../Cards/Cards.jsx";
 
-function StartGame() {
-  const { game_id } = useParams();
-  const { userId } = useContext(UserIdContext);
-  const [reconnectingWS, setReconnectingWS] = useState(false); // Estado para reconexion para WS
-  const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
-  const [allPlayersCards, setAllPlayersCards] = useState([]);
+function StartGame({ game_id, userId, websocketUrl }) {
+  const [players, setPlayers] = useState([]);
   const [board, setBoard] = useState("");
-  const socketRef = useRef(null);
-  const reconnectTimeoutRefWS = useRef(null);
-  const reconnectTimeoutRefAPI = useRef(null);
-  const isMounted = useRef(true); // Para verificar si el componente sigue montado
-  const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
   const [isGameOver, setIsGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(0);
-
-  // Fetch inicial de los datos del juego
-  const fetchGameData = async () => {
-    if (game_id) {
-      try {
-        const response = await fetch(`/api/games/${game_id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          console.log(
-            "Hubo un problema al crear la partida, intentando de nuevo..."
-          );
-          setReconnectingAPI(true); // Iniciar estado de reconexion
-          // Reintentar despues del intervalo
-          reconnectTimeoutRefAPI.current = setTimeout(() => {
-            fetchGameData(); // Volver a intentar el fetch
-          }, reconnectInterval);
-          return;
-        } else {
-          const result = await response.json();
-          console.log(result);
-          setBoard(result.board);
-          setReconnectingAPI(false); // Si el fetch es exitoso, cancelar el estado de reconexion
-          if (reconnectTimeoutRefAPI.current)
-            clearTimeout(reconnectTimeoutRefAPI.current);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        setReconnectingAPI(true); // Activar reconexion en caso de error
-        reconnectTimeoutRefAPI.current = setTimeout(() => {
-          fetchGameData(); // Reintentar el fetch después del intervalo
-        }, reconnectInterval);
-      } finally {
-        console.log("finally");
-      }
-    }
-  };
-
-  // useEffect para iniciar el fetch cuando el componente se monte
-  useEffect(() => {
-    fetchGameData();
-
-    // Limpiar el timeout de reconexion cuando el componente se desmonte
-    return () => {
-      if (reconnectTimeoutRefAPI.current)
-        clearTimeout(reconnectTimeoutRefAPI.current);
-    };
-  }, [game_id]);
+  const socketRef = useRef(null);
+  const [reconnectingWS, setReconnectingWS] = useState(false); // Estado para reconexion para WS
+  const reconnectTimeoutRefWS = useRef(null);
+  const isMounted = useRef(true); // Para verificar si el componente sigue montado
+  const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
 
   // Funcion para conectar al WebSocket
+  console.log(websocketUrl)
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
-    socketRef.current = new WebSocket(`/apiWS/games/${game_id}/${userId}`);
+    socketRef.current = new WebSocket(websocketUrl);
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
       setReconnectingWS(false); // Conexion exitosa, cancelar el estado de reconexion
@@ -106,25 +49,21 @@ function StartGame() {
       const message = JSON.parse(event.data);
       console.log(message);
       if (message.type === "GameStarted") {
-        const players = message.payload.players;
-        setAllPlayersCards(players);
+        setPlayers(message.payload.players);
+        setBoard(message.payload.board);
       } else if (message.type === "PlayerLeft") {
-        setAllPlayersCards((prevPlayers) => {
+        setPlayers((prevPlayers) => {
           return prevPlayers.filter(
             (player) => player.unique_id !== message.payload.player_id
           );
         });
       } else if (message.type === "TurnSkipped") {
-        setBoard(payload.board);
-        setAllPlayersCards((prevPlayers) => {
-          return prevPlayers.filter(
-            (player) => player.unique_id !== message.payload.player_id
-          );
-        });
-        setCurrentTurn(payload.turn);
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
+        setCurrentTurn(message.payload.turn);
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
-        setWinner(payload.player_name);
+        setWinner(message.payload.player_name);
       }
     };
   };
@@ -151,13 +90,32 @@ function StartGame() {
     };
   }, [game_id, userId]);
 
-  return reconnectingWS || reconnectingAPI ? (
+  return reconnectingWS ? (
     <div>Intentando reconectar...</div>
   ) : (
     <div className="gameContainer">
-      <Board className="boardContainer" board={board} />
-      <Card className="cardContainer" allPlayersCards={allPlayersCards} />
-      <LeaveGame playerId={userId} gameId={game_id} />
+      <div className="boardContainer">
+        <Board board={board} />
+      </div>
+      {Array.isArray(players) && players.length > 0 && (
+        <>
+          <div key={0} className="player">
+            <Cards
+              playerData={players.find((player) => player.unique_id === userId)}
+            />
+          </div>
+          {players
+            .filter((player) => player.unique_id !== userId)
+            .map((player, index) => (
+              <div key={index + 1} className={`opponent-${index + 1}`}>
+                {player && <Cards playerData={player} />}
+              </div>
+            ))}
+        </>
+      )}
+      <div className="leaveButtonContainer">
+        <LeaveGame playerId={userId} gameId={game_id} />
+      </div>
       {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
     </div>
   );

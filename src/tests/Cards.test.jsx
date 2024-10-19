@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Card from "../containers/Cards/Card.jsx";
+import Cards from "../containers/Cards/Cards.jsx";
 import { UserIdProvider } from "../contexts/UserIdContext.jsx";
 import { BrowserRouter as Router, useParams } from "react-router-dom";
 import WS from "jest-websocket-mock";
@@ -68,7 +68,8 @@ describe("Card", () => {
 
     render(
       <UserIdProvider value={mockUserIdContextValue}>
-        <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+        <Cards playerData={allPlayersCards[0]}/>
+        <Cards playerData={allPlayersCards[1]}/>
       </UserIdProvider>
     );
 
@@ -77,11 +78,11 @@ describe("Card", () => {
   });
 
   it("Cuando no hay cartas que mostrar se muestra el mensaje acorde", () => {
-    const allPlayersCards = [];
+    const allPlayersCards = {};
 
     render(
       <UserIdProvider value={mockUserIdContextValue}>
-        <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+        <Cards playerData={allPlayersCards}/>
       </UserIdProvider>
     );
     screen.debug();

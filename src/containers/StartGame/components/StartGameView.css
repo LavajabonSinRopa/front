@@ -5,22 +5,49 @@ body {
 }
 
 .gameContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Espacio entre el tablero y las cartas */
-  height: 100vh; /* Altura completa de la ventana */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 25vh);
+  width: 100vw;
+  height: 100vh;
 }
 
 .boardContainer {
-  display: flex;
-  justify-content: center; /* Centra el tablero horizontalmente */
-  align-items: center; /* Centra el tablero verticalmente (si tiene altura definida) */
-  height: 100vh; /* O cualquier altura que desees */
-  flex: 1; /* Permite que el tablero ocupe el espacio disponible */
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+  
 }
 
-.cardContainer {
-  display: flex;
-  justify-content: center; /* Centra las cartas horizontalmente */
-  margin-bottom: 20px; /* Espacio entre las cartas y el borde inferior */
+.player {
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 4; /* Ocupa filas 2 y 3 */
+}
+
+.opponent-1 {
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 1; /* Ocupa filas 2 y 3 */
+}
+
+.boardContainer , .player , .opponent-1, .opponent-2, .opponent-3, .leaveButtonContainer {
+  display: flex; /* Usamos flexbox para centrar contenido */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Ocupa todo el espacio de la celda */
+  width: 100%; /* Ocupa todo el espacio de la celda */
+}
+
+
+.opponent-2 {
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+}
+
+.opponent-3 {
+  grid-column: 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+}
+
+.leaveButtonContainer {
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 4; /* Ocupa filas 2 y 3 */
 }

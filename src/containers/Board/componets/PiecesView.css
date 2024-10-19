@@ -1,6 +1,6 @@
 .button {
-  width: 100px; /* Ajusta el tamaño del cuadrado */
-  height: 100px; /* Ajusta el tamaño del cuadrado */
+  width: 60px; /* Ajusta el tamaño del cuadrado */
+  height: 60px; /* Ajusta el tamaño del cuadrado */
   border: none;
   color: white; /* Color del texto */
   font-size: small;
