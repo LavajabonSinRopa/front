@@ -1,0 +1,26 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Espacio entre el tablero y las cartas */
+  height: 100vh; /* Altura completa de la ventana */
+}
+
+.boardContainer {
+  display: flex;
+  justify-content: center; /* Centra el tablero horizontalmente */
+  align-items: center; /* Centra el tablero verticalmente (si tiene altura definida) */
+  height: 100vh; /* O cualquier altura que desees */
+  flex: 1; /* Permite que el tablero ocupe el espacio disponible */
+}
+
+.cardContainer {
+  display: flex;
+  justify-content: center; /* Centra las cartas horizontalmente */
+  margin-bottom: 20px; /* Espacio entre las cartas y el borde inferior */
+}

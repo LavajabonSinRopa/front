@@ -1,21 +1,27 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import GameLobby from "./components/GameLobby";
-import { UserIdContext } from "../../contexts/UserIdContext";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useParams } from "react-router-dom";
+import Board from "../Board/Board.jsx";
+import LeaveGame from "../LeaveGame/LeaveGame.jsx";
+import { UserIdContext } from "../../contexts/UserIdContext.jsx";
+import "./components/StartGameView.css";
+import VictoryScreen from "./VictoryScreen/VictoryScreen.jsx";
+import Card from "../Cards/Card.jsx";
 
-export const GameLobbyContainer = () => {
+function StartGame() {
   const { game_id } = useParams();
   const { userId } = useContext(UserIdContext);
-  const [gameData, setGameData] = useState(null);
-  const [playerList, setPlayerList] = useState([]);
-  const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
   const [reconnectingWS, setReconnectingWS] = useState(false); // Estado para reconexion para WS
+  const [reconnectingAPI, setReconnectingAPI] = useState(false); // Estado para reconexion para la API
+  const [allPlayersCards, setAllPlayersCards] = useState([]);
+  const [board, setBoard] = useState("");
   const socketRef = useRef(null);
   const reconnectTimeoutRefWS = useRef(null);
   const reconnectTimeoutRefAPI = useRef(null);
-  const reconnectInterval = 150; // Intervalo de reconexion de 5 segundos
   const isMounted = useRef(true); // Para verificar si el componente sigue montado
-  const navigate = useNavigate();
+  const reconnectInterval = 150; // Intervalo de reconexion de 150 milisegundos
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [currentTurn, setCurrentTurn] = useState(0);
 
   // Fetch inicial de los datos del juego
   const fetchGameData = async () => {
@@ -30,7 +36,7 @@ export const GameLobbyContainer = () => {
 
         if (!response.ok) {
           console.log(
-            "Hubo un problema al crear la partida, intenta de nuevo."
+            "Hubo un problema al crear la partida, intentando de nuevo..."
           );
           setReconnectingAPI(true); // Iniciar estado de reconexion
           // Reintentar despues del intervalo
@@ -40,21 +46,8 @@ export const GameLobbyContainer = () => {
           return;
         } else {
           const result = await response.json();
-          const game = result;
-
-          setGameData({
-            gameName: game.name,
-            gameId: game.unique_id,
-            gameState: game.state,
-            gameCreator: game.creator,
-          });
-
-          const { player_names, players } = game;
-          const tuples = player_names.map((name, index) => [
-            players[index],
-            name,
-          ]);
-          setPlayerList(tuples);
+          console.log(result);
+          setBoard(result.board);
           setReconnectingAPI(false); // Si el fetch es exitoso, cancelar el estado de reconexion
           if (reconnectTimeoutRefAPI.current)
             clearTimeout(reconnectTimeoutRefAPI.current);
@@ -65,6 +58,8 @@ export const GameLobbyContainer = () => {
         reconnectTimeoutRefAPI.current = setTimeout(() => {
           fetchGameData(); // Reintentar el fetch después del intervalo
         }, reconnectInterval);
+      } finally {
+        console.log("finally");
       }
     }
   };
@@ -88,7 +83,7 @@ export const GameLobbyContainer = () => {
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
       setReconnectingWS(false); // Conexion exitosa, cancelar el estado de reconexion
-      if (reconnectTimeoutRefWS.current)  
+      if (reconnectTimeoutRefWS.current)
         clearTimeout(reconnectTimeoutRefWS.current);
     };
 
@@ -110,21 +105,27 @@ export const GameLobbyContainer = () => {
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log(message);
-      if (message.type === "PlayerJoined") {
-        const { player_id, player_name } = message.payload;
-        setPlayerList((prevPlayers) => [
-          ...prevPlayers,
-          [player_id, player_name],
-        ]);
+      if (message.type === "GameStarted") {
+        const players = message.payload.players;
+        setAllPlayersCards(players);
       } else if (message.type === "PlayerLeft") {
-				// Actualizar lista cuando sale alguien
-				const { player_id } = message.payload;
-				setPlayerList((prevPlayers) =>
-					prevPlayers.filter(([id]) => id !== player_id)
-				);
-			} else if (message.type === "GameStarted") {
-				navigate(`/games/${game_id}/start`);
-			}
+        setAllPlayersCards((prevPlayers) => {
+          return prevPlayers.filter(
+            (player) => player.unique_id !== message.payload.player_id
+          );
+        });
+      } else if (message.type === "TurnSkipped") {
+        setBoard(payload.board);
+        setAllPlayersCards((prevPlayers) => {
+          return prevPlayers.filter(
+            (player) => player.unique_id !== message.payload.player_id
+          );
+        });
+        setCurrentTurn(payload.turn);
+      } else if (message.type === "GameWon") {
+        setIsGameOver(true);
+        setWinner(payload.player_name);
+      }
     };
   };
 
@@ -134,7 +135,10 @@ export const GameLobbyContainer = () => {
     // Solo conectar si estamos montados y tenemos valores validos
     if (game_id && userId) {
       // Solo conecta si no hay conexion activa
-      if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
+      if (
+        !socketRef.current ||
+        socketRef.current.readyState === WebSocket.CLOSED
+      ) {
         connectWebSocket();
       }
     }
@@ -145,25 +149,17 @@ export const GameLobbyContainer = () => {
       if (reconnectTimeoutRefWS.current)
         clearTimeout(reconnectTimeoutRefWS.current);
     };
-  }, [game_id, userId, navigate]);
+  }, [game_id, userId]);
 
-  return (
-    <div>
-      {gameData ? (
-        (reconnectingAPI || reconnectingWS) ? (
-          <p>Reconectando...</p>
-        ) : (
-          <GameLobby
-            gameData={gameData}
-            playerList={playerList}
-            playerId={userId}
-          />
-        )
-      ) : (
-        <p>Loading...</p>
-      )}
+  return reconnectingWS || reconnectingAPI ? (
+    <div>Intentando reconectar...</div>
+  ) : (
+    <div className="gameContainer">
+      <Board className="boardContainer" board={board} />
+      <Card className="cardContainer" allPlayersCards={allPlayersCards} />
+      <LeaveGame playerId={userId} gameId={game_id} />
+      {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
     </div>
   );
-};
-
-export default GameLobbyContainer;
+}
+export default StartGame;

@@ -1,17 +1,12 @@
-import React, { useEffect, useState, createContext, useContext } from 'react';
+import React, { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import { BASE_WS_ADDRESS } from '../utils/constants';
 
 export const WebSocketContext = createContext(null);
 
-/*
-  USO: 
-  import { useWebSocket } from '../contexts/WebsocketContext'; 
-  const socket = useWebSocket('[endpoint]'); p. ej useWebSocket('/games')
-  addEventListener() y removeEventListener()
-
-*/
 export const WebSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
+  const [latestMessage, setLatestMessage] = useState(null);
+  
   useEffect(() => {
     return () => {
       if (socket) {
@@ -21,14 +16,14 @@ export const WebSocketProvider = ({ children }) => {
   }, [socket]);
 
   return (
-    <WebSocketContext.Provider value={{ socket, setSocket }}>
+    <WebSocketContext.Provider value={{ socket, setSocket, latestMessage, setLatestMessage }}>
       {children}
     </WebSocketContext.Provider>
   );
 };
 
 export const useWebSocket = (url) => {
-  const { socket, setSocket } = useContext(WebSocketContext);
+  const { socket, setSocket, latestMessage, setLatestMessage } = useContext(WebSocketContext);
 
   useEffect(() => {
     if (!url) {
@@ -46,6 +41,7 @@ export const useWebSocket = (url) => {
 
     newSocket.onmessage = (event) => {
       console.log('WebSocket message received:', event.data);
+      setLatestMessage(JSON.parse(event.data));
     };
 
     newSocket.onerror = (error) => {
@@ -59,7 +55,15 @@ export const useWebSocket = (url) => {
     return () => {
       newSocket.close();
     };
-  }, [url, setSocket]);
+  }, [url, setSocket, setLatestMessage]);
 
-  return socket;
+  const sendMessage = useCallback((message) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(message));
+    } else {
+      console.warn('WebSocket is not open.');
+    }
+  }, [socket]);
+
+  return { socket, latestMessage, sendMessage };
 };

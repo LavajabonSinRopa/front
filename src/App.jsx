@@ -5,7 +5,7 @@ import CreatePartida from "./containers/CrearPartida/CrearPartida.jsx";
 import ListGames from "./containers/ListGames/ListGames.jsx";
 import GameLobbyContainer from "./containers/GameLobbyContainer/GameLobbyContainer.jsx";
 import { UserIdProvider } from "./contexts/UserIdContext.jsx";
-import StartGame from "./containers/StartGame.jsx";
+import StartGame from "./containers/StartGame/StartGame.jsx";
 
 function App() {
   return (
