@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import CardView from "./components/CardView.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/Cards.css";
+import { MovCardContext } from "../../contexts/MovCardContext.jsx";
 
-function Card({ playerData }) {
+function Card({ playerData, isYourTurn }) {
   const [playerMovCards, setPlayerMovCards] = useState([]);
   const [playerFigCards, setPlayerFigCards] = useState([]);
   const { userId } = useContext(UserIdContext);
+  const { movCardId, setMovCardId, movCardType, setMovCardType } =
+    useContext(MovCardContext);
 
   useEffect(() => {
     if (
@@ -19,10 +22,29 @@ function Card({ playerData }) {
     }
   }, [playerData]);
 
-  // Verifica si playerData está definido antes de intentar renderizar CardView
+  useEffect(() => {
+    setMovCardId(null);
+    setMovCardType(null);
+  }, [isYourTurn]);
+
   if (!playerData) {
     return <div>Loading...</div>;
   }
+
+  const handleUseMovCard = (e) => {
+    if (userId === playerData.unique_id && isYourTurn) {
+      if (movCardId === null || movCardType === null) {
+        setMovCardId(e.target.dataset.id);
+        setMovCardType(e.target.dataset.type);
+      } else if (e.target.dataset.id === movCardId) {
+        setMovCardId(null);
+        setMovCardType(null);
+      } else {
+        setMovCardId(e.target.dataset.id);
+        setMovCardType(e.target.dataset.type);
+      }
+    }
+  };
 
   return (
     <div className="cardContainer">
@@ -35,6 +57,7 @@ function Card({ playerData }) {
         movCards={playerMovCards}
         figCards={playerFigCards}
         playerId={playerData.unique_id}
+        useMovCard={handleUseMovCard}
       />
     </div>
   );

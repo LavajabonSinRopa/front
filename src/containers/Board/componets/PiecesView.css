@@ -6,24 +6,105 @@
   font-size: small;
   font-weight: bold; /* Negrita para el texto */
   cursor: grab; /* Cambia el cursor al pasar por encima */
+  border: 2px solid #ffffff49;
+}
+
+.button:hover {
+  border-color: white; 
 }
 
 .red {
   background-color: red;
+  color: red; 
 }
 
 .green {
   background-color: green;
+  color: green;
 }
 
 .blue {
   background-color: blue;
+  color: blue;
 }
 
 .yellow {
   background-color: yellow;
+  color: yellow;
 }
 
-.isFigure {
-  border: 2px solid #ffffff49;
+.isSelected {
+  animation: vibrarSeleccion 1s ease-in-out 1s infinite;
+  box-shadow: 0 0 0.3em 0.3em currentColor; /* Hereda el color del contenedor */
+  border-color: white;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.moveableSlot {
+  border-color: white;
+  box-shadow: 0 0 0.3em 0.3em currentColor;
+}
+
+@keyframes vibrarSeleccion {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-5deg);
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+}
+
+.movError {
+  animation: vibrarError 1s ease-in-out 1s;
+}
+
+@keyframes vibrarError {
+  0% {
+    transform: translateX(0);
+    background-color: initial;
+  }
+  5% {
+    transform: translateX(-3px);
+    background-color: red;
+  }
+  10% {
+    transform: translateX(0);
+    background-color: red; 
+  }
+  15% {
+    transform: translateX(3px);
+    background-color: red; 
+  }
+  20% {
+    transform: translateX(0);
+    background-color: red; 
+  }
+  25% {
+    transform: translateX(-3px);
+    background-color: red; 
+  }
+  30% {
+    transform: translateX(0);
+    background-color: red; 
+  }
+  35% {
+    transform: translateX(3px);
+    background-color: red;
+  }
+  40% {
+    transform: translateX(0);
+    background-color: initial; 
+  }
 }
