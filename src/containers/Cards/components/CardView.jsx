@@ -99,7 +99,8 @@ const CardView = ({ movCards, figCards, playerId, useMovCard }) => {
                       src={userId === playerId ? movSvgMap[card.type] : backMov}
                       style={{
                         transform: movCardId === card.unique_id ? 'scale(1.5)' : 'scale(1)',
-                        transition: 'transform 0.3s ease-in-out'
+                        transition: 'transform 0.3s ease-in-out',
+    filter: card.state === 'blocked' ? 'grayscale(100%)' : 'none'
                       }}
                     />
                   </li>
