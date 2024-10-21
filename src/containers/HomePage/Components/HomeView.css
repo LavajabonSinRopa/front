@@ -1,0 +1,117 @@
+.homeContainer {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  width: 100vw;
+  height: 100vh;
+  position: relative; /* Permite usar z-index en los hijos */
+  overflow: hidden; /* Evita que el fondo se desborde */
+}
+
+.homeColumn1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  z-index: 3; /* Asegúrate de que el contenido esté por encima del fondo */
+}
+
+.homeColumn2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  z-index: 3; /* Asegúrate de que el contenido esté por encima del fondo */
+}
+
+.switcher_UI_UX_desing_banner {
+  width: 80%;
+  height: auto;
+  margin-bottom: 30px;
+  padding-left: 30px;
+}
+
+.homeButton {
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #052d38;
+  background-color: #29957d;
+}
+
+.homeColumn2 {
+  grid-column: 2; /* Asegura que esté en la segunda columna */
+  position: relative; /* Establece un contexto para el posicionamiento absoluto */
+  transform: scaleX(-1);
+}
+
+.switcherAnimado {
+  width: 320%;
+  height: auto;
+  position: absolute; /* Cambia a posición absoluta */
+  top: 63%; /* Ajusta según sea necesario */
+  left: 100%; /* Ajusta según sea necesario */
+  transform: translate(-50%, -50%); /* Centra el elemento */
+  z-index: 10; /* Asegúrate de que esté por encima del fondo */
+}
+
+@keyframes moverFondo {
+  0% {
+    background-position: 0 0; /* Posición inicial */
+  }
+  100% {
+    background-position: 100px -150px; /* Cambia el valor según el tamaño de tu imagen */
+  }
+}
+
+.homeBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* Fondo detrás del contenido */
+  background-image: url("./switcher_UI_UX_desing_background_pattern.svg");
+  background-size: 100px 150px; /* Establece el tamaño de la imagen de fondo */
+  background-repeat: repeat; /* Repite la imagen si es necesario */
+  background-color: #5dc8af;
+  animation: moverFondo 5s linear infinite; /* Aplica la animación */
+}
+
+.frame {
+  border: 15px solid #f28e1f; /* Ajusta el grosor y color según necesites */
+  position: absolute; /* Permite que el z-index funcione */
+  z-index: 2; /* Asegúrate de que esté por encima del fondo */
+  padding: 20px; /* Añade padding de 20px */
+  width: calc(90vw); /* Ajusta el ancho para tener en cuenta el padding */
+  height: calc(
+    90vh - 70px
+  ); /* Ajusta la altura para tener en cuenta el padding */
+  box-sizing: border-box; /* Asegura que el borde y el padding no afecten al tamaño */
+  border-radius: 45px; /* Bordes redondeados */
+  top: 50%; /* Centra verticalmente */
+  left: 50%; /* Centra horizontalmente */
+  transform: translate(-50%, -50%); /* Ajusta para centrar correctamente */
+}
+
+.backgroundPolygon1 {
+    width: 100%;
+    height: auto;
+    position: absolute; /* Cambia a posición absoluta */
+    top: 0%; /* Ajusta según sea necesario */
+    left: 0%; /* Ajusta según sea necesario */
+    transform: translate(-0%, -0%) scaleX(-1); /* Centra el elemento */
+    z-index: 2; /* Asegúrate de que esté por encima del fondo */
+}
+
+.shadow {
+    width: 100%;
+    height: auto;
+    position: absolute; /* Cambia a posición absoluta */
+    top: -8%; /* Ajusta según sea necesario */
+    left: 1%; /* Ajusta según sea necesario */
+    transform: translate(-0%, -0%) scaleX(-1); /* Centra el elemento */
+    z-index: 2; /* Asegúrate de que esté por encima del fondo */
+}
