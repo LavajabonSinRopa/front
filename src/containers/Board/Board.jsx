@@ -10,6 +10,7 @@ const Board = ({ board, isYourTurn }) => {
   const { game_id } = useParams();
   const [movError, setMovError] = useState(false);
   const timeoutRef = useRef(null);
+  const [swappedPieces, setSwappedPieces] = useState([]);
   const { movCardId, setMovCardId, movCardType, setMovCardType } =
     useContext(MovCardContext);
   const {
@@ -26,6 +27,7 @@ const Board = ({ board, isYourTurn }) => {
     setFirstPieceYaxis(null);
     setSecondPieceXaxis(null);
     setSecondPieceYaxis(null);
+    setSwappedPieces([]); 
   }, [isYourTurn]);
 
   async function handleMovSelection(rowIndex, colIndex) {
@@ -80,6 +82,12 @@ const Board = ({ board, isYourTurn }) => {
           setMovCardId(null);
           setMovCardType(null);
           clearSelection();
+
+          setSwappedPieces((prevSwappedPieces) => [
+            ...prevSwappedPieces,
+            [firstPieceYaxis, firstPieceXaxis],
+            [rowIndex, colIndex],
+          ]);
         }
         // Resetear estados tras un movimiento exitoso
       } catch (error) {
@@ -117,6 +125,7 @@ const Board = ({ board, isYourTurn }) => {
         board={board}
         handleMovSelection={handleMovSelection}
         movError={movError}
+        swappedPieces={swappedPieces}
       />
     </>
   );

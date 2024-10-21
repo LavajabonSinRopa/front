@@ -4,7 +4,7 @@ import "./BoardView.css";
 import { MovementContext } from "../../../contexts/MovementContext";
 import { MovCardContext } from "../../../contexts/MovCardContext";
 
-const BoardView = ({ board, handleMovSelection, movError }) => {
+const BoardView = ({ board, handleMovSelection, movError, swappedPieces }) => {
   const {
     firstPieceXaxis,
     firstPieceYaxis,
@@ -75,6 +75,11 @@ const BoardView = ({ board, handleMovSelection, movError }) => {
                     firstPieceYaxis === rowIndex) ||
                     (secondPieceXaxis === colIndex &&
                       secondPieceYaxis === rowIndex))
+                }
+                isSwapped={
+                  swappedPieces.some(
+                    ([x, y]) => x === rowIndex && y === colIndex
+                  )
                 }
               />
             </div>
