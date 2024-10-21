@@ -2,7 +2,7 @@
 import React, { useState} from "react";
 import CancelMoveView from "./components/CancelMoveView.jsx";
 
-function CancelMove({playerId, gameId, isYourTurn}) {
+function CancelMove({playerId, gameId, isYourTurn, partialMovementsMade}) {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
 
@@ -45,6 +45,7 @@ function CancelMove({playerId, gameId, isYourTurn}) {
                 onCancelMove = {handleCancelMove}
                 isLoading = {isLoading}
                 message = {message}
+                partialMovementsMade = {partialMovementsMade}
 
             />
         </div>

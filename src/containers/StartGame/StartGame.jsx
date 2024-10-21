@@ -28,7 +28,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
 
-  const [movesDone, setMovesDone] = useState(0);
+  const [partialMovementsMade, setPartialMovementsMade] = useState(false);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -144,6 +144,16 @@ function StartGame({ game_id, userId, websocketUrl }) {
     };
   }, [game_id, userId]);
 
+  useEffect(() => {
+    if (players.length > 0) {
+      const currentPlayer = players.find(player => player.unique_id === userId);
+      if (currentPlayer && currentPlayer.movement_cards) {
+        const hasBlockedCard = currentPlayer.movement_cards.some(card => card.state === "blocked");
+        setPartialMovementsMade(hasBlockedCard);
+      }
+    }
+  }, [players, userId]);
+
   return reconnectingWS ? (
     <div>Intentando reconectar...</div>
   ) : (
@@ -193,6 +203,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
             playerId={userId}
             gameId={game_id}
             isYourTurn={isYourTurn}
+            partialMovementsMade={partialMovementsMade}
           />
         </div>
       </MovCardProvider>

@@ -6,7 +6,8 @@ const CancelMoveView = ({
     onCancelMove,
     isLoading,
     message,
-}) => //TODO: deshabilitar boton si no hay movimientos hechos aun 
+    partialMovementsMade
+}) => 
     {
     return (
         <div>
@@ -14,7 +15,7 @@ const CancelMoveView = ({
             <div className="error-message">
                 {message}
             </div>}
-            <button onClick={onCancelMove} disabled={!isYourTurn || isLoading}>
+            <button onClick={onCancelMove} disabled={!isYourTurn || isLoading || !partialMovementsMade}>
                 {isLoading ? "Cargando..." : "Cancelar Movimiento"}
             </button>
         </div>
