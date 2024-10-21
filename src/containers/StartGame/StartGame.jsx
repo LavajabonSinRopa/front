@@ -6,6 +6,7 @@ import Cards from "../Cards/Cards.jsx";
 import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
+import CancelMove from "../CancelMove/CancelMove.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
 
@@ -26,6 +27,8 @@ function StartGame({ game_id, userId, websocketUrl }) {
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
+
+  const [partialMovementsMade, setPartialMovementsMade] = useState(false);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -106,6 +109,9 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "MovSuccess") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+      } else if (message.type === "MoveUnMade") {
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
       }
     };
   };
@@ -137,6 +143,16 @@ function StartGame({ game_id, userId, websocketUrl }) {
         clearTimeout(reconnectTimeoutRefWS.current);
     };
   }, [game_id, userId]);
+
+  useEffect(() => {
+    if (players.length > 0) {
+      const currentPlayer = players.find(player => player.unique_id === userId);
+      if (currentPlayer && currentPlayer.movement_cards) {
+        const hasBlockedCard = currentPlayer.movement_cards.some(card => card.state === "blocked");
+        setPartialMovementsMade(hasBlockedCard);
+      }
+    }
+  }, [players, userId]);
 
   return reconnectingWS ? (
     <div>Intentando reconectar...</div>
@@ -182,6 +198,12 @@ function StartGame({ game_id, userId, websocketUrl }) {
             gameId={game_id}
             currentTurn={turnNumber}
             isYourTurn={isYourTurn}
+          />
+          <CancelMove
+            playerId={userId}
+            gameId={game_id}
+            isYourTurn={isYourTurn}
+            partialMovementsMade={partialMovementsMade}
           />
         </div>
       </MovCardProvider>
