@@ -105,6 +105,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setWinner(message.payload.player_name);
       } else if (message.type === "MovSuccess") {
         setBoard(message.payload.board);
+        setPlayers(message.payload.players);
       }
     };
   };

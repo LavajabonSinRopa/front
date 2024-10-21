@@ -3,7 +3,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import StartGame from "../containers/StartGame/StartGame.jsx";
 import WS from "jest-websocket-mock";
-import { MemoryRouter, Routes, Route, useNavigate, useParams} from "react-router-dom";
+import {
+  MemoryRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { UserIdContext, UserIdProvider } from "../contexts/UserIdContext.jsx";
 import {
   MovementContext,
@@ -102,7 +108,7 @@ const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockedUsedNavigate,
-  useParams: () => ({ game_id: "gameIdValue" }),  // Mock de useParams devolviendo "gameTestId"
+  useParams: () => ({ game_id: "gameIdValue" }), // Mock de useParams devolviendo "gameTestId"
 }));
 
 const mockUserIdContextValue = {
@@ -396,7 +402,7 @@ describe("CrearPartida", () => {
         json: () => Promise.resolve({ message: "Movimiento exitoso" }),
       })
     );
-    
+
     const { container } = render(
       <MovementContext.Provider value={mockMovementContextValue}>
         <MovCardContext.Provider value={mockMovCardContextValue}>
@@ -432,11 +438,11 @@ describe("CrearPartida", () => {
     await waitFor(() => {
       expect(cardElement).toHaveStyle("transform: scale(1.5)");
     });
-    
+
     const moveableSlots = container.querySelectorAll(".moveableSlot");
     expect(moveableSlots.length).toBe(2);
     expect(moveableSlots[1]).toHaveClass("blue");
-    
+
     fireEvent.click(moveableSlots[1]);
 
     await waitFor(() => {
@@ -453,10 +459,10 @@ describe("CrearPartida", () => {
         }),
       });
     });
-    
+
     // Limpiar mocks
     global.fetch.mockRestore();
-  
+
     await waitFor(() => {
       expect(cardElement).toHaveStyle("transform: scale(1)");
     });
@@ -472,18 +478,71 @@ describe("CrearPartida", () => {
           ["yellow", "red", "yellow", "yellow", "yellow", "green"],
           ["blue", "red", "blue", "green", "blue", "green"],
         ],
+        players: [
+          {
+            unique_id: "8825596f-450e-438d-bd17-a2202af15f4a",
+            name: "luca",
+            movement_cards: [
+              {
+                type: 1,
+                unique_id: "c64f69b3-746a-41b5-93c3-26800a9b864e",
+                state: null,
+              },
+              {
+                type: 2,
+                unique_id: "ead42368-e902-4b3c-99d1-f7b65b6fe1e3",
+                state: null,
+              },
+              {
+                type: 3,
+                unique_id: "ef43d251-8dda-4a08-8fda-f1b159a31ec1",
+                state: null,
+              },
+            ],
+            figure_cards: [
+              { type: 4, state: "drawn" },
+              { type: 5, state: "drawn" },
+              { type: 6, state: "drawn" },
+            ],
+          },
+          {
+            unique_id: "e1ba906d-d1c7-41c3-9495-da40a38f1acc",
+            name: "messi",
+            movement_cards: [
+              {
+                type: 4,
+                unique_id: "416305b3-df8a-4889-9388-fe1e89dead57",
+                state: null,
+              },
+              {
+                type: 5,
+                unique_id: "816a767b-2c00-4f4c-bd10-987a45ce8eed",
+                state: null,
+              },
+              {
+                type: 6,
+                unique_id: "2b219f08-5d29-4e69-8dcf-1ae6d79f10aa",
+                state: null,
+              },
+            ],
+            figure_cards: [
+              { type: 1, state: "drawn" },
+              { type: 2, state: "drawn" },
+              { type: 3, state: "drawn" },
+            ],
+          },
+        ],
       },
     };
 
-    server.send(message2)
+    server.send(message2);
 
     await waitFor(() => {
       expect(firstButton).toHaveClass("blue");
       expect(moveableSlots[1]).toHaveClass("red");
-    })
-    
+    });
+
     const selectedPieces = container.querySelectorAll(".isSelected");
     expect(selectedPieces.length).toBe(0);
-
   });
 });

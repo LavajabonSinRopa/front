@@ -33,15 +33,25 @@ function Card({ playerData, isYourTurn }) {
 
   const handleUseMovCard = (e) => {
     if (userId === playerData.unique_id && isYourTurn) {
-      if (movCardId === null || movCardType === null) {
-        setMovCardId(e.target.dataset.id);
-        setMovCardType(e.target.dataset.type);
-      } else if (e.target.dataset.id === movCardId) {
-        setMovCardId(null);
-        setMovCardType(null);
-      } else {
-        setMovCardId(e.target.dataset.id);
-        setMovCardType(e.target.dataset.type);
+      const cardId = e.target.dataset.id;
+      const cardType = e.target.dataset.type;
+      const card = playerMovCards.find((card) => card.unique_id === cardId);
+
+      console.log("card and card state:");
+      console.log(card);
+      console.log(card.state);
+
+      if (card && card.state !== "blocked") {
+        if (movCardId === null || movCardType === null) {
+          setMovCardId(cardId);
+          setMovCardType(cardType);
+        } else if (cardId === movCardId) {
+          setMovCardId(null);
+          setMovCardType(null);
+        } else {
+          setMovCardId(cardId);
+          setMovCardType(cardType);
+        }
       }
     }
   };
