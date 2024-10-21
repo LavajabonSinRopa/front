@@ -27,8 +27,7 @@
 }
 
 .piece:hover {
-  border-color: #f0f0f0; /* Color del borde al pasar el raton */
-  transform: scale(1.05); /* Efecto de aumento al pasar el raton */
+  transform: scale(1.15); /* Efecto de aumento al pasar el raton */
   cursor: pointer; /* Cambia el cursor al pasar el raton */
 }
 
