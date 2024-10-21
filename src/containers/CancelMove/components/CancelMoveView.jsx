@@ -15,7 +15,7 @@ const CancelMoveView = ({
                 {message}
             </div>}
             <button onClick={onCancelMove} disabled={!isYourTurn || isLoading}>
-                {isLoading ? "Cargando..." : isYourTurn ? "Cancelar Movimiento" : "Esperando tu turno"}
+                {isLoading ? "Cargando..." : "Cancelar Movimiento"}
             </button>
         </div>
     );

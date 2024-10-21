@@ -114,7 +114,7 @@ describe("CancelMove component", () => {
             <CancelMove playerId={playerId} gameId={gameId} isYourTurn={false} />
         );
 
-        expect(screen.getByText("Esperando tu turno")).toBeInTheDocument();
-        expect(screen.getByText("Esperando tu turno").closest('button')).toBeDisabled();
+        const button = screen.getByText("Cancelar Movimiento");
+        expect(button).toBeDisabled();
     });
 });
