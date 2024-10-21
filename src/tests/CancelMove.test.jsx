@@ -28,7 +28,7 @@ describe("CancelMove component", () => {
         });
         
         render(
-            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} />
+            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} partialMovementsMade={true}/>
         );
     
         fireEvent.click(screen.getByText("Cancelar Movimiento"));
@@ -46,7 +46,7 @@ describe("CancelMove component", () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         render(
-            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} />
+            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} partialMovementsMade={true}/>
         );
 
         await act(async () => {
@@ -70,7 +70,7 @@ describe("CancelMove component", () => {
         });
 
         render(
-            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} />
+            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} partialMovementsMade={true} />
         );
 
         await act(async () => {
@@ -92,7 +92,7 @@ describe("CancelMove component", () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
         render(
-            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} />
+            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={true} partialMovementsMade={true}/>
         );
 
         await act(async () => {
@@ -111,7 +111,7 @@ describe("CancelMove component", () => {
         const currentTurnNotPlayer = 2; // simulamos que es el turno de otro jugador
         
         render(
-            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={false} />
+            <CancelMove playerId={playerId} gameId={gameId} isYourTurn={false} partialMovementsMade={false}/>
         );
 
         const button = screen.getByText("Cancelar Movimiento");
