@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect, useContext, useId } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
 import Board from "../Board/Board.jsx";
 import LeaveGame from "../LeaveGame/LeaveGame.jsx";
 import "./components/StartGameView.css";
 import Cards from "../Cards/Cards.jsx";
 import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
-import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx"
+import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
+import { MovCardProvider } from "../../contexts/MovCardContext";
+import { MovementProvider } from "../../contexts/MovementContext";
 
 function StartGame({ game_id, userId, websocketUrl }) {
   const [players, setPlayers] = useState([]);
@@ -24,29 +25,29 @@ function StartGame({ game_id, userId, websocketUrl }) {
     return savedTurn !== null ? parseInt(savedTurn, 10) : 1;
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
-  const [isYourTurn, setIsYourTurn] = useState(false); 
-
+  const [isYourTurn, setIsYourTurn] = useState(false);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
-    const turnIndex = (turn % players.length);
-    const currentPlayerIndex = players.findIndex(player => player.unique_id === userId);
+    const turnIndex = turn % players.length;
+    const currentPlayerIndex = players.findIndex(
+      (player) => player.unique_id === userId
+    );
     return currentPlayerIndex === turnIndex;
   };
 
   const calculateCurrentPlayerId = (newTurn, players) => {
     const playerIndex = newTurn % players.length;
     const currentPlayer = players[playerIndex];
-  
+
     if (currentPlayer) {
       const currentPlayerId = currentPlayer.unique_id;
       setCurrentPlayerId(currentPlayerId);
     }
   };
 
-
   // Funcion para conectar al WebSocket
-  console.log(websocketUrl)
+  console.log(websocketUrl);
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
@@ -75,6 +76,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
+      console.log(message)
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
@@ -101,9 +103,11 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
         setWinner(message.payload.player_name);
+      } else if (message.type === "MovSuccess") {
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
       }
     };
-  
   };
 
   useEffect(() => {
@@ -137,43 +141,51 @@ function StartGame({ game_id, userId, websocketUrl }) {
   return reconnectingWS ? (
     <div>Intentando reconectar...</div>
   ) : (
-    <div className="gameContainer">
-      <div className="boardContainer">
-        <Board board={board} />
-      </div>
-      {Array.isArray(players) && players.length > 0 && (
-        <>
-          <div key={0} className="player">
-            <Cards
-              playerData={players.find((player) => player.unique_id === userId)}
-            />
+    <MovementProvider>
+      <MovCardProvider>
+        <div className="gameContainer">
+          <div className="boardContainer">
+            <Board board={board} isYourTurn={isYourTurn}/>
           </div>
-          {players
-            .filter((player) => player.unique_id !== userId)
-            .map((player, index) => (
-              <div key={index + 1} className={`opponent-${index + 1}`}>
-                {player && <Cards playerData={player} />}
+          {Array.isArray(players) && players.length > 0 && (
+            <>
+              <div key={0} className="player">
+                <Cards
+                  playerData={players.find(
+                    (player) => player.unique_id === userId
+                  )} isYourTurn={isYourTurn}
+                />
               </div>
-            ))}
-        </>
-      )}
-      <div className="leaveButtonContainer">
-        <LeaveGame playerId={userId} gameId={game_id} />
-      </div>
-      {isGameOver && <VictoryScreen isGameOver={isGameOver} winner={winner} />}
-      <GameInfo 
-        turnNumber={turnNumber}
-        players={players}
-        currentPlayerId={currentPlayerId}
-        userId={userId}
-      />
-      <EndTurn
-        playerId={userId}
-        gameId={game_id}
-        currentTurn={turnNumber}
-        isYourTurn={isYourTurn}
-      />
-    </div>
+              {players
+                .filter((player) => player.unique_id !== userId)
+                .map((player, index) => (
+                  <div key={index + 1} className={`opponent-${index + 1}`}>
+                    {player && <Cards playerData={player} isYourTurn={isYourTurn}/>}
+                  </div>
+                ))}
+            </>
+          )}
+          <div className="leaveButtonContainer">
+            <LeaveGame playerId={userId} gameId={game_id} />
+          </div>
+          {isGameOver && (
+            <VictoryScreen isGameOver={isGameOver} winner={winner} />
+          )}
+          <GameInfo
+            turnNumber={turnNumber}
+            players={players}
+            currentPlayerId={currentPlayerId}
+            userId={userId}
+          />
+          <EndTurn
+            playerId={userId}
+            gameId={game_id}
+            currentTurn={turnNumber}
+            isYourTurn={isYourTurn}
+          />
+        </div>
+      </MovCardProvider>
+    </MovementProvider>
   );
 }
 export default StartGame;
