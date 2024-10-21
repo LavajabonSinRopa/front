@@ -72,8 +72,9 @@ const Board = ({ board, isYourTurn }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
+          
         });
-
+          console.log(data)
         if (!response.ok) {
           const errorDetails = await response.json();
           console.log("Detalles del error:", errorDetails);
