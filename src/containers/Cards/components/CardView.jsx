@@ -79,7 +79,7 @@ const movSvgMap = {
 const CardView = ({ movCards, figCards, playerId, useMovCard }) => {
   const { userId } = useContext(UserIdContext);
   const { movCardId } = useContext(MovCardContext);
-
+  
   return (
     <div className="cardViewContainer">
         {movCards && (

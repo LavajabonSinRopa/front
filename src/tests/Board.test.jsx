@@ -3,15 +3,45 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Board from "../containers/Board/Board.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
+import { UserIdProvider } from "../contexts/UserIdContext.jsx";
+import { useParams } from "react-router-dom";
+import { MovCardProvider } from "../contexts/MovCardContext.jsx";
+import { MovementProvider } from "../contexts/MovementContext.jsx";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: jest.fn(),
 }));
 
+const mockUserIdContextValue = {
+  userId: "12345",
+  setUserId: jest.fn(),
+};
+
+const mockMovCardContextValue = {
+  movCardId: "999999",
+  setMovCardId: jest.fn(),
+  movCardType: "1",
+  setMovCardType: jest.fn(),
+};
+
+const mockMovementContextValue = {
+  firstPieceXaxis: "0",
+  setFirstPieceXaxis: jest.fn(),
+  firstPieceYaxis: "0",
+  setFirstPieceYaxis: jest.fn(),
+  secondPieceXaxis: "1",
+  setSecondPieceXaxis: jest.fn(),
+  secondPieceYaxis: "1",
+  setSecondPieceYaxis: jest.fn(),
+};
 
 describe("Board", () => {
   const mockGameId = "1";
+
+  beforeEach(() => {
+    useParams.mockReturnValue({ game_id: "GameTestId" });
+  });
 
   afterEach(() => {
     // Limpiar el mock
@@ -30,7 +60,13 @@ describe("Board", () => {
 
     render(
       <Router>
-        <Board board={boardMock} />
+        <MovementProvider value={mockMovementContextValue}>
+          <MovCardProvider value={mockMovCardContextValue}>
+            <UserIdProvider value={mockUserIdContextValue}>
+              <Board board={boardMock} isYourTurn={true} />
+            </UserIdProvider>
+          </MovCardProvider>
+        </MovementProvider>
       </Router>
     );
 
@@ -58,9 +94,19 @@ describe("Board", () => {
   });
 
   it("Si el fetch no se puede realizar se muestra un mensaje de error", async () => {
-    const boardMock = []
-    
-    render(<Board board={boardMock} />);
+    const boardMock = [];
+
+    render(
+      <Router>
+        <MovementProvider value={mockMovementContextValue}>
+          <MovCardProvider value={mockMovCardContextValue}>
+            <UserIdProvider value={mockUserIdContextValue}>
+              <Board board={boardMock} isYourTurn={true} />
+            </UserIdProvider>
+          </MovCardProvider>
+        </MovementProvider>
+      </Router>
+    );
 
     const pieces = screen.queryAllByRole("button");
     expect(pieces).toHaveLength(0);
