@@ -1,0 +1,77 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.gameContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 25vh);
+  width: 100vw;
+  height: 100vh;
+}
+
+.boardContainer {
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+  
+}
+
+.player {
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 4; /* Ocupa filas 2 y 3 */
+}
+
+.opponent-1 {
+  grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 1; /* Ocupa filas 2 y 3 */
+}
+
+.boardContainer , .player , .opponent-1, .opponent-2, .opponent-3 {
+  display: flex; /* Usamos flexbox para centrar contenido */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Ocupa todo el espacio de la celda */
+  width: 100%; /* Ocupa todo el espacio de la celda */
+}
+
+
+.opponent-2 {
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+}
+
+.opponent-3 {
+  grid-column: 4; /* Ocupa columnas 2 y 3 */
+  grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+}
+
+.gameInfo {
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 1; /* Ocupa filas 2 y 3 */
+}
+
+.endTurnButton{
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 3; /* Ocupa filas 2 y 3 */
+}
+          
+.cancelMoveButton{
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 4; /* Ocupa filas 2 y 3 */
+}
+
+.optionsButtonContainer {
+  grid-column: 1; /* Ocupa columnas 1 */
+  grid-row: 4; /* Ocupa fila 4 */
+  
+  display: flex; /* Usamos flexbox */
+  flex-direction: column; /* Alineación vertical */
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  
+  height: 100%; /* Ocupa todo el espacio de la celda */
+  width: 100%; /* Ocupa todo el espacio de la celda */
+  gap: 10px; /* Espaciado entre los botones */
+}

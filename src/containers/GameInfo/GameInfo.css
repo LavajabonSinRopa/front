@@ -1,0 +1,20 @@
+.game-info {
+  border-radius: 8px;
+  padding: 30px;
+  margin-top: 30px;
+}
+
+.game-info h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+}
+
+.players-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.players-info > span {
+  margin-right: 8px;
+}

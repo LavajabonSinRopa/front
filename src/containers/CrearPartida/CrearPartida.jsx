@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import CrearPartidaView from "./components/CrearPartidaView";
+import { UserIdContext } from "../../contexts/UserIdContext";
 
-const CrearPartida = ({sendDataToParent}) => {
+const CrearPartida = () => {
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
   const [name, setName] = useState("");
@@ -11,6 +12,7 @@ const CrearPartida = ({sendDataToParent}) => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const {userId, setUserId} = useContext(UserIdContext)
 
   const handleChangeUser = (e) => {
     setMessage("");
@@ -67,8 +69,8 @@ const CrearPartida = ({sendDataToParent}) => {
       }
 
       const result = await response.json();
+      setUserId(result.player_id)
       const gameId = result.game_id;
-      sendDataToParent(result.creator)
       
       setMessage("Creación de partida exitosa.");
 

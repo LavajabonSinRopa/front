@@ -1,22 +1,27 @@
 import React from "react";
-import { render, screen, act} from "@testing-library/react";
-import { GenericList } from "./GenericList";
+import { render, screen, waitFor} from "@testing-library/react";
+import { GenericList } from "../containers/GenericList/GenericList.jsx";
 import "@testing-library/jest-dom";
 import WS from "jest-websocket-mock";
 
-
 describe("GenericList", () => {
+  let server;
 
-  const server = new WS("ws://localhost:1234", { jsonProtocol: true });
-  /*
+  beforeEach(() => {
+    server = new WS("ws://localhost:1234", { jsonProtocol: true });
+  });
+
+  afterEach(() => {
+    WS.clean(); // Limpiar los mock de WebSocket después de cada test
+  });
+
   it("renders list items based on WebSocket messages", async () => {
-    // MOCKEO DE PROPS
     const mockRenderItem = jest.fn((item) => (
       <div key={item.id}>{item.name}</div>
     ));
     const websocketUrl = "ws://localhost:1234";
     const typeKey = "players";
-  
+
     render(
       <GenericList
         websocketUrl={websocketUrl}
@@ -24,10 +29,11 @@ describe("GenericList", () => {
         typeKey={typeKey}
       />
     );
+    
+    // Esperar a que la conexión WebSocket esté lista
     await server.connected;
-  
-    // SIMULANDO EL MENSAJE DEL WEBSOCKET
-    const socket = new WebSocket(websocketUrl);
+
+    // Simular mensaje desde el WebSocket
     const message = {
       type: typeKey,
       payload: [
@@ -35,12 +41,14 @@ describe("GenericList", () => {
         { id: 2, name: "Player 2" },
       ],
     };
-  
+
     server.send(message);
-  
-    // ASSERT: TODOS LOS ITEMS DE DEBEN RENDERIZAR
-    expect(screen.getByText("Player 1")).toBeInTheDocument();
-    expect(screen.getByText("Player 2")).toBeInTheDocument();
+
+    // Esperar a que los items se rendericen
+    await waitFor(() => {
+      expect(screen.getByText("Player 1")).toBeInTheDocument();
+      expect(screen.getByText("Player 2")).toBeInTheDocument();
+    });
   });
 
   it("filters items correctly based on props", async () => {
@@ -124,5 +132,5 @@ describe("GenericList", () => {
     expect(screen.queryByText("Item 7")).not.toBeInTheDocument();
     expect(screen.queryByText("Item 8")).not.toBeInTheDocument();
   });
-  */
+
 });

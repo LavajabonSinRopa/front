@@ -1,38 +1,22 @@
-## Estructura del componente `GameLobby`
+## El Switcher - Frontend
 
-### `components/`
+### Cómo correr
+Para levantar la aplicación, ejecutar la siguiente serie de comandos:
+```sh
+# Clonar el repositorio y acceder a la carpeta
+git clone https://github.com/LavajabonSinRopa/front.git
+cd front
 
-* **`Archivos index.jsx en general`**: Exportan el componente principal de la carpeta en la que están para que sean más prolijos los import en otros componentes.
-* **`Archivos .css en general`**: Estilos.
+# Instalar las dependencias
+npm install
 
-* **`GameLobby/`**
-    * `GameLobby.jsx`: 
-        * Renderiza `GameInfo`, `PlayerList` y `GameButtons` (condicionalmente).
-        * Maneja la lógica general del lobby.
+# Levantar la aplicación
+npm run dev
+```
 
-    * **`PlayerList/`**
-        * `PlayerItem.jsx`: Muestra el nombre de cada jugador, destacando si el jugador es el "owner" de la partida.
-        * `PlayerList.jsx`: 
-            * Reutiliza el componente genérico para listar jugadores.
-            * Resalta al owner de la partida.
-            * Usa PlayerItem para renderizar cada jugador
-
-    * **`GameInfo/`**
-        * Muestra el nombre y tipo de la partida. Recibe estos datos desde GameLobbyContainer.
-
-    * **`GameButtons/`**
-        * Muestra el botón "Iniciar Partida" si el usuario es el owner.
-        * Muestra el botón "Abandonar Partida" o "Cancelar Partida" según corresponda.
-        * Maneja los clics en los botones y llama a `gameService`.
-
-### `containers/`
-
-* **`GameLobbyContainer`**
-    * Se conecta al WebSocket para recibir actualizaciones.
-    * Obtiene los datos iniciales de la partida de la API.
-    * Pasa los datos a los componentes del lobby.
-    * Actualiza el estado cuando recibe notificaciones por WebSocket.
-
-### `services/`
-
-* `gameService.js`: Contiene las funciones para llamar a los endpoints de la API para abandonar/cancelar/iniciar la partida.
+### Cómo testear
+Los diferentes tests se encuentran modularizados en distintos archivos según la funcionalidad.
+```sh
+npm test
+```
+Todos los archivos dentro de la carpeta `front/tests` corresponden a tests.

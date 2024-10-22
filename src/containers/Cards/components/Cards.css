@@ -1,0 +1,10 @@
+.cardContainer {
+  display: flex;                /* Activa Flexbox en el contenedor */
+  flex-direction: column;      /* Coloca los elementos en una columna */
+  justify-content: center;     /* Centra verticalmente los elementos */
+  align-items: center;         /* Centra horizontalmente los elementos */
+}
+
+.playerName {
+    font-size: 30px;
+}

@@ -1,0 +1,34 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, 60px);
+  grid-template-rows: repeat(6, 60px);
+  width: 410px;
+  gap: 10px; /* Mayor separacion entre piezas */
+  padding: 20px; /* Espaciado alrededor del tablero */
+  background-color: #662c05; /* Fondo del tablero */
+  border: 4px solid #581b02; /* Borde del tablero */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.row {
+  display: contents; /* Permite que las filas se alineen correctamente */
+}
+
+.piece {
+  display: flex; /* Centra el contenido */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent; /* Borde inicial transparente */
+  border-radius: 11px;
+  background-color: #380a02; /* Fondo de cada pieza */
+  transition: all 0.3s ease; /* Transicion suave */
+}
+
+.piece:hover {
+  transform: scale(1.15); /* Efecto de aumento al pasar el raton */
+  cursor: pointer; /* Cambia el cursor al pasar el raton */
+}
+
+
