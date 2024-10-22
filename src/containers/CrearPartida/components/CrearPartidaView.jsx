@@ -29,18 +29,21 @@ const CrearPartidaView = ({
         onChange={onChangeInput}
       />
       <p>Caracteres usados: {name.length}/20</p>
+
+      {/*
       <h2>Contraseña:</h2>
       <input
         placeholder="Ingresa una Contraseña"
         value={password}
         onChange={onChangePassword}
       />
-      <p>Caracteres usados: {password.length}/10</p>
+      <p>Caracteres usados: {password.length}/10</p>*/}
+
       <button
         style={{
           color: "white",
-          backgroundColor: (validName && validUserName) ? "blue" : "red",
-          cursor: (validName && validUserName) ? "pointer" : "not-allowed",
+          backgroundColor: validName && validUserName ? "blue" : "red",
+          cursor: validName && validUserName ? "pointer" : "not-allowed",
         }}
         disabled={!validName || !validUserName || loading}
         onClick={onSubmit}
