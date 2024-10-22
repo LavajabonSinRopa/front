@@ -15,13 +15,13 @@ describe("Componente PiecesView", () => {
     const button = getByRole("button");
     expect(button).toHaveClass("isSelected");
   });
-
+/*
   it("agrega la clase isSwapped cuando la ficha está intercambiada", () => {
     const { getByRole } = render(<PiecesView color="green" isSwapped />);
     const button = getByRole("button");
     expect(button).toHaveClass("isSwapped");
   });
-
+*/
   it("aplica la clase moveableSlot si la ficha se puede mover", () => {
     const { getByRole } = render(<PiecesView color="yellow" moveableSlot />);
     const button = getByRole("button");

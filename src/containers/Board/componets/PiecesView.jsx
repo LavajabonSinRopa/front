@@ -14,14 +14,15 @@ const PiecesView = ({
   }
   const isAFormedFigure = color === color.toUpperCase(); // Si el color viene todo en mayusculas, es una figura formada y se resalta en el tablero
   const normalColor = color.toLowerCase(); //ficha común, no se resalta
+
   const buttonClass = `button 
   ${moveableSlot ? "moveableSlot" : ""} 
   ${normalColor ? normalColor : ""} 
   ${movError ? "movError" : ""} 
   ${isSelected ? "isSelected" : ""} 
-  ${isSwapped  ? "isSwapped" : ""} 
   ${isAFormedFigure ? "isAFormedFigure" : ""} 
-  ${isSwapped && isAFormedFigure ? "isSwapped" : ""}`;
+  ${isInvolvedInPartialMovement ? "isSwapped" : ""}`;
+  
 
   return <button className={buttonClass}></button>;
 };

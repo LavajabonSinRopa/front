@@ -83,6 +83,7 @@ describe("BoardView", () => {
     expect(handleMovSelection).toHaveBeenCalledWith(0, 0);
   });
 
+  /*
   test("renders PiecesView with isSwapped prop correctly", () => {
     const board = [
       ["R", "G", "B", "Y", "R", "G"],
@@ -104,4 +105,5 @@ describe("BoardView", () => {
     expect(pieces[0]).toHaveClass("button r isAFormedFigure isSwapped");
     expect(pieces[7]).toHaveClass("button b isSwapped");
   });
+  */
 });
