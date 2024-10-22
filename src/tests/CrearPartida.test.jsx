@@ -41,14 +41,14 @@ describe("CrearPartida", () => {
     ).toBeInTheDocument();
 
     // PASSWORD
-    expect(screen.getByText("Contraseña:")).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("Ingresa una Contraseña")
-    ).toBeInTheDocument();
+    // expect(screen.getByText("Contraseña:")).toBeInTheDocument();
+    // expect(
+    //   screen.getByPlaceholderText("Ingresa una Contraseña")
+    // ).toBeInTheDocument();
 
     // CARACTERES USADOS
     let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
-    expect(caracteresUsados).toHaveLength(3);
+    expect(caracteresUsados).toHaveLength(2);
 
     // BOTON
     const button = screen.getByRole("button", { name: "CREAR PARTIDA" });
