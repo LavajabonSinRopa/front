@@ -79,7 +79,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message)
+      console.log(message);
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
@@ -146,9 +146,13 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
   useEffect(() => {
     if (players.length > 0) {
-      const currentPlayer = players.find(player => player.unique_id === userId);
+      const currentPlayer = players.find(
+        (player) => player.unique_id === userId
+      );
       if (currentPlayer && currentPlayer.movement_cards) {
-        const hasBlockedCard = currentPlayer.movement_cards.some(card => card.state === "blocked");
+        const hasBlockedCard = currentPlayer.movement_cards.some(
+          (card) => card.state === "blocked"
+        );
         setPartialMovementsMade(hasBlockedCard);
       }
     }
@@ -161,7 +165,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
       <MovCardProvider>
         <div className="gameContainer">
           <div className="boardContainer">
-            <Board board={board} isYourTurn={isYourTurn}/>
+            <Board board={board} isYourTurn={isYourTurn} />
           </div>
           {Array.isArray(players) && players.length > 0 && (
             <>
@@ -169,42 +173,47 @@ function StartGame({ game_id, userId, websocketUrl }) {
                 <Cards
                   playerData={players.find(
                     (player) => player.unique_id === userId
-                  )} isYourTurn={isYourTurn}
+                  )}
+                  isYourTurn={isYourTurn}
                 />
               </div>
               {players
                 .filter((player) => player.unique_id !== userId)
                 .map((player, index) => (
                   <div key={index + 1} className={`opponent-${index + 1}`}>
-                    {player && <Cards playerData={player} isYourTurn={isYourTurn}/>}
+                    {player && (
+                      <Cards playerData={player} isYourTurn={isYourTurn} />
+                    )}
                   </div>
                 ))}
             </>
           )}
-          <div className="leaveButtonContainer">
+          <div className="optionsButtonContainer">
             <LeaveGame playerId={userId} gameId={game_id} />
+            <EndTurn
+              playerId={userId}
+              gameId={game_id}
+              currentTurn={turnNumber}
+              isYourTurn={isYourTurn}
+            />
+            <CancelMove
+              playerId={userId}
+              gameId={game_id}
+              isYourTurn={isYourTurn}
+              partialMovementsMade={partialMovementsMade}
+            />
           </div>
           {isGameOver && (
             <VictoryScreen isGameOver={isGameOver} winner={winner} />
           )}
-          <GameInfo
-            turnNumber={turnNumber}
-            players={players}
-            currentPlayerId={currentPlayerId}
-            userId={userId}
-          />
-          <EndTurn
-            playerId={userId}
-            gameId={game_id}
-            currentTurn={turnNumber}
-            isYourTurn={isYourTurn}
-          />
-          <CancelMove
-            playerId={userId}
-            gameId={game_id}
-            isYourTurn={isYourTurn}
-            partialMovementsMade={partialMovementsMade}
-          />
+          <div className="gameInfo">
+            <GameInfo
+              turnNumber={turnNumber}
+              players={players}
+              currentPlayerId={currentPlayerId}
+              userId={userId}
+            />
+          </div>
         </div>
       </MovCardProvider>
     </MovementProvider>

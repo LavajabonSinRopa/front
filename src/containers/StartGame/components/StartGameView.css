@@ -28,7 +28,7 @@ body {
   grid-row: 1; /* Ocupa filas 2 y 3 */
 }
 
-.boardContainer , .player , .opponent-1, .opponent-2, .opponent-3, .leaveButtonContainer {
+.boardContainer , .player , .opponent-1, .opponent-2, .opponent-3 {
   display: flex; /* Usamos flexbox para centrar contenido */
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */
@@ -47,7 +47,31 @@ body {
   grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
 }
 
-.leaveButtonContainer {
+.gameInfo {
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 1; /* Ocupa filas 2 y 3 */
+}
+
+.endTurnButton{
+  grid-column: 1; /* Ocupa columnas 2 y 3 */
+  grid-row: 3; /* Ocupa filas 2 y 3 */
+}
+          
+.cancelMoveButton{
   grid-column: 1; /* Ocupa columnas 2 y 3 */
   grid-row: 4; /* Ocupa filas 2 y 3 */
+}
+
+.optionsButtonContainer {
+  grid-column: 1; /* Ocupa columnas 1 */
+  grid-row: 4; /* Ocupa fila 4 */
+  
+  display: flex; /* Usamos flexbox */
+  flex-direction: column; /* Alineación vertical */
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  
+  height: 100%; /* Ocupa todo el espacio de la celda */
+  width: 100%; /* Ocupa todo el espacio de la celda */
+  gap: 10px; /* Espaciado entre los botones */
 }
