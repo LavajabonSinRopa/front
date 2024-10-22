@@ -34,8 +34,8 @@ import mov1 from "./cardSVG/mov1.svg";
 import mov2 from "./cardSVG/mov2.svg";
 import mov3 from "./cardSVG/mov3.svg";
 import mov4 from "./cardSVG/mov4.svg";
-import mov5 from "./cardSVG/mov5.svg";
-import mov6 from "./cardSVG/mov6.svg";
+import mov5 from "./cardSVG/mov6.svg";
+import mov6 from "./cardSVG/mov5.svg";
 import mov7 from "./cardSVG/mov7.svg";
 
 const figSvgMap = {
