@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 import "./CardView.css";
 import { MovCardContext } from "../../../contexts/MovCardContext.jsx";
+import { FigCardContext } from "../../../contexts/FigCardContext.jsx";
 
 import backMov from "./cardSVG/back-mov.svg";
 import backFig from "./cardSVG/back.svg";
@@ -76,60 +77,80 @@ const movSvgMap = {
   6: mov7,
 };
 
-const CardView = ({ movCards, figCards, playerId, useMovCard }) => {
+const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard }) => {
   const { userId } = useContext(UserIdContext);
   const { movCardId } = useContext(MovCardContext);
-  
+  const { figCardId } = useContext(FigCardContext);
+
   return (
     <div className="cardViewContainer">
-        {movCards && (
-          <>
-            {Array.isArray(movCards) && movCards.length > 0 ? (
-              <ul
-                style={{ listStyleType: "none", padding: 0, margin: 0 }}
-                className="grid-container"
-              >
-                {movCards.map((card, index) => (
-                  <li key={index} className="grid-item">
-                    <img
-                      className={"card"}
-                      onClick={useMovCard}
-                      data-id={card.unique_id}
-                      data-type={card.type}
-                      src={userId === playerId ? movSvgMap[card.type] : backMov}
-                      style={{
-                        transform: movCardId === card.unique_id ? 'scale(1.5)' : 'scale(1)',
-                        transition: 'transform 0.3s ease-in-out',
-    filter: card.state === 'blocked' ? 'grayscale(100%)' : 'none'
-                      }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay cartas de movimiento</p>
-            )}
-          </>
-        )}
+      {movCards && (
+        <>
+          {Array.isArray(movCards) && movCards.length > 0 ? (
+            <ul
+              style={{ listStyleType: "none", padding: 0, margin: 0 }}
+              className="grid-container"
+            >
+              {movCards.map((card, index) => (
+                <li key={index} className="grid-item">
+                  <img
+                    className={"card"}
+                    onClick={useMovCard}
+                    data-id={card.unique_id}
+                    data-type={card.type}
+                    src={userId === playerId ? movSvgMap[card.type] : backMov}
+                    style={{
+                      transform:
+                        movCardId === card.unique_id
+                          ? "scale(1.5)"
+                          : "scale(1)",
+                      transition: "transform 0.3s ease-in-out",
+                      filter:
+                        card.state === "blocked" ? "grayscale(100%)" : "none",
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay cartas de movimiento</p>
+          )}
+        </>
+      )}
 
-        {figCards && (
-          <>
-            {Array.isArray(figCards) && figCards.length > 0 ? (
-              <ul
-                style={{ listStyleType: "none", padding: 0, margin: 0 }}
-                className="grid-container"
-              >
-                {figCards.map((card, index) => (
-                  <li key={index} className="grid-item">
-                    <img className={"card"} src={figSvgMap[card.type]} />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay cartas de figura</p>
-            )}
-          </>
-        )}
+      {figCards && (
+        <>
+          {Array.isArray(figCards) && figCards.length > 0 ? (
+            <ul
+              style={{ listStyleType: "none", padding: 0, margin: 0 }}
+              className="grid-container"
+            >
+              {figCards.map((card, index) => (
+                <li key={index} className="grid-item">
+                  <img
+                    className={"card"}
+                    onClick={useFigCard}
+                    data-id={card.unique_id}
+                    data-type={card.type}
+                    src={figSvgMap[card.type]}
+                    style={{
+                      transform:
+                        figCardId === card.unique_id
+                          ? "scale(1.5)"
+                          : "scale(1)",
+                      transition: "transform 0.3s ease-in-out",
+                      filter:
+                        card.state === "blocked" ? "grayscale(100%)" : "none",
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay cartas de figura</p>
+          )}
+        </>
+      )}
     </div>
   );
 };

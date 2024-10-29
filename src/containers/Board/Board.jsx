@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { MovCardContext } from "../../contexts/MovCardContext.jsx";
 import { MovementContext } from "../../contexts/MovementContext.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
+import { FigCardContext } from "../../contexts/FigCardContext.jsx";
 
 const Board = ({ board, isYourTurn }) => {
   const { userId } = useContext(UserIdContext);
@@ -13,6 +14,8 @@ const Board = ({ board, isYourTurn }) => {
   const [swappedPieces, setSwappedPieces] = useState([]);
   const { movCardId, setMovCardId, movCardType, setMovCardType } =
     useContext(MovCardContext);
+  const { figCardId, setFigCardId, figCardType, setFigCardType } =
+    useContext(FigCardContext);
   const {
     firstPieceXaxis,
     setFirstPieceXaxis,
@@ -27,8 +30,8 @@ const Board = ({ board, isYourTurn }) => {
     setFirstPieceYaxis(null);
     setSecondPieceXaxis(null);
     setSecondPieceYaxis(null);
-    setSwappedPieces([]); 
-  }, [isYourTurn]);
+    setSwappedPieces([]);
+  }, [isYourTurn,figCardId]);
 
   async function handleMovSelection(rowIndex, colIndex) {
     if (!isYourTurn) return;
@@ -72,9 +75,8 @@ const Board = ({ board, isYourTurn }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-          
         });
-          console.log(data)
+        console.log(data);
         if (!response.ok) {
           const errorDetails = await response.json();
           console.log("Detalles del error:", errorDetails);
@@ -120,11 +122,72 @@ const Board = ({ board, isYourTurn }) => {
     }, 2000);
   }
 
+  async function handleFigSelection(rowIndex, colIndex) {
+    if (!isYourTurn) return;
+
+    if (rowIndex == null || colIndex == null) {
+      return;
+    }
+
+    const data = {
+      player_id: userId,
+      card_id: figCardId,
+      x: colIndex,
+      y: rowIndex,
+    };//game_id=game_id, player_id=request.player_id, card_id=request.card_id, i = request.y, j = request.x
+
+    try {
+      const response = await fetch(`/api/games/${game_id}/completeFigure`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      console.log("FIGURAAAAAAAAAAAAAAAAAAAaa");
+      console.log(data);
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        console.log("Detalles del error:", errorDetails);
+        setMovError(true);
+      } else {
+        setFigCardId(null);
+        setFigCardType(null);
+        const responseApplyMovs = await fetch(`/api/games/${game_id}/apply`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            player_id: userId,
+          }),
+        });
+        if (!responseApplyMovs.ok) {
+          const errorDetails = await responseApplyMovs.json();
+          console.log("Detalles del error:", errorDetails);
+          setMovError(true);
+        } else {
+          console.log("SE APLICARON LOS MOVIMIENTOS");
+        }
+      }
+      // Resetear estados tras un movimiento exitoso
+    } catch (error) {
+      console.error("Error al realizar movimiento:", error);
+    } finally {
+      console.log("Finalizó la acción.");
+    }
+
+    // Manejar timeout para el error
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setMovError(false);
+    }, 2000);
+  }
+
   return (
     <>
       <BoardView
         board={board}
         handleMovSelection={handleMovSelection}
+        handleFigSelection={handleFigSelection}
         movError={movError}
         swappedPieces={swappedPieces}
       />

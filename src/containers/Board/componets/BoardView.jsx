@@ -3,15 +3,17 @@ import PiecesView from "./PiecesView";
 import "./BoardView.css";
 import { MovementContext } from "../../../contexts/MovementContext";
 import { MovCardContext } from "../../../contexts/MovCardContext";
+import { FigCardContext } from "../../../contexts/FigCardContext";
 
-const BoardView = ({ board, handleMovSelection, movError, swappedPieces }) => {
+const BoardView = ({ board, handleMovSelection, handleFigSelection, movError, swappedPieces }) => {
   const {
     firstPieceXaxis,
     firstPieceYaxis,
     secondPieceXaxis,
     secondPieceYaxis,
   } = useContext(MovementContext);
-  const { movCardType } = useContext(MovCardContext);
+  const { movCardId, movCardType } = useContext(MovCardContext);
+  const { figCardId } = useContext(FigCardContext);
 
   function isMoveableSlot(xAxis, yAxis) {
     let isMoveable = false;
@@ -61,7 +63,13 @@ const BoardView = ({ board, handleMovSelection, movError, swappedPieces }) => {
             <div
               key={colIndex}
               className="piece"
-              onClick={() => handleMovSelection(rowIndex, colIndex)}
+              onClick={() => {
+                if (figCardId !== null) {
+                  handleFigSelection(rowIndex, colIndex);
+                } else  {
+                  handleMovSelection(rowIndex, colIndex);
+                }
+              }}
             >
               <PiecesView
                 color={char}
