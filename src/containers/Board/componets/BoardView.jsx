@@ -1,11 +1,22 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import PiecesView from "./PiecesView";
 import "./BoardView.css";
 import { MovementContext } from "../../../contexts/MovementContext";
 import { MovCardContext } from "../../../contexts/MovCardContext";
 import { FigCardContext } from "../../../contexts/FigCardContext";
 
-const BoardView = ({ board, handleMovSelection, handleFigSelection, movError, swappedPieces }) => {
+const BoardView = ({
+  board,
+  handleMovSelection,
+  handleFigSelection,
+  movError,
+  figError,
+  swappedPieces,
+  getConnectedComponents,
+}) => {
+  const [connectedComponents, setConnectedComponents] = useState([]);
+  const [selectedFigRow, setSelectedFigRow] = useState(null);
+  const [selectedFigCol, setSelectedFigCol] = useState(null);
   const {
     firstPieceXaxis,
     firstPieceYaxis,
@@ -66,9 +77,19 @@ const BoardView = ({ board, handleMovSelection, handleFigSelection, movError, sw
               onClick={() => {
                 if (figCardId !== null) {
                   handleFigSelection(rowIndex, colIndex);
-                } else  {
+                  setSelectedFigRow(rowIndex);
+                  setSelectedFigCol(colIndex);
+                } else {
                   handleMovSelection(rowIndex, colIndex);
                 }
+              }}
+              onMouseEnter={() => {
+                setConnectedComponents(
+                  getConnectedComponents(board, rowIndex, colIndex, char)
+                );
+              }}
+              onMouseLeave={() => {
+                setConnectedComponents([]);
               }}
             >
               <PiecesView
@@ -84,12 +105,30 @@ const BoardView = ({ board, handleMovSelection, handleFigSelection, movError, sw
                     (secondPieceXaxis === colIndex &&
                       secondPieceYaxis === rowIndex))
                 }
-                isSwapped={
-                  swappedPieces.some(
-                    ([x, y]) => x === rowIndex && y === colIndex
+                figError={
+                  figError &&
+                  connectedComponents.some(
+                    ([i, j]) => i === rowIndex && j === colIndex
+                  ) &&
+                  connectedComponents.some(
+                    ([i, j]) => i === selectedFigRow && j === selectedFigCol
+                  )
+                }
+                isSwapped={swappedPieces.some(
+                  ([x, y]) => x === rowIndex && y === colIndex
+                )}
+                isConnectedComponent={
+                  figCardId !== null &&
+                  connectedComponents.some(
+                    ([i, j]) => i === rowIndex && j === colIndex
                   )
                 }
               />
+              {console.log(
+                connectedComponents.some(
+                  ([i, j]) => i === colIndex && j === rowIndex
+                )
+              )}
             </div>
           ))}
         </div>

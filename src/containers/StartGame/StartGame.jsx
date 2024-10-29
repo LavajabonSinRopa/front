@@ -113,6 +113,8 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "MoveUnMade") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+      } else if (message.type === "FigureMade") {
+        setPlayers(message.payload.players);
       }
     };
   };
