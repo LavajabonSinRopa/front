@@ -28,6 +28,8 @@ function Card({ playerData, isYourTurn }) {
   useEffect(() => {
     setMovCardId(null);
     setMovCardType(null);
+    setFigCardId(null);
+    setFigCardType(null);
   }, [isYourTurn]);
 
   if (!playerData) {
