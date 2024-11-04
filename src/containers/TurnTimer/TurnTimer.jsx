@@ -3,6 +3,7 @@ import TurnTimerView from "./components/TurnTimerView.jsx";
 
 const TurnTimer = ({ turnStart, playerId, gameId }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [secondsLeft, setSecondsLeft] = useState(120);
 
     const sendEndTurnMessage = async (initiator = 'timer') => {
         setIsLoading(true);
@@ -32,15 +33,26 @@ const TurnTimer = ({ turnStart, playerId, gameId }) => {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => sendEndTurnMessage(), 120000);
-        return () => clearTimeout(timer); 
-    }, [turnStart]); 
+        setSecondsLeft(120); 
+
+        const interval = setInterval(() => {
+            setSecondsLeft(prev => {
+                if (prev <= 1) {
+                    sendEndTurnMessage();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [turnStart]);
 
     return (
         <div>
             <TurnTimerView 
+                timer = {secondsLeft}
                 isLoading={isLoading}
-                timer = {timer}
             />
         </div>
     );
