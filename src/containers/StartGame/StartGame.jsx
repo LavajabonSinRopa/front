@@ -9,6 +9,7 @@ import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
+import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
 
 function StartGame({ game_id, userId, websocketUrl }) {
   const [players, setPlayers] = useState([]);
@@ -112,6 +113,8 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "MoveUnMade") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+      } else if (message.type === "FigureMade") {
+        setPlayers(message.payload.players);
       }
     };
   };
@@ -163,58 +166,60 @@ function StartGame({ game_id, userId, websocketUrl }) {
   ) : (
     <MovementProvider>
       <MovCardProvider>
-        <div className="gameContainer">
-          <div className="boardContainer">
-            <Board board={board} isYourTurn={isYourTurn} />
-          </div>
-          {Array.isArray(players) && players.length > 0 && (
-            <>
-              <div key={0} className="player">
-                <Cards
-                  playerData={players.find(
-                    (player) => player.unique_id === userId
-                  )}
-                  isYourTurn={isYourTurn}
-                />
-              </div>
-              {players
-                .filter((player) => player.unique_id !== userId)
-                .map((player, index) => (
-                  <div key={index + 1} className={`opponent-${index + 1}`}>
-                    {player && (
-                      <Cards playerData={player} isYourTurn={isYourTurn} />
+        <FigCardProvider>
+          <div className="gameContainer">
+            <div className="boardContainer">
+              <Board board={board} isYourTurn={isYourTurn} />
+            </div>
+            {Array.isArray(players) && players.length > 0 && (
+              <>
+                <div key={0} className="player">
+                  <Cards
+                    playerData={players.find(
+                      (player) => player.unique_id === userId
                     )}
-                  </div>
-                ))}
-            </>
-          )}
-          <div className="optionsButtonContainer">
-            <LeaveGame playerId={userId} gameId={game_id} />
-            <EndTurn
-              playerId={userId}
-              gameId={game_id}
-              currentTurn={turnNumber}
-              isYourTurn={isYourTurn}
-            />
-            <CancelMove
-              playerId={userId}
-              gameId={game_id}
-              isYourTurn={isYourTurn}
-              partialMovementsMade={partialMovementsMade}
-            />
+                    isYourTurn={isYourTurn}
+                  />
+                </div>
+                {players
+                  .filter((player) => player.unique_id !== userId)
+                  .map((player, index) => (
+                    <div key={index + 1} className={`opponent-${index + 1}`}>
+                      {player && (
+                        <Cards playerData={player} isYourTurn={isYourTurn} />
+                      )}
+                    </div>
+                  ))}
+              </>
+            )}
+            <div className="optionsButtonContainer">
+              <LeaveGame playerId={userId} gameId={game_id} />
+              <EndTurn
+                playerId={userId}
+                gameId={game_id}
+                currentTurn={turnNumber}
+                isYourTurn={isYourTurn}
+              />
+              <CancelMove
+                playerId={userId}
+                gameId={game_id}
+                isYourTurn={isYourTurn}
+                partialMovementsMade={partialMovementsMade}
+              />
+            </div>
+            {isGameOver && (
+              <VictoryScreen isGameOver={isGameOver} winner={winner} />
+            )}
+            <div className="gameInfo">
+              <GameInfo
+                turnNumber={turnNumber}
+                players={players}
+                currentPlayerId={currentPlayerId}
+                userId={userId}
+              />
+            </div>
           </div>
-          {isGameOver && (
-            <VictoryScreen isGameOver={isGameOver} winner={winner} />
-          )}
-          <div className="gameInfo">
-            <GameInfo
-              turnNumber={turnNumber}
-              players={players}
-              currentPlayerId={currentPlayerId}
-              userId={userId}
-            />
-          </div>
-        </div>
+        </FigCardProvider>
       </MovCardProvider>
     </MovementProvider>
   );

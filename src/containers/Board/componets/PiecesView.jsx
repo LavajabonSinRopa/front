@@ -6,7 +6,9 @@ const PiecesView = ({
   isSelected,
   moveableSlot,
   movError,
+  figError,
   isSwapped,
+  isConnectedComponent
 }) => {
   const isInvolvedInPartialMovement = color.endsWith("%");
   if (isInvolvedInPartialMovement) {
@@ -19,9 +21,12 @@ const PiecesView = ({
   ${moveableSlot ? "moveableSlot" : ""} 
   ${normalColor ? normalColor : ""} 
   ${movError ? "movError" : ""} 
+  ${figError ? "figError" : ""} 
   ${isSelected ? "isSelected" : ""} 
   ${isAFormedFigure ? "isAFormedFigure" : ""} 
+  ${isConnectedComponent ? "isConnectedComponent" : ""} 
   ${isInvolvedInPartialMovement ? "isSwapped" : ""}`;
+  
   
 
   return <button className={buttonClass}></button>;

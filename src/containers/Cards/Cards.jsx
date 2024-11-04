@@ -3,6 +3,7 @@ import CardView from "./components/CardView.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/Cards.css";
 import { MovCardContext } from "../../contexts/MovCardContext.jsx";
+import { FigCardContext } from "../../contexts/FigCardContext.jsx";
 
 function Card({ playerData, isYourTurn }) {
   const [playerMovCards, setPlayerMovCards] = useState([]);
@@ -10,6 +11,8 @@ function Card({ playerData, isYourTurn }) {
   const { userId } = useContext(UserIdContext);
   const { movCardId, setMovCardId, movCardType, setMovCardType } =
     useContext(MovCardContext);
+  const { figCardId, setFigCardId, figCardType, setFigCardType } =
+    useContext(FigCardContext);
 
   useEffect(() => {
     if (
@@ -25,6 +28,8 @@ function Card({ playerData, isYourTurn }) {
   useEffect(() => {
     setMovCardId(null);
     setMovCardType(null);
+    setFigCardId(null);
+    setFigCardType(null);
   }, [isYourTurn]);
 
   if (!playerData) {
@@ -37,9 +42,9 @@ function Card({ playerData, isYourTurn }) {
       const cardType = e.target.dataset.type;
       const card = playerMovCards.find((card) => card.unique_id === cardId);
 
-      console.log("card and card state:");
-      console.log(card);
-      console.log(card.state);
+      //console.log("card and card state:");
+      //console.log(card);
+      //console.log(card.state);
 
       if (card && card.state !== "blocked") {
         if (movCardId === null || movCardType === null) {
@@ -53,6 +58,35 @@ function Card({ playerData, isYourTurn }) {
           setMovCardType(cardType);
         }
       }
+      setFigCardId(null);
+      setFigCardType(null);
+    }
+  };
+
+  const handleUseFigCard = (e) => {
+    if (userId === playerData.unique_id && isYourTurn) {
+      const cardId = e.target.dataset.id;
+      const cardType = e.target.dataset.type;
+      const card = playerFigCards.find((card) => card.unique_id === cardId);
+
+      console.log("card and card state:");
+      console.log(card);
+      console.log(card.state);
+
+      if (card && card.state !== "blocked") {
+        if (figCardId === null || figCardType === null) {
+          setFigCardId(cardId);
+          setFigCardType(cardType);
+        } else if (cardId === figCardId) {
+          setFigCardId(null);
+          setFigCardType(null);
+        } else {
+          setFigCardId(cardId);
+          setFigCardType(cardType);
+        }
+      }
+      setMovCardId(null);
+      setMovCardType(null);
     }
   };
 
@@ -68,6 +102,7 @@ function Card({ playerData, isYourTurn }) {
         figCards={playerFigCards}
         playerId={playerData.unique_id}
         useMovCard={handleUseMovCard}
+        useFigCard={handleUseFigCard}
       />
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 import "./CardView.css";
 import { MovCardContext } from "../../../contexts/MovCardContext.jsx";
+import { FigCardContext } from "../../../contexts/FigCardContext.jsx";
 
 import backMov from "./cardSVG/back-mov.svg";
 import backFig from "./cardSVG/back.svg";
@@ -39,31 +40,31 @@ import mov6 from "./cardSVG/mov5.svg";
 import mov7 from "./cardSVG/mov7.svg";
 
 const figSvgMap = {
-  0: fig01,
-  1: fig02,
-  2: fig03,
-  3: fig04,
-  4: fig05,
-  5: fig06,
-  6: fig07,
-  7: fig08,
-  8: fig09,
-  9: fig10,
-  10: fig11,
-  11: fig12,
-  12: fig13,
-  13: fig14,
-  14: fig15,
-  15: fig16,
-  16: fig17,
-  17: fig18,
-  18: fige01,
-  19: fige02,
-  20: fige03,
-  21: fige04,
-  22: fige05,
-  23: fige06,
-  24: fige07,
+  0: fige01,
+  1: fige02,
+  2: fige03,
+  3: fige04,
+  4: fige05,
+  5: fige06,
+  6: fige07,
+  7: fig01,
+  8: fig02,
+  9: fig03,
+  10: fig04,
+  11: fig05,
+  12: fig06,
+  13: fig07,
+  14: fig08,
+  15: fig09,
+  16: fig10,
+  17: fig11,
+  18: fig12,
+  19: fig13,
+  20: fig14,
+  21: fig15,
+  22: fig16,
+  23: fig17,
+  24: fig18,
 };
 
 const movSvgMap = {
@@ -76,60 +77,80 @@ const movSvgMap = {
   6: mov7,
 };
 
-const CardView = ({ movCards, figCards, playerId, useMovCard }) => {
+const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard }) => {
   const { userId } = useContext(UserIdContext);
   const { movCardId } = useContext(MovCardContext);
-  
+  const { figCardId } = useContext(FigCardContext);
+
   return (
     <div className="cardViewContainer">
-        {movCards && (
-          <>
-            {Array.isArray(movCards) && movCards.length > 0 ? (
-              <ul
-                style={{ listStyleType: "none", padding: 0, margin: 0 }}
-                className="grid-container"
-              >
-                {movCards.map((card, index) => (
-                  <li key={index} className="grid-item">
-                    <img
-                      className={"card"}
-                      onClick={useMovCard}
-                      data-id={card.unique_id}
-                      data-type={card.type}
-                      src={userId === playerId ? movSvgMap[card.type] : backMov}
-                      style={{
-                        transform: movCardId === card.unique_id ? 'scale(1.5)' : 'scale(1)',
-                        transition: 'transform 0.3s ease-in-out',
-    filter: card.state === 'blocked' ? 'grayscale(100%)' : 'none'
-                      }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay cartas de movimiento</p>
-            )}
-          </>
-        )}
+      {movCards && (
+        <>
+          {Array.isArray(movCards) && movCards.length > 0 ? (
+            <ul
+              style={{ listStyleType: "none", padding: 0, margin: 0 }}
+              className="grid-container"
+            >
+              {movCards.map((card, index) => (
+                <li key={index} className="grid-item">
+                  <img
+                    className={"card"}
+                    onClick={useMovCard}
+                    data-id={card.unique_id}
+                    data-type={card.type}
+                    src={userId === playerId ? movSvgMap[card.type] : backMov}
+                    style={{
+                      transform:
+                        movCardId === card.unique_id
+                          ? "scale(1.5)"
+                          : "scale(1)",
+                      transition: "transform 0.3s ease-in-out",
+                      filter:
+                        card.state === "blocked" ? "grayscale(100%)" : "none",
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay cartas de movimiento</p>
+          )}
+        </>
+      )}
 
-        {figCards && (
-          <>
-            {Array.isArray(figCards) && figCards.length > 0 ? (
-              <ul
-                style={{ listStyleType: "none", padding: 0, margin: 0 }}
-                className="grid-container"
-              >
-                {figCards.map((card, index) => (
-                  <li key={index} className="grid-item">
-                    <img className={"card"} src={figSvgMap[card.type]} />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay cartas de figura</p>
-            )}
-          </>
-        )}
+      {figCards && (
+        <>
+          {Array.isArray(figCards) && figCards.length > 0 ? (
+            <ul
+              style={{ listStyleType: "none", padding: 0, margin: 0 }}
+              className="grid-container"
+            >
+              {figCards.map((card, index) => (
+                <li key={index} className="grid-item">
+                  <img
+                    className={"card"}
+                    onClick={useFigCard}
+                    data-id={card.unique_id}
+                    data-type={card.type}
+                    src={figSvgMap[card.type]}
+                    style={{
+                      transform:
+                        figCardId === card.unique_id
+                          ? "scale(1.5)"
+                          : "scale(1)",
+                      transition: "transform 0.3s ease-in-out",
+                      filter:
+                        card.state === "blocked" ? "grayscale(100%)" : "none",
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay cartas de figura</p>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -3,22 +3,11 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import StartGame from "../containers/StartGame/StartGame.jsx";
 import WS from "jest-websocket-mock";
-import {
-  MemoryRouter,
-  Routes,
-  Route,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import { UserIdContext, UserIdProvider } from "../contexts/UserIdContext.jsx";
-import {
-  MovementContext,
-  MovementProvider,
-} from "../contexts/MovementContext.jsx";
-import {
-  MovCardContext,
-  MovCardProvider,
-} from "../contexts/MovCardContext.jsx";
+import { MemoryRouter } from "react-router-dom";
+import { UserIdContext } from "../contexts/UserIdContext.jsx";
+import { MovementContext } from "../contexts/MovementContext.jsx";
+import { MovCardContext } from "../contexts/MovCardContext.jsx";
+import { FigCardContext } from "../contexts/FigCardContext.jsx";
 
 const message = {
   type: "GameStarted",
@@ -123,6 +112,13 @@ const mockMovCardContextValue = {
   setMovCardType: jest.fn(),
 };
 
+const mockFigCardContextValue = {
+  figCardId: "5c18c41d-38be-4561-8836-081e62fb4380",
+  setFigCardId: jest.fn(),
+  figCardType: "3",
+  setFigCardType: jest.fn(),
+};
+
 const mockMovementContextValue = {
   firstPieceXaxis: 0,
   setFirstPieceXaxis: jest.fn(),
@@ -145,6 +141,8 @@ describe("CrearPartida", () => {
         jsonProtocol: true,
       }
     );
+    // Limpiar mocks
+    global.fetch.mockRestore();
   });
 
   afterEach(() => {
@@ -259,7 +257,6 @@ describe("CrearPartida", () => {
     };
 
     server.send(message);
-    screen.debug();
     server.send(leaveMessage);
 
     const images = screen.queryAllByRole("img");
@@ -392,7 +389,6 @@ describe("CrearPartida", () => {
     const moveableSlots = container.querySelectorAll(".moveableSlot");
 
     expect(moveableSlots.length).toBe(2);
-    screen.debug();
   });
 
   it("Cuando se hace clicks sobre 2 fichas, con una carta seleccionada, se realiza el movimiento", async () => {
@@ -544,5 +540,157 @@ describe("CrearPartida", () => {
 
     const selectedPieces = container.querySelectorAll(".isSelected");
     expect(selectedPieces.length).toBe(0);
+  });
+
+  it("Se hace click en una figura formada con la carta de figura correspondiente", async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ message: "Figura Formada" }),
+      })
+    );
+
+    const message = {
+      type: "GameStarted",
+      payload: {
+        board: [
+          ["RED", "RED", "RED", "yellow", "yellow", "blue"],
+          ["green", "RED", "blue", "yellow", "green", "blue"],
+          ["blue", "green", "green", "blue", "green", "yellow"],
+          ["red", "red", "green", "yellow", "blue", "red"],
+          ["yellow", "red", "yellow", "yellow", "yellow", "green"],
+          ["blue", "red", "blue", "green", "blue", "green"],
+        ],
+        creator: "58cf988c-6813-4aa7-b4af-6009828e2065",
+        name: "PartidaDePrueba",
+        players: [
+          {
+            unique_id: "8825596f-450e-438d-bd17-a2202af15f4a",
+            name: "luca",
+            movement_cards: [
+              {
+                type: 1,
+                unique_id: "c64f69b3-746a-41b5-93c3-26800a9b864e",
+                state: null,
+              },
+              {
+                type: 2,
+                unique_id: "ead42368-e902-4b3c-99d1-f7b65b6fe1e3",
+                state: null,
+              },
+              {
+                type: 3,
+                unique_id: "ef43d251-8dda-4a08-8fda-f1b159a31ec1",
+                state: null,
+              },
+            ],
+            figure_cards: [
+              {
+                type: 3,
+                unique_id: "5c18c41d-38be-4561-8836-081e62fb4380",
+                state: "drawn",
+              },
+              {
+                type: 22,
+                unique_id: "bb082724-02ae-4c04-ae5f-7ac9668a1f85",
+                state: "drawn",
+              },
+              {
+                type: 8,
+                unique_id: "5ed30eb6-e96b-41bc-81e2-747ac8418c69",
+                state: "drawn",
+              },
+            ],
+          },
+          {
+            unique_id: "e1ba906d-d1c7-41c3-9495-da40a38f1acc",
+            name: "messi",
+            movement_cards: [
+              {
+                type: 4,
+                unique_id: "416305b3-df8a-4889-9388-fe1e89dead57",
+                state: null,
+              },
+              {
+                type: 5,
+                unique_id: "816a767b-2c00-4f4c-bd10-987a45ce8eed",
+                state: null,
+              },
+              {
+                type: 6,
+                unique_id: "2b219f08-5d29-4e69-8dcf-1ae6d79f10aa",
+                state: null,
+              },
+            ],
+            figure_cards: [
+              {
+                type: 6,
+                unique_id: "c558bad6-6876-4483-a1a5-a72190e5be2f",
+                state: "drawn",
+              },
+              {
+                type: 5,
+                unique_id: "76e45acf-0540-493c-8ff5-052e43a125fc",
+                state: "drawn",
+              },
+              {
+                type: 6,
+                unique_id: "db9cddc5-e0b1-4d10-8dc8-4179320fdccb",
+                state: "drawn",
+              },
+            ],
+          },
+        ],
+        state: "started",
+        turn: "0",
+        unique_id: "93ef1c22-c03e-4b03-9ca6-cbc462676d2f",
+      },
+    };
+
+    const { container } = render(
+      <MovementContext.Provider value={mockMovementContextValue}>
+        <MovCardContext.Provider value={mockMovCardContextValue}>
+          <FigCardContext.Provider value={mockFigCardContextValue}>
+            <UserIdContext.Provider value={mockUserIdContextValue}>
+              <StartGame
+                game_id={"gameIdValue"}
+                userId={"8825596f-450e-438d-bd17-a2202af15f4a"}
+                websocketUrl={`ws://localhost:1234/games/gameIdValue/8825596f-450e-438d-bd17-a2202af15f4a`}
+              />
+            </UserIdContext.Provider>
+          </FigCardContext.Provider>
+        </MovCardContext.Provider>
+      </MovementContext.Provider>
+    );
+
+    server.send(message);
+    const figCard = container.querySelector(
+      '[data-id="5c18c41d-38be-4561-8836-081e62fb4380"]'
+    );
+    expect(figCard).toHaveStyle("transform: scale(1)");
+    fireEvent.click(figCard);
+    expect(figCard).toHaveStyle("transform: scale(1.5)");
+    screen.debug();
+
+    const pieces = screen.getAllByRole("button");
+    const firstPiece = pieces[0];
+    expect(firstPiece).toHaveClass("red");
+    fireEvent.click(firstPiece);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `/api/games/gameIdValue/completeFigure`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            player_id: mockUserIdContextValue.userId,
+            card_id: mockFigCardContextValue.figCardId,
+            x: 0,
+            y: 0,
+          }),
+        }
+      );
+    });
   });
 });
