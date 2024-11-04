@@ -5,6 +5,7 @@ import { MovCardContext } from "../../contexts/MovCardContext.jsx";
 import { MovementContext } from "../../contexts/MovementContext.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import { FigCardContext } from "../../contexts/FigCardContext.jsx";
+import { BlockFigCardContext } from "../../contexts/BlockFigCardContext.jsx";
 
 const Board = ({ board, isYourTurn }) => {
   const { userId } = useContext(UserIdContext);
@@ -19,6 +20,14 @@ const Board = ({ board, isYourTurn }) => {
     useContext(MovCardContext);
   const { figCardId, setFigCardId, figCardType, setFigCardType } =
     useContext(FigCardContext);
+  const {
+    blockFigCardId,
+    setBlockFigCardId,
+    blockFigCardType,
+    setBlockFigCardType,
+    opponentId,
+    setOpponentId
+  } = useContext(BlockFigCardContext);
   const {
     firstPieceXaxis,
     setFirstPieceXaxis,
@@ -50,16 +59,20 @@ const Board = ({ board, isYourTurn }) => {
     const directions = [
       [0, 1], //derecha
       [1, 0], //abajo
-      [0, -1],//izquierda
-      [-1, 0],//arriba
+      [0, -1], //izquierda
+      [-1, 0], //arriba
     ];
     const components = [];
 
     const dfs = (i, j) => {
       if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length) return;
-      const sanitizedColor = color.replace(/%/g, '');
-      const sanitizedGridElem = grid[i][j].replace(/%/g, '');
-      if (visited.has(`${i},${j}`) || !sanitizedGridElem.includes(sanitizedColor) ) return;
+      const sanitizedColor = color.replace(/%/g, "");
+      const sanitizedGridElem = grid[i][j].replace(/%/g, "");
+      if (
+        visited.has(`${i},${j}`) ||
+        !sanitizedGridElem.includes(sanitizedColor)
+      )
+        return;
 
       visited.add(`${i},${j}`);
       components.push([i, j]);
@@ -114,19 +127,19 @@ const Board = ({ board, isYourTurn }) => {
     if (firstPieceXaxis === null || firstPieceYaxis === null) {
       setFirstPieceXaxis(colIndex);
       setFirstPieceYaxis(rowIndex);
-    // Clic en la misma pieza: deseleccionar
+      // Clic en la misma pieza: deseleccionar
     } else if (firstPieceXaxis === colIndex && firstPieceYaxis === rowIndex) {
       resetPieceSelection();
-    // Clic en una posicion diferente con carta seleccionada: hacer el movimiento
+      // Clic en una posicion diferente con carta seleccionada: hacer el movimiento
     } else if (movCardId && movCardType) {
       setSecondPieceXaxis(colIndex);
       setSecondPieceYaxis(rowIndex);
       await handleMove(rowIndex, colIndex);
-    // Clic en otra pieza sin tener una carta elegida: Seleccionar otra pieza
+      // Clic en otra pieza sin tener una carta elegida: Seleccionar otra pieza
     } else if (!movCardId && !movCardType) {
       setFirstPieceXaxis(colIndex);
       setFirstPieceYaxis(rowIndex);
-    // Cualquier otro caso: resetear seleccion
+      // Cualquier otro caso: resetear seleccion
     } else {
       resetPieceSelection();
     }
@@ -166,11 +179,43 @@ const Board = ({ board, isYourTurn }) => {
     handleTimeout(setFigError, figErrorTimeoutRef);
   };
 
+  const handleFigBlock = async (rowIndex, colIndex) => {
+    if (!isYourTurn || rowIndex == null || colIndex == null) return;
+    const data = {
+      player_id: opponentId,
+      card_id: blockFigCardId,
+      x: colIndex,
+      y: rowIndex,
+    };
+
+    try {
+      const response = await fetch(`/api/games/${game_id}/blockFigure`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        console.log("Detalles del error:", errorDetails);
+        setFigError(true);
+      } else {
+        setBlockFigCardId(null);
+        setBlockFigCardType(null);
+      }
+    } catch (error) {
+      console.error("Error al bloquear figura:", error);
+    }
+    // Timer para animaciones de error en figuras
+    handleTimeout(setFigError, figErrorTimeoutRef);
+  };
+
   return (
     <BoardView
       board={board}
       handleMovSelection={handleMovSelection}
       handleFigSelection={handleFigSelection}
+      handleFigBlock={handleFigBlock}
       movError={movError}
       figError={figError}
       swappedPieces={swappedPieces}
