@@ -8,6 +8,7 @@ function ListGames({ websocketUrl }) {
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [numPlayers, setNumPlayers] = useState(null);
 
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -30,6 +31,8 @@ function ListGames({ websocketUrl }) {
         setSearch={setSearch}
         containerRef={containerRef}
         isAtBottom={isAtBottom}
+        numPlayers={numPlayers}
+        setNumPlayers={setNumPlayers}
       >
         <GenericList
           filterBy={"name"}
@@ -38,6 +41,7 @@ function ListGames({ websocketUrl }) {
           renderItem={renderItem}
           typeKey={"CreatedGames"}
           idKey={"unique_id"}
+          numPlayers={numPlayers}
         />
       </ListGamesView>
     </UsernameProvider>
