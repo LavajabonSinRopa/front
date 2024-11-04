@@ -42,9 +42,9 @@ function Card({ playerData, isYourTurn }) {
       const cardType = e.target.dataset.type;
       const card = playerMovCards.find((card) => card.unique_id === cardId);
 
-      console.log("card and card state:");
-      console.log(card);
-      console.log(card.state);
+      //console.log("card and card state:");
+      //console.log(card);
+      //console.log(card.state);
 
       if (card && card.state !== "blocked") {
         if (movCardId === null || movCardType === null) {

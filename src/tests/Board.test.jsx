@@ -7,6 +7,7 @@ import { UserIdProvider } from "../contexts/UserIdContext.jsx";
 import { useParams } from "react-router-dom";
 import { MovCardProvider } from "../contexts/MovCardContext.jsx";
 import { MovementProvider } from "../contexts/MovementContext.jsx";
+import { FigCardProvider } from "../contexts/FigCardContext.jsx";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -23,6 +24,13 @@ const mockMovCardContextValue = {
   setMovCardId: jest.fn(),
   movCardType: "1",
   setMovCardType: jest.fn(),
+};
+
+const mockFigCardContextValue = {
+  figCardId: "888888",
+  setFigCardId: jest.fn(),
+  figCardType: "2",
+  setFigCardType: jest.fn(),
 };
 
 const mockMovementContextValue = {
@@ -62,9 +70,11 @@ describe("Board", () => {
       <Router>
         <MovementProvider value={mockMovementContextValue}>
           <MovCardProvider value={mockMovCardContextValue}>
-            <UserIdProvider value={mockUserIdContextValue}>
-              <Board board={boardMock} isYourTurn={true} />
-            </UserIdProvider>
+            <FigCardProvider value={mockFigCardContextValue}>
+              <UserIdProvider value={mockUserIdContextValue}>
+                <Board board={boardMock} isYourTurn={true} />
+              </UserIdProvider>
+            </FigCardProvider>
           </MovCardProvider>
         </MovementProvider>
       </Router>
@@ -100,9 +110,11 @@ describe("Board", () => {
       <Router>
         <MovementProvider value={mockMovementContextValue}>
           <MovCardProvider value={mockMovCardContextValue}>
-            <UserIdProvider value={mockUserIdContextValue}>
-              <Board board={boardMock} isYourTurn={true} />
-            </UserIdProvider>
+            <FigCardProvider value={mockFigCardContextValue}>
+              <UserIdProvider value={mockUserIdContextValue}>
+                <Board board={boardMock} isYourTurn={true} />
+              </UserIdProvider>
+            </FigCardProvider>
           </MovCardProvider>
         </MovementProvider>
       </Router>
