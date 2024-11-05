@@ -20,3 +20,41 @@
   height: 70px; /* Ajusta el tamaño del cuadrado */
   cursor: grab; /* Cambia el cursor al pasar por encima */
 }
+
+.errorBlockFig {
+  animation: vibrarError 0.5s ease-in-out infinite;
+}
+
+
+
+@keyframes vibrarError {
+  0% {
+    transform: translateX(0);
+    background-color: red;
+  }
+  12% {
+    transform: translateX(-3px);
+  }
+  24% {
+    transform: translateX(0);
+  }
+  36% {
+    transform: translateX(3px);
+  }
+  48% {
+    transform: translateX(0);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  72% {
+    transform: translateX(0);
+  }
+  84% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(0);
+    background-color: initial; 
+  }
+}

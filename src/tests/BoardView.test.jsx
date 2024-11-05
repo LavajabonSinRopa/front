@@ -5,6 +5,7 @@ import BoardView from "../containers/Board/componets/BoardView";
 import { MovementContext } from "../contexts/MovementContext";
 import { MovCardContext } from "../contexts/MovCardContext";
 import { FigCardContext } from "../contexts/FigCardContext";
+import { BlockFigCardContext } from "../contexts/BlockFigCardContext";
 
 // Mocks para los contextos
 const movementValue = {
@@ -25,12 +26,23 @@ const mockFigCardContextValue = {
   setFigCardType: jest.fn(),
 };
 
+const mockBlockFigCardContextValue = {
+  blockFigCardId: "888888",
+  setBlockFigCardId: jest.fn(),
+  blockFigCardType: "2",
+  setBlockFigCardType: jest.fn(),
+  opponentId: "8825596f-450e-438d-bd17-a2202af15f4a",
+  setOpponentId: jest.fn(),
+};
+
 const renderBoardView = (props) => {
   return render(
     <MovementContext.Provider value={movementValue}>
       <MovCardContext.Provider value={movCardValue}>
         <FigCardContext.Provider value={mockFigCardContextValue}>
-          <BoardView {...props} />
+          <BlockFigCardContext.Provider value={mockBlockFigCardContextValue}>
+            <BoardView {...props} />
+          </BlockFigCardContext.Provider>
         </FigCardContext.Provider>
       </MovCardContext.Provider>
     </MovementContext.Provider>
