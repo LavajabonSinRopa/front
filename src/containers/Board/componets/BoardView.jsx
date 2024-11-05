@@ -86,6 +86,8 @@ const BoardView = ({
       setSelectedFigPosition({ row: rowIndex, col: colIndex });
     } else if (movCardId !== null) {
       handleMovSelection(rowIndex, colIndex);
+    } else {
+      console.log("Error: No se ha seleccionado ninguna carta");
     }
   };
 

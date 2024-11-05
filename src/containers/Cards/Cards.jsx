@@ -111,7 +111,7 @@ function Card({ playerData, isYourTurn }) {
       const isAnyCardBlocked = playerFigCards.some(
         (card) => card.state === "blocked"
       );
-
+      
       setMovCardId(null);
       setMovCardType(null);
       setFigCardId(null);

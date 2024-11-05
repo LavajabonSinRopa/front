@@ -187,7 +187,6 @@ const Board = ({ board, isYourTurn }) => {
       x: colIndex,
       y: rowIndex,
     };
-
     try {
       const response = await fetch(`/api/games/${game_id}/blockFigure`, {
         method: "POST",
