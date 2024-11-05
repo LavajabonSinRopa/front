@@ -115,6 +115,10 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
       } else if (message.type === "FigureMade") {
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
+      } else if (message.type === "FigureBlocked") {
+        setBoard(message.payload.board);
         setPlayers(message.payload.players);
       }
     };
@@ -124,7 +128,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
     if (game_id && players.length > 0) {
       setIsYourTurn(calculateIsYourTurn(turnNumber, players, userId));
     }
-  }, [turnNumber, players, userId]);
+  }, [turnNumber, players, userId, board]);
 
   // Inicializacion y cierre del WebSocket
   useEffect(() => {

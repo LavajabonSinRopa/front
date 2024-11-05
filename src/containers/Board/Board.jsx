@@ -182,7 +182,7 @@ const Board = ({ board, isYourTurn }) => {
   const handleFigBlock = async (rowIndex, colIndex) => {
     if (!isYourTurn || rowIndex == null || colIndex == null) return;
     const data = {
-      player_id: opponentId,
+      player_id: userId,
       card_id: blockFigCardId,
       x: colIndex,
       y: rowIndex,

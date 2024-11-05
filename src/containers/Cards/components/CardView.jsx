@@ -78,7 +78,7 @@ const movSvgMap = {
   6: mov7,
 };
 
-const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlockFigCard }) => {
+const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlockFigCard, errorBlockFig }) => {
   const { userId } = useContext(UserIdContext);
   const { movCardId } = useContext(MovCardContext);
   const { figCardId } = useContext(FigCardContext);
@@ -130,7 +130,7 @@ const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlo
               {figCards.map((card, index) => (
                 <li key={index} className="grid-item">
                   <img
-                    className={"card"}
+                    className={`card ${errorBlockFig && userId !== playerId ? "errorBlockFig" : ""}`}
                     onClick={userId === playerId ? useFigCard : useBlockFigCard}
                     data-id={card.unique_id}
                     data-type={card.type}

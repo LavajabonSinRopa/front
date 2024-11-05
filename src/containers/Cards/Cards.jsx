@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import CardView from "./components/CardView.jsx";
 import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import "./components/Cards.css";
@@ -22,6 +22,8 @@ function Card({ playerData, isYourTurn }) {
     opponentId,
     setOpponentId,
   } = useContext(BlockFigCardContext);
+  const blockFigTimeoutRef = useRef(null);
+  const [errorBlockFig, setErrorBlockFig] = useState(false);
 
   useEffect(() => {
     if (
@@ -130,9 +132,15 @@ function Card({ playerData, isYourTurn }) {
           setOpponentId(playerData.unique_id);
         }
       } else {
-        setBlockFigCardId(null);
-        setBlockFigCardType(null);
-        setOpponentId(null);
+        setErrorBlockFig(true);
+        if (blockFigTimeoutRef.current)
+          clearTimeout(blockFigTimeoutRef.current);
+        blockFigTimeoutRef.current = setTimeout(() => {
+          setErrorBlockFig(false);
+          setBlockFigCardId(null);
+          setBlockFigCardType(null);
+          setOpponentId(null);
+        }, 500);
       }
     }
   };
@@ -151,6 +159,7 @@ function Card({ playerData, isYourTurn }) {
         useMovCard={handleUseMovCard}
         useFigCard={handleUseFigCard}
         useBlockFigCard={useBlockFigCard}
+        errorBlockFig={errorBlockFig}
       />
     </div>
   );
