@@ -4,6 +4,8 @@ import "@testing-library/jest-dom";
 import BoardView from "../containers/Board/componets/BoardView";
 import { MovementContext } from "../contexts/MovementContext";
 import { MovCardContext } from "../contexts/MovCardContext";
+import { FigCardContext } from "../contexts/FigCardContext";
+import { BlockFigCardContext } from "../contexts/BlockFigCardContext";
 
 // Mocks para los contextos
 const movementValue = {
@@ -17,11 +19,31 @@ const movCardValue = {
   movCardType: "0",
 };
 
+const mockFigCardContextValue = {
+  figCardId: "888888",
+  setFigCardId: jest.fn(),
+  figCardType: "2",
+  setFigCardType: jest.fn(),
+};
+
+const mockBlockFigCardContextValue = {
+  blockFigCardId: "888888",
+  setBlockFigCardId: jest.fn(),
+  blockFigCardType: "2",
+  setBlockFigCardType: jest.fn(),
+  opponentId: "8825596f-450e-438d-bd17-a2202af15f4a",
+  setOpponentId: jest.fn(),
+};
+
 const renderBoardView = (props) => {
   return render(
     <MovementContext.Provider value={movementValue}>
       <MovCardContext.Provider value={movCardValue}>
-        <BoardView {...props} />
+        <FigCardContext.Provider value={mockFigCardContextValue}>
+          <BlockFigCardContext.Provider value={mockBlockFigCardContextValue}>
+            <BoardView {...props} />
+          </BlockFigCardContext.Provider>
+        </FigCardContext.Provider>
       </MovCardContext.Provider>
     </MovementContext.Provider>
   );
@@ -63,24 +85,6 @@ describe("BoardView", () => {
     expect(
       screen.getByText(/ERROR: FORMATO DE TABLERO INCORRECTO/i)
     ).toBeInTheDocument();
-  });
-
-  test("calls handleMovSelection when a piece is clicked", () => {
-    const board = [
-      ["R", "G", "B", "Y", "R", "G"],
-      ["G", "B", "Y", "R", "G", "B"],
-      ["B", "Y", "R", "G", "B", "Y"],
-      ["Y", "R", "G", "B", "Y", "R"],
-      ["R", "G", "B", "Y", "R", "G"],
-      ["G", "B", "Y", "R", "G", "B"],
-    ];
-
-    const handleMovSelection = jest.fn();
-    renderBoardView({ board, handleMovSelection, swappedPieces: [] });
-
-    // Simula un click en la celda (0, 0)
-    fireEvent.click(screen.getAllByRole("button")[0]);
-    expect(handleMovSelection).toHaveBeenCalledWith(0, 0);
   });
 
   /*

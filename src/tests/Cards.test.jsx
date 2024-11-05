@@ -13,6 +13,11 @@ import {
   MovementContext,
   MovementProvider,
 } from "../contexts/MovementContext.jsx";
+import {
+  FigCardContext,
+  FigCardProvider,
+} from "../contexts/FigCardContext.jsx";
+import { BlockFigCardContext } from "../contexts/BlockFigCardContext.jsx";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -31,6 +36,22 @@ const mockMovCardContextValue = {
   setMovCardId: jest.fn(),
   movCardType: "1",
   setMovCardType: jest.fn(),
+};
+
+const mockFigCardContextValue = {
+  figCardId: "888888",
+  setFigCardId: jest.fn(),
+  figCardType: "2",
+  setFigCardType: jest.fn(),
+};
+
+const mockBlockFigCardContextValue = {
+  blockFigCardId: "888888",
+  setBlockFigCardId: jest.fn(),
+  blockFigCardType: "2",
+  setBlockFigCardType: jest.fn(),
+  opponentId: "8825596f-450e-438d-bd17-a2202af15f4a",
+  setOpponentId: jest.fn(),
 };
 
 const mockMovementContextValue = {
@@ -124,10 +145,14 @@ describe("Card", () => {
     render(
       <MovementContext.Provider value={mockMovementContextValue}>
         <MovCardContext.Provider value={mockMovCardContextValue}>
-          <UserIdContext.Provider value={mockUserIdContextValue}>
-            <Cards playerData={allPlayersCards[0]} isYourTurn={true} />
-            <Cards playerData={allPlayersCards[1]} isYourTurn={false} />
-          </UserIdContext.Provider>
+          <FigCardContext.Provider value={mockFigCardContextValue}>
+            <BlockFigCardContext.Provider value={mockBlockFigCardContextValue}>
+              <UserIdContext.Provider value={mockUserIdContextValue}>
+                <Cards playerData={allPlayersCards[0]} isYourTurn={true} />
+                <Cards playerData={allPlayersCards[1]} isYourTurn={false} />
+              </UserIdContext.Provider>
+            </BlockFigCardContext.Provider>
+          </FigCardContext.Provider>
         </MovCardContext.Provider>
       </MovementContext.Provider>
     );
@@ -144,9 +169,13 @@ describe("Card", () => {
     render(
       <MovementContext.Provider value={mockMovementContextValue}>
         <MovCardContext.Provider value={mockMovCardContextValue}>
-          <UserIdContext.Provider value={mockUserIdContextValue}>
-            <Cards playerData={allPlayersCards} isYourTurn={true} />
-          </UserIdContext.Provider>
+          <FigCardContext.Provider value={mockFigCardContextValue}>
+            <BlockFigCardContext.Provider value={mockBlockFigCardContextValue}>
+              <UserIdContext.Provider value={mockUserIdContextValue}>
+                <Cards playerData={allPlayersCards} isYourTurn={true} />
+              </UserIdContext.Provider>
+            </BlockFigCardContext.Provider>
+          </FigCardContext.Provider>
         </MovCardContext.Provider>
       </MovementContext.Provider>
     );
@@ -161,9 +190,13 @@ describe("Card", () => {
     render(
       <MovementContext.Provider value={mockMovementContextValue}>
         <MovCardContext.Provider value={mockMovCardContextValue}>
-          <UserIdContext.Provider value={mockUserIdContextValue}>
-            <Cards playerData={null} isYourTurn={true} />
-          </UserIdContext.Provider>
+          <FigCardContext.Provider value={mockFigCardContextValue}>
+            <BlockFigCardContext.Provider value={mockBlockFigCardContextValue}>
+              <UserIdContext.Provider value={mockUserIdContextValue}>
+                <Cards playerData={null} isYourTurn={true} />
+              </UserIdContext.Provider>
+            </BlockFigCardContext.Provider>
+          </FigCardContext.Provider>
         </MovCardContext.Provider>
       </MovementContext.Provider>
     );

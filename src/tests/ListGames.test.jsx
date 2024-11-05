@@ -117,13 +117,16 @@ describe("ListaPartidas", () => {
     expect(
       screen.getByPlaceholderText(/Ingresa un Nombre/i)
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Buscar/i })).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
     expect(itemsH1).toHaveLength(4);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(4);
+    expect(itemsH2).toHaveLength(5);
+    //Filtro de jugadores
+    [1, 2, 3, 4].map((num) =>
+      expect(screen.getByRole("button", { name: num })).toBeInTheDocument()
+    );
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -172,13 +175,12 @@ describe("ListaPartidas", () => {
     expect(
       screen.getByPlaceholderText(/Ingresa un Nombre/i)
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Buscar/i })).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
     expect(itemsH1).toHaveLength(2);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(2);
+    expect(itemsH2).toHaveLength(3);
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -316,6 +318,37 @@ describe("ListaPartidas", () => {
 
     // Verifica que no se ha navegado a otra ruta
     expect(mockedUsedNavigate).not.toHaveBeenCalled();
+  });
+
+  it("se filtra correctamente segun numero de jugadores", async () => {
+    render(
+      <MemoryRouter>
+        <UsernameProvider value={mockUsernameContextValue}>
+          <UserIdProvider value={mockUserIdContextValue}>
+            <ListGames websocketUrl={"ws://localhost:1234"} />
+          </UserIdProvider>
+        </UsernameProvider>
+      </MemoryRouter>
+    );
+
+    server.send(message);
+
+    // Filtrar por 3 jugadores
+    const button = screen.getByRole("button", { name: "3" });
+    fireEvent.click(button);
+    // Espera a que se actualicen los elementos
+    await waitFor(() => {
+      expect(screen.getByText("dragonball")).toBeInTheDocument();
+      expect(screen.queryByText("scaloneta")).not.toBeInTheDocument();
+      expect(screen.queryByText("lavajabon")).not.toBeInTheDocument();
+    });
+    // Se deselecciona el filtro
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(screen.getByText("dragonball")).toBeInTheDocument();
+      expect(screen.getByText("scaloneta")).toBeInTheDocument();
+      expect(screen.getByText("lavajabon")).toBeInTheDocument();
+    });
   });
 
   it("debería manejar la desconexión del WebSocket", async () => {
