@@ -7,6 +7,7 @@ import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
+import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
 import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
@@ -222,6 +223,13 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   players={players}
                   currentPlayerId={currentPlayerId}
                   userId={userId}
+                />
+              </div>
+              <div className="chatContainer">
+                <Chat
+                  playerName={
+                    players.find((player) => player.unique_id === userId)?.name
+                  }
                 />
               </div>
             </div>
