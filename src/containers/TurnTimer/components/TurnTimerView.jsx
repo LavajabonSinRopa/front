@@ -1,10 +1,12 @@
-//TurnTimerView.jsx
 import React from "react";
 
-const TurnTimerView = ({ timer, isLoading }) => {
+const TurnTimerView = ({ timer }) => {
+    const minutes = Math.floor(timer / 60);
+    const seconds = timer % 60;
+
     return (
-        <div> 
-            <h1>{isLoading ? "Finalizando turno..." : `Tiempo restante: ${timer}s`}</h1>
+        <div className="timer">
+            <span>Tiempo restante: <b>{`${minutes}:${seconds.toString().padStart(2, '0')}`}</b></span>
         </div>
     );
 };
