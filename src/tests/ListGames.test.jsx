@@ -279,6 +279,7 @@ describe("ListaPartidas", () => {
         },
         body: JSON.stringify({
           player_name: "testUser",
+          password: "",
         }),
       }
     );

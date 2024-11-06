@@ -11,11 +11,12 @@ const ItemContainer = ({ item }) => {
 
   const navigate = useNavigate();
 
-  const handleClick = async () => {
+  const handleClick = async (password) => {
     if (validUsername) {
       const gameId = item.unique_id;
       const data = {
         player_name: username,
+        password: password || "",
       };
       try {
         const response = await fetch(`/api/games/${gameId}/join`, {
@@ -25,8 +26,9 @@ const ItemContainer = ({ item }) => {
           },
           body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
+          const errorDetails = await response.json();
           console.log(
             "Hubo un problema al unirse a la partida, intenta de nuevo."
           );
@@ -39,12 +41,9 @@ const ItemContainer = ({ item }) => {
         navigate(`/games/${gameId}`);
       } catch (error) {
         console.error("Error al unirse a la partida:", error);
-      } finally {
-        console.log("Finalizó la acción.");
       }
     }
   };
-
 
   return <ItemComponent item={item} handleClick={handleClick} />;
 };
