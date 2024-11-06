@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { UsernameContext } from "../../../contexts/UsernameContext";
-import hide from "../../../assets/svg/hide.svg";
-import view from "../../../assets/svg/view.svg";
+import hide from "../../../assets/hide.svg";
+import view from "../../../assets/view.svg";
 
 const ValidationMessage = ({ value, maxLength, isValid }) => {
   return (
