@@ -30,14 +30,13 @@ const CrearPartidaView = ({
       />
       <p>Caracteres usados: {name.length}/20</p>
 
-      {/*
       <h2>Contraseña:</h2>
       <input
         placeholder="Ingresa una Contraseña"
         value={password}
         onChange={onChangePassword}
       />
-      <p>Caracteres usados: {password.length}/10</p>*/}
+      <p>Caracteres usados: {password.length}/10</p>
 
       <button
         style={{

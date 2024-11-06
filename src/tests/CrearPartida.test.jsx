@@ -18,7 +18,6 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-
 describe("CrearPartida", () => {
   beforeEach(() => {
     // Limpia los mocks antes de cada prueba
@@ -40,15 +39,15 @@ describe("CrearPartida", () => {
       screen.getByPlaceholderText("Ingresa un Nombre")
     ).toBeInTheDocument();
 
-    // PASSWORD
-    // expect(screen.getByText("Contraseña:")).toBeInTheDocument();
-    // expect(
-    //   screen.getByPlaceholderText("Ingresa una Contraseña")
-    // ).toBeInTheDocument();
+    //PASSWORD
+    expect(screen.getByText("Contraseña:")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Ingresa una Contraseña")
+    ).toBeInTheDocument();
 
     // CARACTERES USADOS
     let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
-    expect(caracteresUsados).toHaveLength(2);
+    expect(caracteresUsados).toHaveLength(3);
 
     // BOTON
     const button = screen.getByRole("button", { name: "CREAR PARTIDA" });
@@ -120,7 +119,7 @@ describe("CrearPartida", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("Creación de partida exitosa", async () => {
+  it("Creación de partida exitosa sin contraseña", async () => {
     render(
       <MemoryRouter>
         <UserIdProvider value={mockUserIdContextValue}>
@@ -135,10 +134,8 @@ describe("CrearPartida", () => {
     const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
     const createButton = screen.getByText("CREAR PARTIDA");
 
-    // Introducir un nombre valido
     fireEvent.change(nameInput, { target: { value: "PartidaTest" } });
 
-    // Mock de la respuesta de la API
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
@@ -147,12 +144,9 @@ describe("CrearPartida", () => {
       })
     );
 
-    // Hacer clic en el boton de crear partida
     fireEvent.click(createButton);
-    // El boton este deshabilitado mientras se esta cargando
     expect(createButton).toBeDisabled();
 
-    // Esperar el mensaje de exito
     await waitFor(() =>
       expect(
         screen.getByText("Creación de partida exitosa.")
@@ -160,7 +154,6 @@ describe("CrearPartida", () => {
     );
     expect(createButton).not.toBeDisabled();
 
-    // Verificar que fetch fue llamado con la URL y el metodo correcto
     expect(fetch).toHaveBeenCalledWith("/api/games", {
       method: "POST",
       headers: {
@@ -169,14 +162,14 @@ describe("CrearPartida", () => {
       body: JSON.stringify({
         game_name: "PartidaTest",
         player_name: "UsernameValido",
+        password: "",
       }),
     });
 
     expect(mockedUsedNavigate).toHaveBeenCalled();
   });
 
-  it("Creación de partida fallida", async () => {
-    // Mock de la respuesta de la API
+  it("Creación de partida fallida sin contraseña", async () => {
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
@@ -191,22 +184,17 @@ describe("CrearPartida", () => {
       </MemoryRouter>
     );
 
-    // Escribir un username valido
     const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
     fireEvent.change(usernameInput, { target: { value: "Jugador1" } });
 
-    // Escribir un nombre para la partida valido
     const inputNombre = screen.getByPlaceholderText("Ingresa un Nombre");
     fireEvent.change(inputNombre, { target: { value: "Nombre Valido" } });
 
-    // Asegurarse de que el boton de creacion de partida este habilitado
     const buttonCrear = screen.getByText("CREAR PARTIDA");
     expect(buttonCrear).not.toBeDisabled();
 
-    // Hacer clic en el boton de crear partida
     fireEvent.click(buttonCrear);
 
-    // Esperar que aparezca el mensaje de error
     await waitFor(() => {
       expect(
         screen.getByText(
@@ -218,4 +206,191 @@ describe("CrearPartida", () => {
     // Verifica que no se ha navegado a otra ruta
     expect(mockedUsedNavigate).not.toHaveBeenCalled();
   });
+
+  it("Actualiza el estado de la contraseña correctamente", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const passwordInput = screen.getByPlaceholderText("Ingresa una Contraseña");
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    expect(passwordInput.value).toBe("password123");
+  });
+
+  it("Creación de partida exitosa con contraseña", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
+
+    const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
+    fireEvent.change(nameInput, { target: { value: "PartidaTest" } });
+
+    const passwordInput = screen.getByPlaceholderText("Ingresa una Contraseña");
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    const createButton = screen.getByText("CREAR PARTIDA");
+
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({ game_id: "game123", player_id: "player123" }),
+      })
+    );
+
+    fireEvent.click(createButton);
+
+    expect(createButton).toBeDisabled();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("Creación de partida exitosa.")
+      ).toBeInTheDocument()
+    );
+    expect(createButton).not.toBeDisabled();
+
+    expect(fetch).toHaveBeenCalledWith("/api/games", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        game_name: "PartidaTest",
+        player_name: "UsernameValido",
+        password: "password123",
+      }),
+    });
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith("/games/game123");
+  });
+
+  it("Creación de partida exitosa sin contraseña", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
+
+    const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
+    fireEvent.change(nameInput, { target: { value: "PartidaTest" } });
+
+    const createButton = screen.getByText("CREAR PARTIDA");
+
+    fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({ game_id: "game123", player_id: "player123" }),
+      })
+    );
+
+    fireEvent.click(createButton);
+
+    expect(createButton).toBeDisabled();
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("Creación de partida exitosa.")
+      ).toBeInTheDocument()
+    );
+    expect(createButton).not.toBeDisabled();
+
+    expect(fetch).toHaveBeenCalledWith("/api/games", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        game_name: "PartidaTest",
+        player_name: "UsernameValido",
+        password: "",
+      }),
+    });
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith("/games/game123");
+  });
+
+  it("Muestra mensaje de error y loguea el error en consola cuando la creación de la partida falla", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+    fetch.mockImplementationOnce(() =>
+      Promise.reject(new Error("Network Error"))
+    );
+
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    fireEvent.change(usernameInput, { target: { value: "Jugador1" } });
+
+    const inputNombre = screen.getByPlaceholderText("Ingresa un Nombre");
+    fireEvent.change(inputNombre, { target: { value: "Nombre Valido" } });
+
+    const buttonCrear = screen.getByText("CREAR PARTIDA");
+    expect(buttonCrear).not.toBeDisabled();
+
+    fireEvent.click(buttonCrear);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "Hubo un problema al crear la partida, intenta de nuevo."
+        )
+      ).toBeInTheDocument();
+    });
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error al crear la partida:",
+      expect.any(Error)
+    );
+
+    expect(mockedUsedNavigate).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("Actualiza el estado de validUsername correctamente", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+
+    fireEvent.change(usernameInput, { target: { value: "Nombre@Invalido" } });
+    expect(
+      screen.getByText("El nombre de usuario no es válido.")
+    ).toBeInTheDocument();
+
+    fireEvent.change(usernameInput, { target: { value: "NombreValido" } });
+    expect(
+      screen.queryByText("El nombre de usuario no es válido.")
+    ).not.toBeInTheDocument();
+  });
+  
 });

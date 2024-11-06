@@ -4,8 +4,8 @@ import PlayerList from "./PlayerList/PlayerList";
 import GameButtons from "./GameButtons/GameButtons";
 import { useNavigate } from "react-router-dom";
 
-function GameLobby({ gameData, playerList, playerId }) {
-	const { gameName, gameId, gameState, gameCreator } = gameData; // Destructure gameData
+function GameLobby({ gameData, playerList, playerId}) {
+	const { gameName, gameId, gameState, gameCreator, gameType } = gameData; // Destructure gameData
 	const navigate = useNavigate();
 
 	const onStartGame = async () => {
@@ -64,7 +64,7 @@ function GameLobby({ gameData, playerList, playerId }) {
 		<div>
 			<GameInfo
 				gameName={gameName}
-				gameType="Pública"
+				gameType={gameType == "public" ? "Pública" : "Privada"}
 			/>
 			<PlayerList
 				playerList={playerList}

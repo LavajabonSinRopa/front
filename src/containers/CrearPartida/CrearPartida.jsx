@@ -50,6 +50,7 @@ const CrearPartida = () => {
     const data = {
       game_name: name,
       player_name: username,
+      password: password || ""
     };
 
     setLoading(true);
