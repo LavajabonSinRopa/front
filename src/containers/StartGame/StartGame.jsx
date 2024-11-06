@@ -30,7 +30,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
-
+  const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
 
   // Verificar si es el turno del jugador actual
@@ -121,6 +121,18 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "FigureBlocked") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+      } else if (message.type === "ChatMessage") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: message.payload.player_id,
+            type: "message",
+            msgInfo: `${message.payload.player_name} (${message.payload.time}): `,
+            text: `${message.payload.message}`,
+          },
+        ]);
+      } else {
+        console.log("Tipo de mensaje desconocido:", message.type);
       }
     };
   };
@@ -227,9 +239,9 @@ function StartGame({ game_id, userId, websocketUrl }) {
               </div>
               <div className="chatContainer">
                 <Chat
-                  playerName={
-                    players.find((player) => player.unique_id === userId)?.name
-                  }
+                  messages={messages}
+                  setMessages={setMessages}
+                  socketRef={socketRef}
                 />
               </div>
             </div>

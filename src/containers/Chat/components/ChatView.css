@@ -1,7 +1,8 @@
 .chat-container {
-    background-color: #3a3a3a;
-    padding: 10px;
-    border-radius: 5px;
+  background-color: #3a3a3a;
+  padding: 10px;
+  border-radius: 5px;
+  
 }
 
 .chat {
@@ -18,25 +19,41 @@
   list-style-type: none;
   padding: 10px;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.message {
+.userMsg {
+  word-break: break-word;
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #429146;
+  border-radius: 5px;
+  max-width: 80%; /* Asegura que los mensajes no se desborden horizontalmente */
+  white-space: normal; /* Asegura que el texto se ajuste y no se quede en una sola línea */
+  hyphens: auto; /* Habilita los guiones automáticos en palabras largas */
+  overflow: hidden; /* Evita el desbordamiento horizontal */
+  align-self: flex-end; /* Alinea el mensaje a la derecha */
+}
+
+.opponentMsg {
   word-break: break-word;
   margin: 5px 0;
   padding: 5px;
   background-color: #8c00ff;
   border-radius: 5px;
-  max-width: 100%; /* Asegura que los mensajes no se desborden horizontalmente */
+  max-width: 80%; /* Asegura que los mensajes no se desborden horizontalmente */
   white-space: normal; /* Asegura que el texto se ajuste y no se quede en una sola línea */
   hyphens: auto; /* Habilita los guiones automáticos en palabras largas */
   overflow: hidden; /* Evita el desbordamiento horizontal */
+  align-self: flex-start; /* Alinea los mensajes del usuario a la izquierda */
 }
 
 .newMsgFlag {
   bottom: 10px;
   left: 10px;
   font-size: 15px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center; /* Aunque con flexbox esto ya está centrado */
 }
 
@@ -67,9 +84,8 @@ input[type="text"] {
 }
 
 .noMsg {
-    font-size: 16px;
-    font-weight: bold;
-    color: #888; /* O el color que prefieras */
-    text-align: center; /* Aunque con flexbox esto ya está centrado */
-  }
-  
+  font-size: 16px;
+  font-weight: bold;
+  color: #888; /* O el color que prefieras */
+  text-align: center; /* Aunque con flexbox esto ya está centrado */
+}
