@@ -35,7 +35,7 @@ const ItemComponent = ({ item, handleClick }) => {
   };
 
   const handleJoinClick = () => {
-    if (!validPassword) {
+    if (item.type == "private" && !validPassword) {
       // No se envía si la contraseña es incorrecta
       return;
     }
