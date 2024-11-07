@@ -7,6 +7,7 @@ import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
+import TurnTimer from "../TurnTimer/TurnTimer.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
 import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
@@ -30,6 +31,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [isYourTurn, setIsYourTurn] = useState(false);
 
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
+  const [time, setTime] = useState(10);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -193,11 +195,13 @@ function StartGame({ game_id, userId, websocketUrl }) {
               </>
             )}
             <div className="optionsButtonContainer">
-              <LeaveGame playerId={userId} gameId={game_id} />
+              <LeaveGame 
+                playerId={userId} 
+                gameId={game_id} 
+              />
               <EndTurn
                 playerId={userId}
                 gameId={game_id}
-                currentTurn={turnNumber}
                 isYourTurn={isYourTurn}
               />
               <CancelMove
@@ -216,6 +220,12 @@ function StartGame({ game_id, userId, websocketUrl }) {
                 players={players}
                 currentPlayerId={currentPlayerId}
                 userId={userId}
+              />
+              <TurnTimer
+                initialTime={time}
+                playerId={userId}
+                gameId={game_id}
+                isYourTurn={isYourTurn}  
               />
             </div>
           </div>
