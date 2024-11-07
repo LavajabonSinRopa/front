@@ -7,6 +7,7 @@ import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
+import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
 import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
@@ -29,7 +30,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
-
+  const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
 
   // Verificar si es el turno del jugador actual
@@ -52,7 +53,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   };
 
   // Funcion para conectar al WebSocket
-  console.log(websocketUrl);
+  //console.log(websocketUrl);
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
@@ -81,7 +82,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
+      //console.log(message);
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
@@ -120,6 +121,18 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "FigureBlocked") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+      } else if (message.type === "ChatMessage") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: message.payload.player_id,
+            type: "message",
+            msgInfo: `${message.payload.player_name} (${message.payload.time}): `,
+            text: `${message.payload.message}`,
+          },
+        ]);
+      } else {
+        console.log("Tipo de mensaje desconocido:", message.type);
       }
     };
   };
@@ -222,6 +235,13 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   players={players}
                   currentPlayerId={currentPlayerId}
                   userId={userId}
+                />
+              </div>
+              <div className="chatContainer">
+                <Chat
+                  messages={messages}
+                  setMessages={setMessages}
+                  socketRef={socketRef}
                 />
               </div>
             </div>
