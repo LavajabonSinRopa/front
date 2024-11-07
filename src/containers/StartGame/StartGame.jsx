@@ -53,7 +53,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   };
 
   // Funcion para conectar al WebSocket
-  console.log(websocketUrl);
+  //console.log(websocketUrl);
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
@@ -82,7 +82,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
+      //console.log(message);
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);

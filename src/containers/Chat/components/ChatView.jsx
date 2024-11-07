@@ -20,22 +20,28 @@ function ChatView({
   // Efecto que mueve el scroll al final solo si ya esta al final
   // y gestiona notificaciones de nuevos mensajes
   useEffect(() => {
-    if (chatContainerRef.current) {
+    if (chatContainerRef.current && messages.length > 0) {
       const container = chatContainerRef.current;
-      // Verifica si el scroll esta al final
+      
+      // Verifica si el scroll está al final
       const isAtBottom =
-        container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 500;
-      if (isAtBottom) {
-        // Si esta al final, mover el scroll al fondo
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
+  
+      // Asegúrate de que messages[messages.length-1] y su propiedad 'message' existan
+      const lastMessage = messages[messages.length - 1];
+      const isUserMessage = lastMessage?.id === userId;
+  
+      if (isAtBottom || isUserMessage) {
+        // Si está al final, mover el scroll al fondo
         container.scrollTop = container.scrollHeight;
         setNewMsgFlag(false);
       } else {
-        // Si no esta al final, no mover el scroll
+        // Si no está al final, no mover el scroll
         setNewMsgFlag(true);
       }
     }
-  }, [messages]); // Se ejecuta cada vez que llegan mensajes
+  }, [messages, userId]); // Considera también añadir userId si cambia y es relevante
+  
 
   // Efecto para manejar la accion de scroll manual del usuario
   const handleScroll = () => {
@@ -65,6 +71,7 @@ function ChatView({
         className="chat"
         ref={chatContainerRef}
         onScroll={handleScroll}
+        data-testid="scrollable-chat"
       >
         {messages.length > 0 ? (
           <ul className="chatMessages">
