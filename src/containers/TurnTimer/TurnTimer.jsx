@@ -6,12 +6,14 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setSecondsLeft(initialTime); 
+        console.log("Nuevo time recibido:", initialTime);
+        setSecondsLeft(initialTime);
     }, [initialTime]);
 
     useEffect(() => {
+        if (secondsLeft <= 0) return;
         const interval = setInterval(() => {
-            setSecondsLeft(prev => {
+            setSecondsLeft((prev) => {
                 if (prev <= 0) {
                     clearInterval(interval); 
                     if (isYourTurn) {
@@ -24,12 +26,10 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [isYourTurn, initialTime]);
+    }, [secondsLeft, isYourTurn]);
 
     const handleEndTurn = async () => {
-        const data = { 
-            player_id: playerId 
-        };
+        const data = { player_id: playerId };
         setIsLoading(true);
 
         try {
