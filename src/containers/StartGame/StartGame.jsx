@@ -89,6 +89,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setCurrentPlayerId(players[0]?.unique_id);
         calculateCurrentPlayerId(0, players);
         setTurnNumber(message.payload.turn);
+        setTime(message.payload.turn_timer);
         calculateCurrentPlayerId(turnNumber, message.payload.players);
         localStorage.setItem(`game_${game_id}_turn`, message.payload.turn);
       } else if (message.type === "PlayerLeft") {
@@ -106,17 +107,21 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
         calculateCurrentPlayerId(newTurn, message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
         setWinner(message.payload.player_name);
       } else if (message.type === "MovSuccess") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "MoveUnMade") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "FigureMade") {
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       }
     };
   };
