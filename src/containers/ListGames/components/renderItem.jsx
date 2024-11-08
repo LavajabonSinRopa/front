@@ -29,18 +29,14 @@ const ItemContainer = ({ item }) => {
 
         if (!response.ok) {
           const errorDetails = await response.json();
-          console.log(
-            "Hubo un problema al unirse a la partida, intenta de nuevo."
-          );
-          return;
+          throw new Error(errorDetails.detail || "Failed to join the game");
         }
+
         const result = await response.json();
         setUserId(result.player_id);
-
-        console.log("Uniéndose a partida:", result);
         navigate(`/games/${gameId}`);
       } catch (error) {
-        console.error("Error al unirse a la partida:", error);
+        throw error;
       }
     }
   };
