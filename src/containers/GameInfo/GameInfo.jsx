@@ -20,7 +20,7 @@ const GameInfo = ({ turnNumber, players, currentPlayerId, userId }) => {
         <span>Es el turno de {players.find(p => p.unique_id === currentPlayerId)?.name || 'otro jugador'}</span>
       </div>
     </div>
-  );s 
+  );
 };
 
 export default GameInfo;
