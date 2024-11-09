@@ -1,0 +1,91 @@
+.createGameContainer {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../../../assets/switcher_UI_UX_desing_background_pattern.svg");
+  background-size: 100px 150px; /* Establece el tamaño de la imagen de fondo */
+  background-repeat: repeat; /* Repite la imagen si es necesario */
+  background-color: #5dc8af;
+  animation: moverFondoCreateGame 5s linear infinite; /* Aplica la animación */
+}
+
+@keyframes moverFondoCreateGame {
+  0% {
+    background-position: 0 0; /* Posición inicial */
+  }
+  100% {
+    background-position: 100px -150px; /* Cambia el valor según el tamaño de tu imagen */
+  }
+}
+
+.createGameMenuConteiner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.createGameTitle {
+  width: 50%;
+}
+
+.createGameMenu {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  background-color: #29957d;
+  border: 10px solid #25a589; /* Disminuye el grosor del borde */
+  border-bottom-left-radius: 60px;
+  border-bottom-right-radius: 60px;
+}
+
+
+
+.usernameCreateGame,
+.gameNameCreateGame,
+.passwordCreateGame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.usernameCreateGame input,
+.gameNameCreateGame input,
+.passwordCreateGame input {
+  background-color: #217c6f; /* Azul para el fondo */
+  border: none; /* Elimina el borde */
+  color: white; /* Texto blanco para contrastar con el fondo azul */
+  padding: 10px; /* Espaciado interno para hacer que el input sea más grande */
+  border-radius: 5px; /* Bordes redondeados (opcional) */
+  width: 100%; /* Asegura que el input ocupe todo el espacio disponible */
+  font-size: 16px; /* Tamaño de fuente (opcional, puedes ajustarlo a tus necesidades) */
+}
+
+.usernameCreateGame input:focus,
+.gameNameCreateGame input:focus,
+.passwordCreateGame input:focus {
+  outline: none; /* Elimina el borde azul que aparece al hacer foco */
+}
+
+.passwordCreateGame button {
+  background-color: #06313a; /* Azul para el fondo */
+  color: white;
+}
+
+.createGameButton {
+  padding: 15px 30px;
+  margin: 30px;
+  font-weight: bold;
+}
+
+.validationMessageCreateGame {
+  color: red;
+  font-size: 16px;
+}
