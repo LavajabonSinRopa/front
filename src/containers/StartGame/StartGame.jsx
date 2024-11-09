@@ -31,7 +31,6 @@ function StartGame({ game_id, userId, websocketUrl }) {
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
-
   const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
   const [time, setTime] = useState(10);

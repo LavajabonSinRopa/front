@@ -6,7 +6,7 @@ body {
 
 .gameContainer {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 25vh) 1fr;
   grid-template-rows: repeat(4, 25vh);
   width: 100vw;
   height: 100vh;
@@ -40,11 +40,13 @@ body {
 .opponent-2 {
   grid-column: 1; /* Ocupa columnas 2 y 3 */
   grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+  rotate: -90deg;
 }
 
 .opponent-3 {
   grid-column: 4; /* Ocupa columnas 2 y 3 */
   grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
+  rotate: 90deg;
 }
 
 .gameInfo {
@@ -74,4 +76,9 @@ body {
   height: 100%; /* Ocupa todo el espacio de la celda */
   width: 100%; /* Ocupa todo el espacio de la celda */
   gap: 10px; /* Espaciado entre los botones */
+}
+
+.chatContainer {
+  grid-column: 5; /* Ocupa columnas 1 */
+  grid-row: 1/4; /* Ocupa fila 4 */
 }
