@@ -12,20 +12,18 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
 
     useEffect(() => {
         if (secondsLeft <= 0) return;
+
         const interval = setInterval(() => {
-            setSecondsLeft((prev) => {
-                if (prev <= 0) {
-                    clearInterval(interval); 
-                    if (isYourTurn) {
-                        handleEndTurn();
-                    }
-                    return 0;
-                }
-                return prev - 1;
-            });
+            setSecondsLeft((prev) => prev - 1);
         }, 1000);
 
         return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        if (secondsLeft === 0 && isYourTurn) {
+            handleEndTurn();
+        }
     }, [secondsLeft, isYourTurn]);
 
     const handleEndTurn = async () => {
@@ -43,7 +41,6 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
 
             if (response.ok) {
                 console.log(`Jugador ${playerId} ha terminado su turno por timer`);
-                setSecondsLeft(15);
             } else {
                 console.error("Error al intentar terminar el turno por timer");
             }
