@@ -10,7 +10,6 @@ import CancelMove from "../CancelMove/CancelMove.jsx";
 import TurnTimer from "../TurnTimer/TurnTimer.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
-import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
 
 function StartGame({ game_id, userId, websocketUrl }) {
   const [players, setPlayers] = useState([]);
@@ -200,13 +199,11 @@ function StartGame({ game_id, userId, websocketUrl }) {
               </>
             )}
             <div className="optionsButtonContainer">
-              <LeaveGame 
-                playerId={userId} 
-                gameId={game_id} 
-              />
+              <LeaveGame playerId={userId} gameId={game_id} />
               <EndTurn
                 playerId={userId}
                 gameId={game_id}
+                currentTurn={turnNumber}
                 isYourTurn={isYourTurn}
               />
               <CancelMove

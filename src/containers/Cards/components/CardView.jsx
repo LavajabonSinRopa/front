@@ -3,6 +3,7 @@ import { UserIdContext } from "../../../contexts/UserIdContext.jsx";
 import "./CardView.css";
 import { MovCardContext } from "../../../contexts/MovCardContext.jsx";
 import { FigCardContext } from "../../../contexts/FigCardContext.jsx";
+import { BlockFigCardContext } from "../../../contexts/BlockFigCardContext.jsx";
 
 import backMov from "./cardSVG/back-mov.svg";
 import backFig from "./cardSVG/back.svg";
@@ -77,10 +78,11 @@ const movSvgMap = {
   6: mov7,
 };
 
-const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard }) => {
+const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlockFigCard, errorBlockFig }) => {
   const { userId } = useContext(UserIdContext);
   const { movCardId } = useContext(MovCardContext);
   const { figCardId } = useContext(FigCardContext);
+  const { blockFigCardId } = useContext(BlockFigCardContext);
 
   return (
     <div className="cardViewContainer">
@@ -128,14 +130,14 @@ const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard }) => {
               {figCards.map((card, index) => (
                 <li key={index} className="grid-item">
                   <img
-                    className={"card"}
-                    onClick={useFigCard}
+                    className={`card ${errorBlockFig && userId !== playerId ? "errorBlockFig" : ""}`}
+                    onClick={userId === playerId ? useFigCard : useBlockFigCard}
                     data-id={card.unique_id}
                     data-type={card.type}
-                    src={figSvgMap[card.type]}
+                    src={card.state !== "blocked" ? figSvgMap[card.type] : backFig}
                     style={{
                       transform:
-                        figCardId === card.unique_id
+                        figCardId === card.unique_id || blockFigCardId === card.unique_id
                           ? "scale(1.5)"
                           : "scale(1)",
                       transition: "transform 0.3s ease-in-out",

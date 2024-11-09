@@ -47,6 +47,7 @@ export const GameLobbyContainer = () => {
             gameId: game.unique_id,
             gameState: game.state,
             gameCreator: game.creator,
+            gameType: game.type,
           });
 
           const { player_names, players } = game;

@@ -5,7 +5,6 @@ import GameLobby from "../../containers/GameLobbyContainer/components/GameLobby"
 import { UserIdContext } from "../../contexts/UserIdContext";
 import "@testing-library/jest-dom";
 
-// Mock fetch globally
 global.fetch = jest.fn();
 
 const mockedUsedNavigate = jest.fn();
@@ -59,32 +58,32 @@ describe("GameLobby", () => {
   it("Se renderizan los componentes internos correctamente (jugador no creador)", () => {
     render(
       <GameLobby
-        gameData={mockGameData}
+        gameData={{ ...mockGameData, gameType: "public" }} // Adjusted gameType
         playerList={mockPlayerList}
         playerId={mockPlayerId}
       />
     );
-
+  
     expect(screen.getByText("Test Game")).toBeInTheDocument();
-    expect(screen.getByText("Pública")).toBeInTheDocument();
+    expect(screen.getByText("Pública")).toBeInTheDocument(); 
     expect(screen.getByText("Player 1")).toBeInTheDocument();
     expect(screen.getByText("Player 2")).toBeInTheDocument();
     expect(screen.getByText("Player 3")).toBeInTheDocument();
     expect(screen.getByText("Player 4")).toBeInTheDocument();
     expect(screen.getByText("Abandonar Partida")).toBeInTheDocument();
   });
-
+  
   it("Se renderizan los componentes internos correctamente (creador)", () => {
     render(
       <GameLobby
-        gameData={mockGameData}
+        gameData={{ ...mockGameData, gameType: "public" }} // Adjusted gameType
         playerList={mockPlayerList}
         playerId={mockCreatorId}
       />
     );
-
+  
     expect(screen.getByText("Test Game")).toBeInTheDocument();
-    expect(screen.getByText("Pública")).toBeInTheDocument();
+    expect(screen.getByText("Pública")).toBeInTheDocument(); 
     expect(screen.getByText("Player 1")).toBeInTheDocument();
     expect(screen.getByText("Player 2")).toBeInTheDocument();
     expect(screen.getByText("Player 3")).toBeInTheDocument();
@@ -107,11 +106,9 @@ describe("GameLobby", () => {
       </MemoryRouter>
     );
 
-    // Simular apertura de WebSocket
     mockSocket.onopen();
     expect(mockSocket.onopen).toHaveBeenCalled();
 
-    // Simular mensaje de WebSocket para GameStarted
     const gameStartedMessage = JSON.stringify({
       type: "GameStarted",
       payload: { gameId: "testGameId" },
@@ -123,14 +120,12 @@ describe("GameLobby", () => {
       data: gameStartedMessage,
     });
 
-    // Simular error de WebSocket
     const error = new Event("error");
     act(() => {
       mockSocket.onerror(error);
     });
     expect(mockSocket.onerror).toHaveBeenCalledWith(error);
 
-    // Simular cierre de WebSocket
     const closeEvent = new Event("close");
     act(() => {
       mockSocket.onclose(closeEvent);
@@ -171,7 +166,7 @@ describe("GameLobby - 'Iniciar Partida'", () => {
           <GameLobby
             gameData={mockGameData}
             playerList={mockPlayerList}
-            playerId="testCreatorId" // The user is the creator
+            playerId="testCreatorId" 
           />
         </UserIdContext.Provider>
       </MemoryRouter>
@@ -182,7 +177,6 @@ describe("GameLobby - 'Iniciar Partida'", () => {
   });
 
   it("Deshabilita el botón 'Iniciar Partida' cuando hay < 2 jugadores", () => {
-    // Mock player list with only 3 players
     const lessPlayers = [["player1", "Player 1"]];
 
     render(
@@ -190,16 +184,15 @@ describe("GameLobby - 'Iniciar Partida'", () => {
         <UserIdContext.Provider value={mockUserIdContextValue}>
           <GameLobby
             gameData={mockGameData}
-            playerList={lessPlayers} // Less than 4 players
-            playerId="testCreatorId" // The user is the creator
+            playerList={lessPlayers} 
+            playerId="testCreatorId" 
           />
         </UserIdContext.Provider>
       </MemoryRouter>
     );
 
-    // Verify that the "Iniciar Partida" button is disabled
     const startButton = screen.getByText("Iniciar Partida");
-    expect(startButton).toBeDisabled(); // Should be disabled because there are less than 4 players
+    expect(startButton).toBeDisabled(); 
   });
 
   it("Navega a /start cuando se clickea 'Iniciar Partida'", async () => {
