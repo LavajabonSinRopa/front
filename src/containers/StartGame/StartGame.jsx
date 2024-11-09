@@ -8,8 +8,11 @@ import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
 import TurnTimer from "../TurnTimer/TurnTimer.jsx";
+import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
+import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
+import { BlockFigCardProvider } from "../../contexts/BlockFigCardContext.jsx";
 
 function StartGame({ game_id, userId, websocketUrl }) {
   const [players, setPlayers] = useState([]);
@@ -29,6 +32,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
 
+  const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
   const [time, setTime] = useState(10);
 
@@ -52,7 +56,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   };
 
   // Funcion para conectar al WebSocket
-  console.log(websocketUrl);
+  //console.log(websocketUrl);
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
@@ -81,7 +85,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
+      //console.log(message);
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
@@ -121,6 +125,21 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "FigureMade") {
         setPlayers(message.payload.players);
         setTime(message.payload.turn_timer);
+      } else if (message.type === "FigureBlocked") {
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
+      } else if (message.type === "ChatMessage") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: message.payload.player_id,
+            type: "message",
+            msgInfo: `${message.payload.player_name} (${message.payload.time}): `,
+            text: `${message.payload.message}`,
+          },
+        ]);
+      } else {
+        console.log("Tipo de mensaje desconocido:", message.type);
       }
     };
   };
@@ -129,7 +148,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
     if (game_id && players.length > 0) {
       setIsYourTurn(calculateIsYourTurn(turnNumber, players, userId));
     }
-  }, [turnNumber, players, userId]);
+  }, [turnNumber, players, userId, board]);
 
   // Inicializacion y cierre del WebSocket
   useEffect(() => {
@@ -173,64 +192,73 @@ function StartGame({ game_id, userId, websocketUrl }) {
     <MovementProvider>
       <MovCardProvider>
         <FigCardProvider>
-          <div className="gameContainer">
-            <div className="boardContainer">
-              <Board board={board} isYourTurn={isYourTurn} />
-            </div>
-            {Array.isArray(players) && players.length > 0 && (
-              <>
-                <div key={0} className="player">
-                  <Cards
-                    playerData={players.find(
-                      (player) => player.unique_id === userId
-                    )}
-                    isYourTurn={isYourTurn}
-                  />
-                </div>
-                {players
-                  .filter((player) => player.unique_id !== userId)
-                  .map((player, index) => (
-                    <div key={index + 1} className={`opponent-${index + 1}`}>
-                      {player && (
-                        <Cards playerData={player} isYourTurn={isYourTurn} />
+          <BlockFigCardProvider>
+            <div className="gameContainer">
+              <div className="boardContainer">
+                <Board board={board} isYourTurn={isYourTurn} />
+              </div>
+              {Array.isArray(players) && players.length > 0 && (
+                <>
+                  <div key={0} className="player">
+                    <Cards
+                      playerData={players.find(
+                        (player) => player.unique_id === userId
                       )}
-                    </div>
-                  ))}
-              </>
-            )}
-            <div className="optionsButtonContainer">
-              <LeaveGame playerId={userId} gameId={game_id} />
-              <EndTurn
-                playerId={userId}
-                gameId={game_id}
-                currentTurn={turnNumber}
-                isYourTurn={isYourTurn}
-              />
-              <CancelMove
-                playerId={userId}
-                gameId={game_id}
-                isYourTurn={isYourTurn}
-                partialMovementsMade={partialMovementsMade}
-              />
-            </div>
-            {isGameOver && (
-              <VictoryScreen isGameOver={isGameOver} winner={winner} />
-            )}
-            <div className="gameInfo">
-              <GameInfo
-                turnNumber={turnNumber}
-                players={players}
-                currentPlayerId={currentPlayerId}
-                userId={userId}
-              />
-              <TurnTimer
+                      isYourTurn={isYourTurn}
+                    />
+                  </div>
+                  {players
+                    .filter((player) => player.unique_id !== userId)
+                    .map((player, index) => (
+                      <div key={index + 1} className={`opponent-${index + 1}`}>
+                        {player && (
+                          <Cards playerData={player} isYourTurn={isYourTurn} />
+                        )}
+                      </div>
+                    ))}
+                </>
+              )}
+              <div className="optionsButtonContainer">
+                <LeaveGame playerId={userId} gameId={game_id} />
+                <EndTurn
+                  playerId={userId}
+                  gameId={game_id}
+                  currentTurn={turnNumber}
+                  isYourTurn={isYourTurn}
+                />
+                <CancelMove
+                  playerId={userId}
+                  gameId={game_id}
+                  isYourTurn={isYourTurn}
+                  partialMovementsMade={partialMovementsMade}
+                />
+                <TurnTimer
                 initialTime={time}
                 playerId={userId}
                 gameId={game_id}
                 isYourTurn={isYourTurn}  
-              />
+                />
+              </div>
+              {isGameOver && (
+                <VictoryScreen isGameOver={isGameOver} winner={winner} />
+              )}
+              <div className="gameInfo">
+                <GameInfo
+                  turnNumber={turnNumber}
+                  players={players}
+                  currentPlayerId={currentPlayerId}
+                  userId={userId}
+                />
+              </div>
+              <div className="chatContainer">
+                <Chat
+                  messages={messages}
+                  setMessages={setMessages}
+                  socketRef={socketRef}
+                />
+              </div>
             </div>
-          </div>
+          </BlockFigCardProvider>
         </FigCardProvider>
       </MovCardProvider>
     </MovementProvider>
