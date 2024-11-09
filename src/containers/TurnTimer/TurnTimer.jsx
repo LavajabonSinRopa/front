@@ -1,3 +1,4 @@
+// TurnTimer.jsx
 import React, { useState, useEffect } from "react";
 import TurnTimerView from "./components/TurnTimerView.jsx";
 
@@ -14,11 +15,11 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
     if (secondsLeft <= 0) return;
 
     const interval = setInterval(() => {
-        setSecondsLeft((prev) => (prev > 0 ? prev - 1 : initialTime));
+        setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [secondsLeft]);
 
   useEffect(() => {
     if (secondsLeft === 0 && isYourTurn && !isLoading) {
