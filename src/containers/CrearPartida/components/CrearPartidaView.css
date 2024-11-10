@@ -1,3 +1,9 @@
+input[type="text"] {
+  all: unset;  /* Elimina todos los estilos por defecto */
+  width: auto; /* Ajusta el tamaño a tus necesidades */
+  height: auto; /* Ajusta la altura a tus necesidades */
+}
+
 .createGameContainer {
   top: 0;
   left: 0;
@@ -27,76 +33,57 @@
   height: 100%;
   width: 100%;
 }
-
-.createGameTitle {
-  position: relative;
-  top: 7%;
-  z-index: 4;
-  width: 65%;
-  pointer-events: none;
+.createGameTitleContainer {
+  display: flex;
+  justify-content: center; /* Centra los elementos horizontalmente */
+  align-items: flex-end; /* Alinea los elementos al fondo (parte inferior) */
+  width: 100%;
+  height: auto;
 }
 
-.inputErrorNotification, .creatingGameErrorNotification {
+.createGameTitleFront {
+  width: 50%;
+  height: auto;
+  pointer-events: none;
+  position: relative; /* Permite que el solapamiento funcione */
+  z-index: 2; /* Asegura que esta imagen esté por encima */
+}
+
+.createGameTitleBackLeft {
+  width: 10.5%; /* Ajusta el tamaño de la imagen de fondo */
+  height: auto;
+  pointer-events: none;
+  position: absolute; /* Permite posicionarla de manera absoluta */
+  left: 8%; /* Mueve la imagen a la izquierda para que se solape */
+  z-index: 1; /* Asegura que esta imagen esté debajo */
+  transform:translateX(118%) translateY(26%);
+}
+
+.createGameTitleBackRight {
+  width: 10.5%; /* Ajusta el tamaño de la imagen de fondo */
+  height: auto;
+  pointer-events: none;
+  position: absolute; /* Permite posicionarla de manera absoluta */
+  right: 8%; /* Mueve la imagen a la derecha para que se solape */
+  z-index: 1; /* Asegura que esta imagen esté debajo */
+  transform:scaleX(-1) translateX(118%) translateY(26%);
+}
+
+.inputErrorNotification,
+.creatingGameErrorNotification {
   position: absolute;
   width: 20%;
   height: 35%;
-  top: 40%;
+  top: 30%;
   left: 22%;
   z-index: 2;
-}
-
-.createGameMenu {
-  z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  height: auto;
-  width: 40%;
-  background-color: #29957d;
-  border: 10px solid #25a589; /* Disminuye el grosor del borde */
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
-}
-
-.createGameInputContainer {
-  grid-column: 2 / 4; 
-  grid-row: 1 / 4;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.usernameCreateGame,
-.gameNameCreateGame,
-.passwordCreateGame {
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.usernameCreateGame {
-  grid-column: 2 / 4;
-  grid-row: 1;
-}
-
-.gameNameCreateGame {
-  grid-column: 2 / 4;
-  grid-row: 2;
-}
-
-.passwordCreateGame {
-  grid-column: 2 / 4;
-  grid-row: 3;
 }
 
 .borderTopLeft,
 .borderTopRight,
 .borderBottomLeft,
 .borderBottomRight {
-  width: 120px;
+  width: 80%;
   height: auto;
   padding: 10px;
 }
@@ -132,6 +119,57 @@
   align-self: end;
 }
 
+.createGameMenu {
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  height: auto;
+  width: 40%;
+  background-color: #29957d;
+  border-top: none;
+  border-left: 10px solid #25a589;
+  border-right: 10px solid #25a589;
+  border-bottom: 10px solid #25a589;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  
+}
+
+.createGameInputContainer {
+  grid-column: 2 / 4;
+  grid-row: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.usernameCreateGame,
+.gameNameCreateGame,
+.passwordCreateGame {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.usernameCreateGame {
+  grid-column: 2 / 4;
+  grid-row: 1;
+}
+
+.gameNameCreateGame {
+  grid-column: 2 / 4;
+  grid-row: 2;
+}
+
+.passwordCreateGame {
+  grid-column: 2 / 4;
+  grid-row: 3;
+}
+
 .usernameCreateGame input,
 .gameNameCreateGame input,
 .passwordCreateGame input {
@@ -142,7 +180,9 @@
   border-radius: 5px; /* Bordes redondeados (opcional) */
   width: 100%; /* Asegura que el input ocupe todo el espacio disponible */
   font-size: 16px; /* Tamaño de fuente (opcional, puedes ajustarlo a tus necesidades) */
+  box-sizing: border-box; /* Asegura que el padding no haga que el input se salga del contenedor */
 }
+
 
 .usernameCreateGame input:focus,
 .gameNameCreateGame input:focus,

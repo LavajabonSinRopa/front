@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CrearPartidaView.css";
-import createGameTitle from "./switcher_UI_UX_desing_create_game_banner.svg";
+import createGameTitleFront from "./switcher_UI_UX_desing_create_game_banner_front.svg";
+import createGameTitleBack from "./switcher_UI_UX_desing_create_game_banner_back.svg";
 import inputErrorNotification from "./errorInputNotificationAssett.svg";
 import creatingGameErrorNotification from "./errorCreatingGameNotificationAssett.svg";
 import hide from "../../../assets/hide.svg";
@@ -56,8 +57,11 @@ const CrearPartidaView = ({
   return (
     <div className="createGameContainer">
       <div className="createGameMenuConteiner">
-        <img className="createGameTitle" src={createGameTitle} />
-
+        <div className="createGameTitleContainer">
+        <img className="createGameTitleBackLeft" src={createGameTitleBack} />
+          <img className="createGameTitleFront" src={createGameTitleFront} />
+          <img className="createGameTitleBackRight" src={createGameTitleBack} />
+        </div>
         <img
           className="inputErrorNotification"
           src={inputErrorNotification}
@@ -71,7 +75,6 @@ const CrearPartidaView = ({
             transition: "transform 0.5s ease-in, opacity 0.3s ease-in", // Transición para mover y desvanecer
           }}
         />
-
         <img
           className="creatingGameErrorNotification"
           src={creatingGameErrorNotification}
@@ -123,7 +126,7 @@ const CrearPartidaView = ({
             <div className="passwordCreateGame">
               <div style={{ display: "flex", alignItems: "center" }}>
                 <input
-                  style={{ border: "none", width: "100%" }}
+                  style={{ border: "none"}}
                   type={showPassword ? "text" : "password"}
                   placeholder="Contraseña (opcional)"
                   value={password}
