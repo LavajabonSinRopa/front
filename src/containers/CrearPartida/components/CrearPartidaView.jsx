@@ -8,9 +8,6 @@ import hide from "../../../assets/hide.svg";
 import view from "../../../assets/view.svg";
 import border from "./switcher_UI_UX_assett_1.svg";
 
-
-
-
 const ValidationMessage = ({ value, maxLength, isValid }) => {
   return (
     <p
@@ -61,7 +58,7 @@ const CrearPartidaView = ({
     <div className="createGameContainer">
       <div className="createGameMenuConteiner">
         <div className="createGameTitleContainer">
-        <img className="createGameTitleBackLeft" src={createGameTitleBack} />
+          <img className="createGameTitleBackLeft" src={createGameTitleBack} />
           <img className="createGameTitleFront" src={createGameTitleFront} />
           <img className="createGameTitleBackRight" src={createGameTitleBack} />
         </div>
@@ -127,9 +124,11 @@ const CrearPartidaView = ({
             </div>
 
             <div className="passwordCreateGame">
-              <div style={{ display: "flex", alignItems: "center", width: "100%"  }}>
+              <div
+                style={{ display: "flex", alignItems: "center", width: "100%" }}
+              >
                 <input
-                  style={{ border: "none"}}
+                  style={{ border: "none" }}
                   type={showPassword ? "text" : "password"}
                   placeholder="Contraseña (opcional)"
                   value={password}

@@ -3,6 +3,7 @@ import { UsernameContext } from "../../../contexts/UsernameContext";
 import hide from "../../../assets/hide.svg";
 import view from "../../../assets/view.svg";
 import { isValidDateOrTimeValue } from "@testing-library/user-event/dist/cjs/utils/index.js";
+import "./ItemComponent.css";
 
 const ValidationMessage = ({ value, maxLength, isValid }) => {
   return (
@@ -55,48 +56,20 @@ const ItemComponent = ({ item, handleClick }) => {
   };
 
   return (
-    <div
-      key={item.unique_id}
-      style={{
-        padding: 10,
-        margin: 10,
-        backgroundColor: "#00061a",
-        borderRadius: "30px",
-      }}
-    >
+    <div key={item.unique_id} className="item-container">
       <h1>{item.name}</h1>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "10px",
-        }}
-      >
+      <div className="item-grid">
         <div>
           <h2>{"Cantidad de Jugadores: " + item.players.length + "/4"}</h2>
           <p>{"Estado: " + item.state}</p>
           <p>{"Dueño: " + ownerName}</p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}
-        >
+        <div className="item-flex-column">
           {isPrivate && item.players.length !== 4 && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+            <div className="item-flex-column">
               {/* Input escondido para que el browser no sugiera contraseñas >:( */}
               <input type="password" style={{ display: "none" }} />
-              <div style={{ display: "flex", flexDirection: "row" }}>
+              <div className="item-flex-row">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Ingresa una Contraseña"
@@ -105,18 +78,18 @@ const ItemComponent = ({ item, handleClick }) => {
                   maxLength={10}
                   autoComplete="off"
                   inputMode="text"
-                  style={{ backgroundColor: "#1a1a1a" }}
+                  className="input-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ marginLeft: "10px", fontSize: "12px" }}
+                  className="button-show-password"
                   disabled={password.length === 0}
                 >
                   <img
                     src={showPassword ? hide : view}
                     alt={showPassword ? "Ocultar" : "Mostrar"}
-                    style={{ width: "20px", height: "20px" }}
+                    className="img-show-password"
                   />
                 </button>
               </div>
@@ -136,24 +109,14 @@ const ItemComponent = ({ item, handleClick }) => {
             {players !== 4 && (
               <button
                 onClick={handleJoinClick}
-                style={{
-                  color: "white",
-                  backgroundColor:
-                    validUsername &&
-                    item.state !== "started" &&
-                    players !== 4 &&
-                    ((isPrivate && validPassword && password.length !== 0) ||
-                      !isPrivate)
-                      ? "#0059b3"
-                      : "red",
-                  cursor:
-                    validUsername &&
-                    item.state !== "started" &&
-                    players !== 4 &&
-                    ((isPrivate && validPassword) || !isPrivate)
-                      ? "pointer"
-                      : "not-allowed",
-                }}
+                className={`button-join ${
+                  !validUsername ||
+                  item.state === "started" ||
+                  players === 4 ||
+                  (isPrivate && (!validPassword || password.length === 0))
+                    ? "button-join-disabled"
+                    : ""
+                }`}
                 disabled={
                   !validUsername ||
                   item.state === "started" ||

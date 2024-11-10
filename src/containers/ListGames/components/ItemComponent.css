@@ -1,0 +1,49 @@
+.item-container {
+  padding: 10px;
+  margin: 10px;
+  background-color: #06313a;
+  border-radius: 30px;
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.item-flex-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.item-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-password {
+  background-color: #1a1a1a;
+}
+
+.button-show-password {
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.img-show-password {
+  width: 20px;
+  height: 20px;
+}
+
+.button-join {
+  color: white;
+  background-color: #0059b3;
+  cursor: pointer;
+}
+
+.button-join-disabled {
+  background-color: red;
+  cursor: not-allowed;
+}
