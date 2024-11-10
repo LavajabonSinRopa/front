@@ -110,6 +110,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
         calculateCurrentPlayerId(newTurn, message.payload.players);
         setTime(message.payload.turn_timer);
+        console.log("got a skip turn with this time: ", message.payload.turn_timer);
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
         setWinner(message.payload.player_name);
