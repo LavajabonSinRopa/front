@@ -9,7 +9,7 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
   useEffect(() => {
       console.log("Nuevo time recibido:", initialTime);
       setSecondsLeft(initialTime);
-  }, [initialTime]);
+  }, [initialTime, isYourTurn]);
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -42,6 +42,7 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
 
           if (response.ok) {
               console.log(`Jugador ${playerId} ha terminado su turno por timer`);
+
           } else {
               console.error("Error al intentar terminar el turno por timer");
           }

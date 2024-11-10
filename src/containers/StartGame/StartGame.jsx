@@ -89,10 +89,9 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
         setCurrentPlayerId(players[0]?.unique_id);
-        calculateCurrentPlayerId(0, players);
         setTurnNumber(message.payload.turn);
         setTime(message.payload.turn_timer);
-        calculateCurrentPlayerId(turnNumber, message.payload.players);
+        calculateCurrentPlayerId(0, message.payload.players);
         localStorage.setItem(`game_${game_id}_turn`, message.payload.turn);
       } else if (message.type === "PlayerLeft") {
         setPlayers((prevPlayers) => {
