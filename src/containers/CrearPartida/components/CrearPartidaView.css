@@ -1,8 +1,9 @@
-input[type="text"] {
-  all: unset;  /* Elimina todos los estilos por defecto */
-  width: auto; /* Ajusta el tamaño a tus necesidades */
-  height: auto; /* Ajusta la altura a tus necesidades */
+input {
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+  appearance: none; 
 }
+
 
 .createGameContainer {
   top: 0;
@@ -72,10 +73,10 @@ input[type="text"] {
 .inputErrorNotification,
 .creatingGameErrorNotification {
   position: absolute;
-  width: 20%;
-  height: 35%;
-  top: 30%;
-  left: 22%;
+  width: 25%;
+  height: 50%;
+  top: 25%;
+  left: 20%;
   z-index: 2;
 }
 
@@ -83,7 +84,7 @@ input[type="text"] {
 .borderTopRight,
 .borderBottomLeft,
 .borderBottomRight {
-  width: 80%;
+  width: 60%;
   height: auto;
   padding: 10px;
 }
@@ -148,7 +149,7 @@ input[type="text"] {
 .usernameCreateGame,
 .gameNameCreateGame,
 .passwordCreateGame {
-  padding-top: 10px;
+  padding-top: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;

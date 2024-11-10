@@ -8,6 +8,9 @@ import hide from "../../../assets/hide.svg";
 import view from "../../../assets/view.svg";
 import border from "./switcher_UI_UX_assett_1.svg";
 
+
+
+
 const ValidationMessage = ({ value, maxLength, isValid }) => {
   return (
     <p
@@ -80,7 +83,7 @@ const CrearPartidaView = ({
           src={creatingGameErrorNotification}
           style={{
             opacity: message ? 1 : 0, // Ajustar opacidad
-            transform: message ? "translateX(225%)" : "translateX(185%)", // Mover hacia la izquierda
+            transform: message ? "translateX(185%)" : "translateX(140%)", // Mover hacia la izquierda
             transition: "transform 0.5s ease-in, opacity 0.3s ease-in", // Transición para mover y desvanecer
           }}
         />
@@ -93,7 +96,7 @@ const CrearPartidaView = ({
             <div className="usernameCreateGame">
               <input
                 type="text"
-                style={{ border: "none" }}
+                style={{ border: "none", width: "100%" }}
                 placeholder="Nombre de Usuario"
                 value={username}
                 onChange={onChangeUser}
@@ -108,7 +111,7 @@ const CrearPartidaView = ({
             </div>
             <div className="gameNameCreateGame">
               <input
-                style={{ border: "none" }}
+                style={{ border: "none", width: "100%" }}
                 type="text"
                 placeholder="Nombre de la Partida"
                 value={name}
@@ -124,7 +127,7 @@ const CrearPartidaView = ({
             </div>
 
             <div className="passwordCreateGame">
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", width: "100%"  }}>
                 <input
                   style={{ border: "none"}}
                   type={showPassword ? "text" : "password"}
