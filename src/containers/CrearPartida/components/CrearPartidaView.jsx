@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 import "./CrearPartidaView.css";
-import createGameTitle from "./switcher_UI_UX_desing_banner.svg";
+import createGameTitle from "./switcher_UI_UX_desing_create_game_banner.svg";
+import inputErrorNotification from "./errorInputNotificationAssett.svg";
+import hide from "../../../assets/hide.svg";
+import view from "../../../assets/view.svg";
 
 const ValidationMessage = ({ value, maxLength, isValid }) => {
-  return !isValid && value.length > 0 ? (
-    <p style={{ color: "red" }}>Solo se permiten letras y números!</p>
-  ) : (
-    <p style={{ color: "#052d38", fontWeight: "bold" }}>
+  return (
+    <p
+      style={{
+        color: !isValid && value.length > 0 ? "red" : "#052d38",
+        fontWeight: "bold",
+      }}
+    >
       Caracteres usados: {value.length}/{maxLength}
     </p>
   );
@@ -28,15 +34,46 @@ const CrearPartidaView = ({
   onSubmit,
   setShowPassword,
 }) => {
+  const [userInputError, setUserInputError] = useState(false);
+  const [nameInputError, setNameInputError] = useState(false);
+  const [passwordInputError, setPasswordInputError] = useState(false);
+
+  // Usamos un useEffect para manejar la validación
+  useEffect(() => {
+    setUserInputError(!validUserName && username.length > 0);
+  }, [validUserName, username]);
+
+  useEffect(() => {
+    setNameInputError(!validName && name.length > 0);
+  }, [validName, name]);
+
+  useEffect(() => {
+    setPasswordInputError(!validPassword && password.length > 0);
+  }, [validPassword, password]);
+
   return (
     <>
       <div className="createGameContainer">
         <div className="createGameMenuConteiner">
           <img className="createGameTitle" src={createGameTitle} />
+          <img
+            className="inputErrorNotification"
+            src={inputErrorNotification}
+            style={{
+              opacity:
+                userInputError || nameInputError || passwordInputError ? 1 : 0, // Ajustar opacidad
+              transform:
+                userInputError || nameInputError || passwordInputError
+                  ? "translateX(-45%)"
+                  : "translateX(0%)", // Mover hacia la izquierda
+              transition: "transform 0.5s ease-in, opacity 0.3s ease-in", // Transición para mover y desvanecer
+            }}
+          />
           <div className="createGameMenu">
             <div className="usernameCreateGame">
               <input
                 type="text"
+                style={{ border: "none" }}
                 placeholder="Nombre de Usuario"
                 value={username}
                 onChange={onChangeUser}
@@ -48,11 +85,13 @@ const CrearPartidaView = ({
                 value={username}
                 maxLength={20}
                 isValid={validUserName}
+                setInputError={setUserInputError}
               />
             </div>
 
             <div className="gameNameCreateGame">
               <input
+                style={{ border: "none" }}
                 type="text"
                 placeholder="Nombre de la Partida"
                 value={name}
@@ -65,12 +104,14 @@ const CrearPartidaView = ({
                 value={name}
                 maxLength={20}
                 isValid={validName}
+                setInputError={setNameInputError}
               />
             </div>
 
             <div className="passwordCreateGame">
               <div style={{ display: "flex", alignItems: "center" }}>
                 <input
+                  style={{ border: "none", width: "100%" }}
                   type={showPassword ? "text" : "password"}
                   placeholder="Contraseña (opcional)"
                   value={password}
@@ -84,13 +125,18 @@ const CrearPartidaView = ({
                   onClick={() => setShowPassword((prev) => !prev)}
                   style={{ marginLeft: "10px", fontSize: "12px" }}
                 >
-                  {showPassword ? "Ocultar" : "Mostrar"}
+                  <img
+                    src={showPassword ? hide : view}
+                    alt={showPassword ? "Ocultar" : "Mostrar"}
+                    style={{ width: "20px", height: "20px" }}
+                  />
                 </button>
               </div>
               <ValidationMessage
                 value={password}
                 maxLength={10}
                 isValid={validPassword}
+                setInputError={setPasswordInputError}
               />
             </div>
           </div>
@@ -102,7 +148,7 @@ const CrearPartidaView = ({
                 validName &&
                 validUserName &&
                 (validPassword || password.length === 0)
-                  ? "blue"
+                  ? "#06313a"
                   : "red",
               cursor:
                 validName &&

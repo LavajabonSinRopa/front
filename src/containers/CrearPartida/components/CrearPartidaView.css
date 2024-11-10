@@ -29,11 +29,25 @@
 }
 
 .createGameTitle {
-  width: 50%;
+  position: relative;
+  top: 8%;
+  z-index: 4;
+  width: 70%;
+  pointer-events: none;
+}
+
+.inputErrorNotification {
+  position: absolute; 
+  width: 20%;
+  height: 100%;
+  top: 9%;
+  left: 20%;
+  z-index: 2;
 }
 
 .createGameMenu {
-  padding: 30px;
+  z-index: 3;
+  padding: 30px ;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,7 +59,9 @@
   border-bottom-right-radius: 60px;
 }
 
-
+.usernameCreateGame {
+  padding-top: 50px;
+}
 
 .usernameCreateGame,
 .gameNameCreateGame,
