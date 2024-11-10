@@ -1,4 +1,4 @@
-import React, { useState, useContext} from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import CrearPartidaView from "./components/CrearPartidaView";
 import { UserIdContext } from "../../contexts/UserIdContext";
@@ -11,13 +11,15 @@ const CrearPartida = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { setUserId } = useContext(UserIdContext);
   const navigate = useNavigate();
-  const {userId, setUserId} = useContext(UserIdContext)
 
   const handleChangeUser = (e) => {
     setMessage("");
     const newUsername = e.target.value;
-    const isValid = /^[a-zA-Z0-9\s]*$/.test(newUsername);
+    const isValid = /^[a-zA-Z0-9\s]*$/.test(newUsername) && newUsername.length <= 20 && newUsername.length > 0;
     setUsername(newUsername);
 
     if (newUsername.length > 20 || newUsername.trim() === "" || !isValid) {
@@ -30,7 +32,7 @@ const CrearPartida = () => {
   const handleChangeInput = (e) => {
     setMessage("");
     const newName = e.target.value;
-    const isValid = /^[a-zA-Z0-9\s]*$/.test(newName);
+    const isValid = /^[a-zA-Z0-9\s]*$/.test(newName) && newName.length <= 20 && newName.length > 0;
     setName(newName);
 
     if (newName.length > 20 || newName.trim() === "" || !isValid) {
@@ -41,15 +43,21 @@ const CrearPartida = () => {
   };
 
   const handleChangePassword = (e) => {
-    setPassword(e.target.value);
+    setMessage("");
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    const isValidPassword =
+      /^[a-zA-Z0-9]{0,10}$/.test(newPassword) && newPassword.length <= 10;
+    setValidPassword(isValidPassword);
   };
 
   const handleSubmit = async () => {
-    if (!validName || !validUsername) return;
-
+    if (!validName || !validUsername || (!validPassword && password.length > 0)) return;
+    
     const data = {
       game_name: name,
       player_name: username,
+      password: password || "",
     };
 
     setLoading(true);
@@ -69,9 +77,9 @@ const CrearPartida = () => {
       }
 
       const result = await response.json();
-      setUserId(result.player_id)
+      setUserId(result.player_id);
       const gameId = result.game_id;
-      
+
       setMessage("Creación de partida exitosa.");
 
       navigate(`/games/${gameId}`);
@@ -86,19 +94,24 @@ const CrearPartida = () => {
   };
 
   return (
-    <CrearPartidaView
-      username={username}
-      validUserName={validUsername}
-      name={name}
-      validName={validName}
-      message={message}
-      loading={loading}
-      password={password}
-      onChangeUser={handleChangeUser}
-      onChangeInput={handleChangeInput}
-      onChangePassword={handleChangePassword}
-      onSubmit={handleSubmit}
-    />
+    <>
+      <CrearPartidaView
+        username={username}
+        validUserName={validUsername}
+        name={name}
+        validName={validName}
+        message={message}
+        loading={loading}
+        password={password}
+        validPassword={validPassword}
+        showPassword={showPassword}
+        onChangeUser={handleChangeUser}
+        onChangeInput={handleChangeInput}
+        onChangePassword={handleChangePassword}
+        onSubmit={handleSubmit}
+        setShowPassword={setShowPassword}
+      />
+    </>
   );
 };
 

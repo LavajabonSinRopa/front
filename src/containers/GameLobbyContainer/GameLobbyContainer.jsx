@@ -47,6 +47,7 @@ export const GameLobbyContainer = () => {
             gameId: game.unique_id,
             gameState: game.state,
             gameCreator: game.creator,
+            gameType: game.type,
           });
 
           const { player_names, players } = game;
@@ -88,7 +89,7 @@ export const GameLobbyContainer = () => {
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
       setReconnectingWS(false); // Conexion exitosa, cancelar el estado de reconexion
-      if (reconnectTimeoutRefWS.current)  
+      if (reconnectTimeoutRefWS.current)
         clearTimeout(reconnectTimeoutRefWS.current);
     };
 
@@ -117,14 +118,16 @@ export const GameLobbyContainer = () => {
           [player_id, player_name],
         ]);
       } else if (message.type === "PlayerLeft") {
-				// Actualizar lista cuando sale alguien
-				const { player_id } = message.payload;
-				setPlayerList((prevPlayers) =>
-					prevPlayers.filter(([id]) => id !== player_id)
-				);
-			} else if (message.type === "GameStarted") {
-				navigate(`/games/${game_id}/start`);
-			}
+        // Actualizar lista cuando sale alguien
+        const { player_id } = message.payload;
+        setPlayerList((prevPlayers) =>
+          prevPlayers.filter(([id]) => id !== player_id)
+        );
+      } else if (message.type === "GameStarted") {
+        navigate(`/games/${game_id}/start`);
+      } else if (message.type === "GameClosed") {
+        navigate(`/`);
+      }
     };
   };
 
@@ -134,7 +137,10 @@ export const GameLobbyContainer = () => {
     // Solo conectar si estamos montados y tenemos valores validos
     if (game_id && userId) {
       // Solo conecta si no hay conexion activa
-      if (!socketRef.current || socketRef.current.readyState === WebSocket.CLOSED) {
+      if (
+        !socketRef.current ||
+        socketRef.current.readyState === WebSocket.CLOSED
+      ) {
         connectWebSocket();
       }
     }
@@ -150,7 +156,7 @@ export const GameLobbyContainer = () => {
   return (
     <div>
       {gameData ? (
-        (reconnectingAPI || reconnectingWS) ? (
+        reconnectingAPI || reconnectingWS ? (
           <p>Reconectando...</p>
         ) : (
           <GameLobby
