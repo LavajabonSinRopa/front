@@ -7,6 +7,7 @@ import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
+import TurnTimer from "../TurnTimer/TurnTimer.jsx";
 import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
@@ -32,6 +33,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [isYourTurn, setIsYourTurn] = useState(false);
   const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
+  const [time, setTime] = useState(10);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -89,6 +91,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setCurrentPlayerId(players[0]?.unique_id);
         calculateCurrentPlayerId(0, players);
         setTurnNumber(message.payload.turn);
+        setTime(message.payload.turn_timer);
         calculateCurrentPlayerId(turnNumber, message.payload.players);
         localStorage.setItem(`game_${game_id}_turn`, message.payload.turn);
       } else if (message.type === "PlayerLeft") {
@@ -106,18 +109,21 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
         calculateCurrentPlayerId(newTurn, message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
         setWinner(message.payload.player_name);
       } else if (message.type === "MovSuccess") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "MoveUnMade") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "FigureMade") {
-        setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "FigureBlocked") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
@@ -224,6 +230,12 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   gameId={game_id}
                   isYourTurn={isYourTurn}
                   partialMovementsMade={partialMovementsMade}
+                />
+                <TurnTimer
+                initialTime={time}
+                playerId={userId}
+                gameId={game_id}
+                isYourTurn={isYourTurn}  
                 />
               </div>
               {isGameOver && (
