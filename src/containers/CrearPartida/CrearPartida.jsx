@@ -43,6 +43,7 @@ const CrearPartida = () => {
   };
 
   const handleChangePassword = (e) => {
+    setMessage("");
     const newPassword = e.target.value;
     setPassword(newPassword);
     const isValidPassword =
