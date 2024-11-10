@@ -8,6 +8,7 @@ import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
 import TurnTimer from "../TurnTimer/TurnTimer.jsx";
+import ForbiddenColorDisplay from "../ForbiddenColorDisplay/ForbiddenColorDisplay.jsx";
 import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
@@ -34,6 +35,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
   const [time, setTime] = useState(10);
+  const [forbColor, setForbColor] = useState(null)
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -84,7 +86,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
 
     socketRef.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      //console.log(message);
+      console.log(message);
       if (message.type === "GameStarted") {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
@@ -93,6 +95,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setTime(message.payload.turn_timer);
         calculateCurrentPlayerId(0, message.payload.players);
         localStorage.setItem(`game_${game_id}_turn`, message.payload.turn);
+        setForbColor(message.payload.forbidden_color);
       } else if (message.type === "PlayerLeft") {
         setPlayers((prevPlayers) => {
           return prevPlayers.filter(
@@ -123,9 +126,11 @@ function StartGame({ game_id, userId, websocketUrl }) {
       } else if (message.type === "FigureMade") {
         setPlayers(message.payload.players);
         setTime(message.payload.turn_timer);
+        setForbColor(message.payload.forbidden_color);
       } else if (message.type === "FigureBlocked") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setForbColor(message.payload.forbidden_color);
       } else if (message.type === "ChatMessage") {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -246,6 +251,9 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   players={players}
                   currentPlayerId={currentPlayerId}
                   userId={userId}
+                />
+                <ForbiddenColorDisplay
+                  color={forbColor}
                 />
               </div>
               <div className="chatContainer">

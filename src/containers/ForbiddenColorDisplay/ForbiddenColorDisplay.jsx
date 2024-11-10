@@ -1,3 +1,4 @@
+//ForbiddenColorDisplay.jsx
 import React, { useEffect, useState } from "react";
 import ForbiddenColorDisplayView from "./components/ForbiddenColorDisplayView";
 
