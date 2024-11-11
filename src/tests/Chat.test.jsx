@@ -138,7 +138,7 @@ describe("LeaveGame component", () => {
     WS.clean(); // Limpiar los mocks de WebSocket después de cada test
     jest.restoreAllMocks(); // Restaurar los mocks para evitar interferencias con otros tests
   });
-  
+
   test("El componente se renderiza correctamente", () => {
     render(
       <MemoryRouter>
@@ -280,7 +280,48 @@ describe("LeaveGame component", () => {
       )
     ).toBeInTheDocument();
   });
-/*
+
+  test("Si el usuario realiza una accion se muestra un log con la misma", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdContext.Provider value={mockUserIdContextValue}>
+          <StartGame
+            game_id={"gameIdValue"}
+            userId={"58cf988c-6813-4aa7-b4af-6009828e2065"}
+            websocketUrl={`ws://localhost:1234/games/gameIdValue/58cf988c-6813-4aa7-b4af-6009828e2065`}
+          >
+            <Chat
+              messages={[]}
+              setMessages={setMessagesMock}
+              socketRef={mockSocket}
+            />
+          </StartGame>
+        </UserIdContext.Provider>
+      </MemoryRouter>
+    );
+
+    server.send(message);
+
+    const logMessage = {
+      type: "logMsg",
+      payload: {
+        player_id: "1",
+        time: "(1)",
+        player_name: "luca",
+        message: "El jugador ha realizado una accion",
+      },
+    };
+    server.send(logMessage);
+
+    waitFor(() => {
+      const logMsg = screen.getByText("El jugador ha realizado una accion");
+      expect(logMsg).toBeInTheDocument();
+      expect(logMsg).toHaveClass("logMsg");
+      expect(logMsg).loHaveStyle("color: rgb(82, 82, 82)");
+    });
+  });
+
+  /*
   test("Si el usuario esta muy arriba en el chat se le notifican de nuevos mensajes", async () => {
     render(
       <MemoryRouter>

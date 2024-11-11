@@ -26,7 +26,7 @@ const Board = ({ board, isYourTurn, forbiddenColor }) => {
     blockFigCardType,
     setBlockFigCardType,
     opponentId,
-    setOpponentId
+    setOpponentId,
   } = useContext(BlockFigCardContext);
   const {
     firstPieceXaxis,
@@ -197,6 +197,8 @@ const Board = ({ board, isYourTurn, forbiddenColor }) => {
       if (!response.ok) {
         const errorDetails = await response.json();
         console.log("Detalles del error:", errorDetails);
+        setBlockFigCardId(null);
+        setBlockFigCardType(null);
         setFigError(true);
       } else {
         setBlockFigCardId(null);

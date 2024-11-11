@@ -35,7 +35,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
   const [time, setTime] = useState(10);
-  const [forbColor, setForbColor] = useState(null)
+  const [forbColor, setForbColor] = useState(null);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -136,7 +136,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
           ...prevMessages,
           {
             id: message.payload.player_id,
-            type: "message",
+            type: message.payload.player_id === "1" ? "msgLog" : "message",
             msgInfo: `${message.payload.player_name} (${message.payload.time}): `,
             text: `${message.payload.message}`,
           },
@@ -198,7 +198,11 @@ function StartGame({ game_id, userId, websocketUrl }) {
           <BlockFigCardProvider>
             <div className="gameContainer">
               <div className="boardContainer">
-                <Board board={board} isYourTurn={isYourTurn} forbiddenColor={forbColor} />
+                <Board
+                  board={board}
+                  isYourTurn={isYourTurn}
+                  forbiddenColor={forbColor}
+                />
               </div>
               {Array.isArray(players) && players.length > 0 && (
                 <>
@@ -236,10 +240,10 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   partialMovementsMade={partialMovementsMade}
                 />
                 <TurnTimer
-                initialTime={time}
-                playerId={userId}
-                gameId={game_id}
-                isYourTurn={isYourTurn}  
+                  initialTime={time}
+                  playerId={userId}
+                  gameId={game_id}
+                  isYourTurn={isYourTurn}
                 />
               </div>
               {isGameOver && (
@@ -252,9 +256,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
                   currentPlayerId={currentPlayerId}
                   userId={userId}
                 />
-                <ForbiddenColorDisplay
-                  color={forbColor}
-                />
+                <ForbiddenColorDisplay color={forbColor} />
               </div>
               <div className="chatContainer">
                 <Chat

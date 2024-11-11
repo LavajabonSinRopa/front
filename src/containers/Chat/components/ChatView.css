@@ -49,6 +49,18 @@
   align-self: flex-start; /* Alinea los mensajes del usuario a la izquierda */
 }
 
+.logMsg {
+  margin: 5px 0;
+  padding: 5px;
+  color: rgb(82, 82, 82);
+  border-radius: 5px;
+  max-width: 80%; /* Asegura que los mensajes no se desborden horizontalmente */
+  white-space: normal; /* Asegura que el texto se ajuste y no se quede en una sola línea */
+  hyphens: auto; /* Habilita los guiones automáticos en palabras largas */
+  overflow: hidden; /* Evita el desbordamiento horizontal */
+  align-self: center; /* Alinea los mensajes del sistema al centro */
+}
+
 .newMsgFlag {
   bottom: 10px;
   left: 10px;

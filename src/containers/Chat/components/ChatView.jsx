@@ -92,7 +92,7 @@ function ChatView({
                     {message.text}
                   </>
                 ) : (
-                  <b>ACA IRIAN LOS LOGS DE ACCIONES</b>
+                  <b>{message.text}</b>
                 )}
               </li>
             ))}

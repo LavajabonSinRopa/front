@@ -5,6 +5,7 @@ import "./components/Cards.css";
 import { MovCardContext } from "../../contexts/MovCardContext.jsx";
 import { FigCardContext } from "../../contexts/FigCardContext.jsx";
 import { BlockFigCardContext } from "../../contexts/BlockFigCardContext.jsx";
+import { MovementContext } from "../../contexts/MovementContext.jsx";
 
 function Card({ playerData, isYourTurn }) {
   const [playerMovCards, setPlayerMovCards] = useState([]);
@@ -22,6 +23,7 @@ function Card({ playerData, isYourTurn }) {
     opponentId,
     setOpponentId,
   } = useContext(BlockFigCardContext);
+  const { setFirstPieceXaxis, setFirstPieceYaxis } = useContext(MovementContext);
   const blockFigTimeoutRef = useRef(null);
   const [errorBlockFig, setErrorBlockFig] = useState(false);
 
@@ -67,6 +69,8 @@ function Card({ playerData, isYourTurn }) {
           setMovCardId(cardId);
           setMovCardType(cardType);
         } else if (cardId === movCardId) {
+          setFirstPieceXaxis(null);
+          setFirstPieceYaxis(null);
           setMovCardId(null);
           setMovCardType(null);
         } else {
