@@ -115,7 +115,7 @@ const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlo
               ))}
             </ul>
           ) : (
-            <p>No hay cartas de movimiento</p>
+            <p style={{ color: "#052d38" }}>No hay cartas de movimiento</p>
           )}
         </>
       )}
@@ -149,7 +149,7 @@ const CardView = ({ movCards, figCards, playerId, useMovCard, useFigCard, useBlo
               ))}
             </ul>
           ) : (
-            <p>No hay cartas de figura</p>
+            <p style={{ color: "#052d38" }}>No hay cartas de figura</p>
           )}
         </>
       )}
