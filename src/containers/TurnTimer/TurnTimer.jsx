@@ -22,7 +22,7 @@ const TurnTimer = ({ initialTime, playerId, gameId, isYourTurn }) => {
   }, [secondsLeft]);
 
   useEffect(() => {
-    if (secondsLeft === 0 && isYourTurn && !isLoading) {
+    if (secondsLeft <= 0 && isYourTurn && !isLoading) {
         handleEndTurn();
     }
   }, [secondsLeft, isYourTurn, isLoading]);
