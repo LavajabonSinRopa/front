@@ -7,7 +7,7 @@ import { UserIdContext } from "../../contexts/UserIdContext.jsx";
 import { FigCardContext } from "../../contexts/FigCardContext.jsx";
 import { BlockFigCardContext } from "../../contexts/BlockFigCardContext.jsx";
 
-const Board = ({ board, isYourTurn }) => {
+const Board = ({ board, isYourTurn, forbiddenColor }) => {
   const { userId } = useContext(UserIdContext);
   const { game_id } = useParams();
   const [movError, setMovError] = useState(false);
@@ -219,6 +219,7 @@ const Board = ({ board, isYourTurn }) => {
       figError={figError}
       swappedPieces={swappedPieces}
       getConnectedComponents={getConnectedComponents}
+      forbiddenColor={forbiddenColor}
     />
   );
 };

@@ -198,7 +198,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
           <BlockFigCardProvider>
             <div className="gameContainer">
               <div className="boardContainer">
-                <Board board={board} isYourTurn={isYourTurn} />
+                <Board board={board} isYourTurn={isYourTurn} forbiddenColor={forbColor} />
               </div>
               {Array.isArray(players) && players.length > 0 && (
                 <>
