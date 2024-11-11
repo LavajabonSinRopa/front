@@ -1,4 +1,5 @@
 import React from "react";
+import "./GameButtons.css";
 // Componente que maneja ambos botones
 const GameButtons = ({
   playerId,
@@ -12,9 +13,10 @@ const GameButtons = ({
   const isOwner = playerId === ownerId;
   const playersNumber = playerList.length;
   return (
-    <div>
+    <div className="lobbyGameButtonsContainer">
       {isOwner && (
         <button
+          className="lobbyStartGameButton"
           onClick={onStartGame}
           disabled={playersNumber < 2 || 4 < playersNumber}
         >
@@ -22,7 +24,10 @@ const GameButtons = ({
         </button>
       )}
 
-      <button onClick={isOwner ? onCancelGame : onLeaveGame}>
+      <button
+        className="lobbyLeaveGameButton"
+        onClick={isOwner ? onCancelGame : onLeaveGame}
+      >
         {isOwner ? "Cancelar Partida" : "Abandonar Partida"}
       </button>
     </div>

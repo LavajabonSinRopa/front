@@ -1,0 +1,13 @@
+.lobbyGameInfoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.lobbyGameInfoData {
+  margin: 5px;
+  color: rgb(5, 45, 56);
+  font-size: 25px;
+}

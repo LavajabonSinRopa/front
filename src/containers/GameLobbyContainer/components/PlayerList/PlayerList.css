@@ -1,0 +1,25 @@
+.lobbyPlayerListContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+.lobbyPlayerListTitle {
+  color: rgb(5, 45, 56);
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.lobbyPlayerListItem {
+  width: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  background-color: #217c6f;
+  margin: 5px;
+  border-radius: 30px;
+}
