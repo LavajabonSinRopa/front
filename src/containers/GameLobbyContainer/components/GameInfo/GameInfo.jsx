@@ -1,4 +1,7 @@
 import React from "react";
+import "./GameInfo.css";
+
+
 function GameInfo({ gameName, gameType }) {
 	return (
 		<div>
