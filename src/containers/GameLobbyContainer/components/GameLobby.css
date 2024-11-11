@@ -1,0 +1,121 @@
+.lobbyContainer {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../../../assets/switcher_UI_UX_desing_background_pattern.svg");
+  background-size: 100px 150px; /* Establece el tamaño de la imagen de fondo */
+  background-repeat: repeat; /* Repite la imagen si es necesario */
+  background-color: #5dc8af;
+  animation: moverFondoCreateGame 5s linear infinite; /* Aplica la animación */
+}
+
+.lobbyMenuContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.lobbyTitleContainer {
+  display: flex;
+  justify-content: center; /* Centra los elementos horizontalmente */
+  align-items: flex-end; /* Alinea los elementos al fondo (parte inferior) */
+  width: 100%;
+  height: auto;
+}
+
+.lobbyTitleFront {
+  width: 50%;
+  height: auto;
+  pointer-events: none;
+  position: relative; /* Permite que el solapamiento funcione */
+  z-index: 2; /* Asegura que esta imagen esté por encima */
+}
+
+.lobbyTitleBackLeft {
+  width: 10.5%; /* Ajusta el tamaño de la imagen de fondo */
+  height: auto;
+  pointer-events: none;
+  position: absolute; /* Permite posicionarla de manera absoluta */
+  left: 8%; /* Mueve la imagen a la izquierda para que se solape */
+  z-index: 1; /* Asegura que esta imagen esté debajo */
+  transform: translateX(118%) translateY(26%);
+}
+
+.lobbyTitleBackRight {
+  width: 10.5%; /* Ajusta el tamaño de la imagen de fondo */
+  height: auto;
+  pointer-events: none;
+  position: absolute; /* Permite posicionarla de manera absoluta */
+  right: 8%; /* Mueve la imagen a la derecha para que se solape */
+  z-index: 1; /* Asegura que esta imagen esté debajo */
+  transform: scaleX(-1) translateX(118%) translateY(26%);
+}
+
+.lobbyBorderTopLeft,
+.lobbyBorderTopRight,
+.lobbyBorderBottomLeft,
+.lobbyBorderBottomRight {
+  width: 60%;
+  height: auto;
+  padding: 10px;
+}
+
+.lobbyBorderTopLeft {
+  grid-column: 1;
+  grid-row: 1;
+  rotate: 180deg;
+  justify-self: start;
+  align-self: start;
+}
+.lobbyBorderTopRight {
+  grid-column: 4;
+  grid-row: 1;
+  rotate: 270deg;
+  justify-self: end;
+  align-self: start;
+}
+
+.lobbyBorderBottomLeft {
+  grid-column: 1;
+  grid-row: 3;
+  rotate: 90deg;
+  justify-self: start;
+  align-self: end;
+}
+
+.lobbyBorderBottomRight {
+  grid-column: 4;
+  grid-row: 3;
+  rotate: 0deg;
+  justify-self: end;
+  align-self: end;
+}
+
+.lobbyMenu {
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  height: auto;
+  width: 40%;
+  background-color: #29957d;
+  border-top: none;
+  border-left: 10px solid #25a589;
+  border-right: 10px solid #25a589;
+  border-bottom: 10px solid #25a589;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.lobbyDataContainer {
+  grid-column: 2 / 4;
+  grid-row: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

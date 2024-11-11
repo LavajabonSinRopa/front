@@ -3,6 +3,10 @@ import GameInfo from "./GameInfo/GameInfo";
 import PlayerList from "./PlayerList/PlayerList";
 import GameButtons from "./GameButtons/GameButtons";
 import { useNavigate } from "react-router-dom";
+import "./GameLobby.css";
+import lobbyTitleBack from "./switcher_UI_UX_desing_create_game_banner_back.svg";
+import lobbyTitleFront from "./switcher_UI_UX_desing_lobby_banner_front.svg";
+import border from "./switcher_UI_UX_assett_1.svg";
 
 function GameLobby({ gameData, playerList, playerId }) {
   const { gameName, gameId, gameState, gameCreator, gameType } = gameData; // Destructure gameData
@@ -81,21 +85,36 @@ function GameLobby({ gameData, playerList, playerId }) {
   };
 
   return (
-    <div>
-      <GameInfo
-        gameName={gameName}
-        gameType={gameType == "public" ? "Pública" : "Privada"}
-      />
-      <PlayerList playerList={playerList} ownerId={gameCreator} />
-      <GameButtons
-        playerId={playerId}
-        ownerId={gameCreator}
-        gameId={gameId}
-        playerList={playerList}
-        onStartGame={onStartGame}
-        onCancelGame={onCancelGame}
-        onLeaveGame={onLeaveGame}
-      />
+    <div className="lobbyContainer">
+      <div className="lobbyMenuContainer">
+        <div className="lobbyTitleContainer">
+          <img className="lobbyTitleBackLeft" src={lobbyTitleBack} />
+          <img className="lobbyTitleFront" src={lobbyTitleFront} />
+          <img className="lobbyTitleBackRight" src={lobbyTitleBack} />
+        </div>
+        <div className="lobbyMenu">
+          <img className="lobbyBorderTopLeft" src={border} />
+          <img className="lobbyBorderTopRight" src={border} />
+          <img className="lobbyBorderBottomLeft" src={border} />
+          <img className="lobbyBorderBottomRight" src={border} />
+          <div className="lobbyDataContainer">
+            <GameInfo
+              gameName={gameName}
+              gameType={gameType == "public" ? "Pública" : "Privada"}
+            />
+            <PlayerList playerList={playerList} ownerId={gameCreator} />
+            <GameButtons
+              playerId={playerId}
+              ownerId={gameCreator}
+              gameId={gameId}
+              playerList={playerList}
+              onStartGame={onStartGame}
+              onCancelGame={onCancelGame}
+              onLeaveGame={onLeaveGame}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
