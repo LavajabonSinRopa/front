@@ -5,7 +5,7 @@ import GameButtons from "./GameButtons/GameButtons";
 import { useNavigate } from "react-router-dom";
 import "./GameLobby.css";
 import lobbyTitleBack from "./switcher_UI_UX_desing_create_game_banner_back.svg";
-import lobbyTitleFront from "./switcher_UI_UX_desing_create_game_banner_front.svg";
+import lobbyTitleFront from "./switcher_UI_UX_desing_lobby_banner_front.svg";
 import border from "./switcher_UI_UX_assett_1.svg";
 
 function GameLobby({ gameData, playerList, playerId }) {
