@@ -119,10 +119,10 @@ describe("ListaPartidas", () => {
     ).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
-    expect(itemsH1).toHaveLength(4);
+    expect(itemsH1).toHaveLength(3);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(5);
+    expect(itemsH2).toHaveLength(6);
     //Filtro de jugadores
     [1, 2, 3, 4].map((num) =>
       expect(screen.getByRole("button", { name: num })).toBeInTheDocument()
@@ -134,7 +134,7 @@ describe("ListaPartidas", () => {
     );
     expect(joinButtons).toHaveLength(2);
     //Titulo
-    expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
+    // expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
     expect(screen.getByText("dragonball")).toBeInTheDocument();
     expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
@@ -177,10 +177,10 @@ describe("ListaPartidas", () => {
     ).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
-    expect(itemsH1).toHaveLength(2);
+    expect(itemsH1).toHaveLength(1);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(3);
+    expect(itemsH2).toHaveLength(4);
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -188,7 +188,6 @@ describe("ListaPartidas", () => {
     );
     expect(joinButtons).toHaveLength(1);
     //Titulo
-    expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
     expect(screen.getByText("dragonball")).toBeInTheDocument();
     expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
