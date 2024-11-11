@@ -23,7 +23,7 @@ const ListGamesView = ({
         <div className="searchGameMenuContainer">
           <div className="searchGameTitleContainer">
             <img
-              className="searchGameTitleContainer"
+              className="searchGameTitleFront"
               src={switcher_UI_UX_design_search_game_banner}
             />
           </div>
