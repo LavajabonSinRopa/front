@@ -84,6 +84,8 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  min-width: 550px;
+  margin-left: 20px;
 }
 
 .ayudador {
@@ -136,7 +138,6 @@
   z-index: 2;
 }
 
-/* Border styles (if applicable) */
 .borderTopLeft,
 .borderTopRight,
 .borderBottomLeft,
@@ -146,7 +147,6 @@
   padding: 10px;
 }
 
-/* Specific border placement styles (if needed) */
 .borderTopLeft {
   grid-column: 1;
   grid-row: 1;
