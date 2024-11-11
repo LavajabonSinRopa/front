@@ -8,13 +8,14 @@ const PiecesView = ({
   movError,
   figError,
   isSwapped,
-  isConnectedComponent
+  isConnectedComponent,
+  forbiddenColor,
 }) => {
   const isInvolvedInPartialMovement = color.endsWith("%");
   if (isInvolvedInPartialMovement) {
     color = color.slice(0, -1);
   }
-  const isAFormedFigure = color === color.toUpperCase(); // Si el color viene todo en mayusculas, es una figura formada y se resalta en el tablero
+  const isAFormedFigure = (color === color.toUpperCase()) && (color.toLowerCase() !== forbiddenColor); // Si el color viene todo en mayusculas, es una figura formada y se resalta en el tablero
   const normalColor = color.toLowerCase(); //ficha común, no se resalta
 
   const buttonClass = `button 

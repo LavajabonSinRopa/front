@@ -15,6 +15,7 @@ const BoardView = ({
   figError,
   swappedPieces,
   getConnectedComponents,
+  forbiddenColor,
 }) => {
   const [connectedComponents, setConnectedComponents] = useState([]);
   const [selectedFigPosition, setSelectedFigPosition] = useState({
@@ -140,6 +141,7 @@ const BoardView = ({
                 figError={isErrorInFig(rowIndex, colIndex)}
                 isSwapped={isSwappedPosition(rowIndex, colIndex)}
                 isConnectedComponent={isConnectedPosition(rowIndex, colIndex)}
+                forbiddenColor={forbiddenColor}
               />
             </div>
           ))}
