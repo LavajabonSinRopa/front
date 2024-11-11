@@ -22,15 +22,16 @@ function ChatView({
   useEffect(() => {
     if (chatContainerRef.current && messages.length > 0) {
       const container = chatContainerRef.current;
-      
+
       // Verifica si el scroll está al final
       const isAtBottom =
-        container.scrollHeight - container.scrollTop <= container.clientHeight + 500;
-  
+        container.scrollHeight - container.scrollTop <=
+        container.clientHeight + 500;
+
       // Asegúrate de que messages[messages.length-1] y su propiedad 'message' existan
       const lastMessage = messages[messages.length - 1];
       const isUserMessage = lastMessage?.id === userId;
-  
+
       if (isAtBottom || isUserMessage) {
         // Si está al final, mover el scroll al fondo
         container.scrollTop = container.scrollHeight;
@@ -41,7 +42,6 @@ function ChatView({
       }
     }
   }, [messages, userId]); // Considera también añadir userId si cambia y es relevante
-  
 
   // Efecto para manejar la accion de scroll manual del usuario
   const handleScroll = () => {
@@ -60,13 +60,13 @@ function ChatView({
   // Enviar el mensaje al presionar "Enter"
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      handleSend(); 
+      handleSend();
     }
   };
 
   return (
     <div className="chat-container">
-      <h1>Chat</h1>
+      <h1 style={{ margin: "0", padding: "10px", color: "#052d38" }}>Chat</h1>
       <div
         className="chat"
         ref={chatContainerRef}
@@ -103,8 +103,10 @@ function ChatView({
       </div>
       {newMsgFlag && <div className="newMsgFlag">Nuevo(s) mensaje(s).</div>}
       {msgError && <p className="msgError">{msgError}</p>}
-      <div className="inputMessage">
+      <div className="inputMessageContainer">
         <input
+          className="inputMessage"
+          style={{ border: "none", width: "100%" }}
           type="text"
           value={unSendMessage}
           placeholder="Escribe un mensaje..."

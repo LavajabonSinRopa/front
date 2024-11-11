@@ -6,11 +6,27 @@ body {
 
 .gameContainer {
   display: grid;
-  grid-template-columns: repeat(4, 25vh) 1fr;
+  grid-template-columns: repeat(4, 18vw) 1fr;
   grid-template-rows: repeat(4, 25vh);
   width: 100vw;
   height: 100vh;
+  background-color: #691023;
+  background-image: url("../../../assets/switcher_UI_UX_desing_background_pattern.svg");
+  background-size: 100px 150px; /* Establece el tamaño de la imagen de fondo */
+  background-repeat: repeat; /* Repite la imagen si es necesario */
+  background-color: #5dc8af;
+  animation: moverFondoPartida 5s linear infinite; /* Aplica la animación */
 }
+
+@keyframes moverFondoPartida {
+  0% {
+    background-position: 0 0; /* Posición inicial */
+  }
+  100% {
+    background-position: 100px -150px; /* Cambia el valor según el tamaño de tu imagen */
+  }
+}
+
 
 .boardContainer {
   grid-column: 2 / 4; /* Ocupa columnas 2 y 3 */
@@ -40,13 +56,11 @@ body {
 .opponent-2 {
   grid-column: 1; /* Ocupa columnas 2 y 3 */
   grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
-  rotate: -90deg;
 }
 
 .opponent-3 {
   grid-column: 4; /* Ocupa columnas 2 y 3 */
   grid-row: 2 / 4; /* Ocupa filas 2 y 3 */
-  rotate: 90deg;
 }
 
 .gameInfo {

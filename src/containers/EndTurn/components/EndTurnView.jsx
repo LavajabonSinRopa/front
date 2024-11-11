@@ -13,7 +13,7 @@ const EndTurnView = ({
             <div className="error-message">
                 {message}
             </div>}
-            <button onClick={onPassTurn} disabled={!isYourTurn || isLoading}>
+            <button onClick={onPassTurn} disabled={!isYourTurn || isLoading} style={{backgroundColor: "#06313a", color: "white"}}>
                 {isLoading ? "Cargando..." : isYourTurn ? "Terminar Turno" : "Esperando tu turno"}
             </button>
         </div>
