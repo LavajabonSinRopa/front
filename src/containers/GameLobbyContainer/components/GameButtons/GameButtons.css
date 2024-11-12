@@ -1,0 +1,20 @@
+.lobbyGameButtonsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.lobbyStartGameButton, .lobbyLeaveGameButton {
+  background-color: rgb(6, 49, 58);
+  border: none;
+  border-radius: 15px;
+  color: white;
+  padding: 15px;
+  margin: 10px;
+  margin-bottom: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 160px;
+
+}

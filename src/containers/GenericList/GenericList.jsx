@@ -12,6 +12,7 @@ export const GenericList = ({
   idKey = "id", // OBLIGATORIO
   onCustomMessage, // OPCIONAL, Callback para mensajes personalizados
   reconnectInterval = 5000, // OPCIONAL, tiempo de espera para reconectar en ms
+  numPlayers, // OPCIONAL
 }) => {
   const [items, setItems] = useState([]); // Lista de items que se va a mostrar
   const [originalItems, setOriginalItems] = useState([]); // Lista de items que se recive
@@ -56,6 +57,7 @@ export const GenericList = ({
     socketRef.current.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
+        //console.log("WebSocket message received:", message);
         if (message.type === typeKey) {
           const data = message.payload;
           setOriginalItems(data);
@@ -99,13 +101,21 @@ export const GenericList = ({
           return false;
         });
       }
+      if(numPlayers){
+        filteredItems = filteredItems.filter((item) => {
+          if (item["players"]) {
+            return item["players"].length === numPlayers;
+          }
+          return false;
+        });
+      }
       filteredItems = filteredItems.slice(from, to);
       setItems(filteredItems);
     } catch (e) {
       console.error("Error filtering items:", e);
       setError("Error filtering items");
     }
-  }, [filterKey, from, to, originalItems, filterBy]);
+  }, [filterKey, from, to, originalItems, filterBy,numPlayers]);
 
   return error ? (
     <div>Error: {error}</div>

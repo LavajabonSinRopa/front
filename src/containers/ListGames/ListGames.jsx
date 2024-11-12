@@ -3,11 +3,13 @@ import ListGamesView from "./components/ListGamesView";
 import { GenericList } from "../GenericList/GenericList";
 import { renderItem } from "./components/renderItem";
 import { UsernameProvider } from "../../contexts/UsernameContext";
+import "./ListGames.css";
 
-function ListGames({ websocketUrl }) { 
+function ListGames({ websocketUrl }) {
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [numPlayers, setNumPlayers] = useState(null);
 
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -23,24 +25,28 @@ function ListGames({ websocketUrl }) {
     };
   }, []);
 
-
   return (
-    <UsernameProvider>
-      <ListGamesView
-        setSearch={setSearch}
-        containerRef={containerRef}
-        isAtBottom={isAtBottom}
-      >
-        <GenericList
-          filterBy={"name"}
-          filterKey={search}
-          websocketUrl={websocketUrl}
-          renderItem={renderItem}
-          typeKey={"CreatedGames"}
-          idKey={"unique_id"}
-        />
-      </ListGamesView>
-    </UsernameProvider>
+    <div className="listGamesContainer">
+      <UsernameProvider>
+        <ListGamesView
+          setSearch={setSearch}
+          containerRef={containerRef}
+          isAtBottom={isAtBottom}
+          numPlayers={numPlayers}
+          setNumPlayers={setNumPlayers}
+        >
+          <GenericList
+            filterBy={"name"}
+            filterKey={search}
+            websocketUrl={websocketUrl}
+            renderItem={renderItem}
+            typeKey={"CreatedGames"}
+            idKey={"unique_id"}
+            numPlayers={numPlayers}
+          />
+        </ListGamesView>
+      </UsernameProvider>
+    </div>
   );
 }
 

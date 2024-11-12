@@ -1,0 +1,156 @@
+/* Overall container styles */
+.searchGamesContainer {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../../../assets/switcher_UI_UX_desing_background_pattern.svg");
+  background-size: 100px 150px;
+  background-repeat: repeat;
+  background-color: #5dc8af;
+  animation: moverFondoHome 5s linear infinite;
+}
+
+@keyframes moverFondoHome {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100px -150px;
+  }
+}
+
+/* Menu container styles */
+.searchGameMenuContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Title container styles */
+.searchGameTitleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: auto;
+  margin-top: 50px;
+}
+
+.searchGameTitleFront {
+  width: 65%;
+  height: auto;
+  pointer-events: none;
+  position: relative; /* Permite que el solapamiento funcione */
+  z-index: 2; /* Asegura que esta imagen esté por encima */
+}
+
+.searchGameInputMenuContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #25a589;
+  width: 50%;
+  padding: 20px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  border-left: 10px solid #25a589;
+  border-right: 10px solid #25a589;
+  border-bottom: 10px solid #25a589;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.searchGameInputMenuContainer input {
+  background-color: #217c6f;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 16px;
+}
+
+.searchGameInputMenuContainer input:focus {
+  outline: none;
+}
+
+.searchGamesAvailableGamesDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 550px;
+  margin-left: 20px;
+}
+
+.ayudador {
+  margin-top: -60px;
+  overflow: hidden;
+  background-color: #25a589;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  width: 90%; 
+  max-width: 680px; 
+  background-color: #29957d;
+  border-top: none;
+  border-left: 10px solid #25a589;
+  border-right: 10px solid #25a589;
+  border-bottom: 10px solid #25a589;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+/* Game card styles */
+.gameCards {
+  width: 80%;
+  height: 500px;
+  overflow-y: auto;
+  padding: 10px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Number of players button styles */
+.numPlayersButton {
+  margin: 5px;
+}
+
+.numPlayersButtonActive {
+  background-color: #052d38;
+}
+
+/* Error notifications styles */
+.inputErrorNotification,
+.creatingGameErrorNotification {
+  position: absolute;
+  width: 25%;
+  height: 50%;
+  top: 25%;
+  left: 20%;
+  z-index: 2;
+}
+
+.borderTopLeft,
+.borderTopRight,
+.borderBottomLeft,
+.borderBottomRight {
+  width: 60%;
+  height: auto;
+  padding: 10px;
+}
+
+.borderTopLeft {
+  grid-column: 1;
+  grid-row: 1;
+  rotate: 180deg;
+  justify-self: start;
+  align-self: start;
+}

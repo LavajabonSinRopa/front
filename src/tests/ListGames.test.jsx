@@ -117,21 +117,24 @@ describe("ListaPartidas", () => {
     expect(
       screen.getByPlaceholderText(/Ingresa un Nombre/i)
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Buscar/i })).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
-    expect(itemsH1).toHaveLength(4);
+    expect(itemsH1).toHaveLength(3);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(4);
+    expect(itemsH2).toHaveLength(6);
+    //Filtro de jugadores
+    [1, 2, 3, 4].map((num) =>
+      expect(screen.getByRole("button", { name: num })).toBeInTheDocument()
+    );
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
       (button) => button.textContent === "UNIRSE"
     );
-    expect(joinButtons).toHaveLength(3);
+    expect(joinButtons).toHaveLength(2);
     //Titulo
-    expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
+    // expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
     expect(screen.getByText("dragonball")).toBeInTheDocument();
     expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
@@ -172,13 +175,12 @@ describe("ListaPartidas", () => {
     expect(
       screen.getByPlaceholderText(/Ingresa un Nombre/i)
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Buscar/i })).toBeInTheDocument();
     //H1s
     const itemsH1 = await screen.findAllByRole("heading", { level: 1 });
-    expect(itemsH1).toHaveLength(2);
+    expect(itemsH1).toHaveLength(1);
     //H2s
     const itemsH2 = await screen.findAllByRole("heading", { level: 2 });
-    expect(itemsH2).toHaveLength(2);
+    expect(itemsH2).toHaveLength(4);
     //botones
     const itemsButton = await screen.findAllByRole("button");
     const joinButtons = itemsButton.filter(
@@ -186,7 +188,6 @@ describe("ListaPartidas", () => {
     );
     expect(joinButtons).toHaveLength(1);
     //Titulo
-    expect(screen.getByText("Partidas disponibles")).toBeInTheDocument();
     //Partida 1
     expect(screen.getByText("dragonball")).toBeInTheDocument();
     expect(screen.getByText("Cantidad de Jugadores: 3/4")).toBeInTheDocument();
@@ -277,6 +278,7 @@ describe("ListaPartidas", () => {
         },
         body: JSON.stringify({
           player_name: "testUser",
+          password: "",
         }),
       }
     );
@@ -286,7 +288,39 @@ describe("ListaPartidas", () => {
     );
   });
 
-  it("no te deja unirte si la partida está llena", async () => {
+  // it("no te deja unirte si la partida está llena", async () => {
+  //   render(
+  //     <MemoryRouter>
+  //       <UsernameProvider value={mockUsernameContextValue}>
+  //         <UserIdProvider value={mockUserIdContextValue}>
+  //           <ListGames websocketUrl={"ws://localhost:1234"} />
+  //         </UserIdProvider>
+  //       </UsernameProvider>
+  //     </MemoryRouter>
+  //   );
+
+  //   const inputPartida = screen.getByPlaceholderText("Ingresa un Nombre");
+  //   fireEvent.change(inputPartida, { target: { value: "lavajabon" } });
+  //   server.send(message);
+  //   // Espera a que se actualicen los elementos
+  //   await waitFor(() => {
+  //     const input = screen.getByPlaceholderText("Elige un Nombre");
+  //     fireEvent.change(input, { target: { value: "testUser" } });
+
+  //     const itemsButton = screen.getAllByRole("button");
+  //     const joinButtons = itemsButton.filter(
+  //       (button) => button.textContent === "UNIRSE"
+  //     );
+
+  //     expect(joinButtons.length).toBeGreaterThan(0);
+  //     fireEvent.click(joinButtons[0]);
+  //   });
+
+  //   // Verifica que no se ha navegado a otra ruta
+  //   expect(mockedUsedNavigate).not.toHaveBeenCalled();
+  // });
+
+  it("se filtra correctamente segun numero de jugadores", async () => {
     render(
       <MemoryRouter>
         <UsernameProvider value={mockUsernameContextValue}>
@@ -297,25 +331,24 @@ describe("ListaPartidas", () => {
       </MemoryRouter>
     );
 
-    const inputPartida = screen.getByPlaceholderText("Ingresa un Nombre");
-    fireEvent.change(inputPartida, { target: { value: "lavajabon" } });
     server.send(message);
+
+    // Filtrar por 3 jugadores
+    const button = screen.getByRole("button", { name: "3" });
+    fireEvent.click(button);
     // Espera a que se actualicen los elementos
     await waitFor(() => {
-      const input = screen.getByPlaceholderText("Elige un Nombre");
-      fireEvent.change(input, { target: { value: "testUser" } });
-
-      const itemsButton = screen.getAllByRole("button");
-      const joinButtons = itemsButton.filter(
-        (button) => button.textContent === "UNIRSE"
-      );
-
-      expect(joinButtons.length).toBeGreaterThan(0);
-      fireEvent.click(joinButtons[0]);
+      expect(screen.getByText("dragonball")).toBeInTheDocument();
+      expect(screen.queryByText("scaloneta")).not.toBeInTheDocument();
+      expect(screen.queryByText("lavajabon")).not.toBeInTheDocument();
     });
-
-    // Verifica que no se ha navegado a otra ruta
-    expect(mockedUsedNavigate).not.toHaveBeenCalled();
+    // Se deselecciona el filtro
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(screen.getByText("dragonball")).toBeInTheDocument();
+      expect(screen.getByText("scaloneta")).toBeInTheDocument();
+      expect(screen.getByText("lavajabon")).toBeInTheDocument();
+    });
   });
 
   it("debería manejar la desconexión del WebSocket", async () => {

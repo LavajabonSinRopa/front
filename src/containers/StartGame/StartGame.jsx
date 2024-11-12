@@ -7,8 +7,13 @@ import GameInfo from "../GameInfo/GameInfo.jsx";
 import EndTurn from "../EndTurn/EndTurn.jsx";
 import VictoryScreen from "../VictoryScreen/VictoryScreen.jsx";
 import CancelMove from "../CancelMove/CancelMove.jsx";
+import TurnTimer from "../TurnTimer/TurnTimer.jsx";
+import ForbiddenColorDisplay from "../ForbiddenColorDisplay/ForbiddenColorDisplay.jsx";
+import Chat from "../Chat/Chat.jsx";
 import { MovCardProvider } from "../../contexts/MovCardContext";
 import { MovementProvider } from "../../contexts/MovementContext";
+import { FigCardProvider } from "../../contexts/FigCardContext.jsx";
+import { BlockFigCardProvider } from "../../contexts/BlockFigCardContext.jsx";
 
 function StartGame({ game_id, userId, websocketUrl }) {
   const [players, setPlayers] = useState([]);
@@ -27,8 +32,10 @@ function StartGame({ game_id, userId, websocketUrl }) {
   });
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
   const [isYourTurn, setIsYourTurn] = useState(false);
-
+  const [messages, setMessages] = useState([]);
   const [partialMovementsMade, setPartialMovementsMade] = useState(false);
+  const [time, setTime] = useState(10);
+  const [forbColor, setForbColor] = useState(null);
 
   // Verificar si es el turno del jugador actual
   const calculateIsYourTurn = (turn, players, userId) => {
@@ -50,7 +57,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
   };
 
   // Funcion para conectar al WebSocket
-  console.log(websocketUrl);
+  //console.log(websocketUrl);
   const connectWebSocket = () => {
     if (!game_id || !userId) return;
 
@@ -84,10 +91,11 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setPlayers(message.payload.players);
         setBoard(message.payload.board);
         setCurrentPlayerId(players[0]?.unique_id);
-        calculateCurrentPlayerId(0, players);
         setTurnNumber(message.payload.turn);
-        calculateCurrentPlayerId(turnNumber, message.payload.players);
+        setTime(message.payload.turn_timer);
+        calculateCurrentPlayerId(0, message.payload.players);
         localStorage.setItem(`game_${game_id}_turn`, message.payload.turn);
+        setForbColor(message.payload.forbidden_color);
       } else if (message.type === "PlayerLeft") {
         setPlayers((prevPlayers) => {
           return prevPlayers.filter(
@@ -103,15 +111,38 @@ function StartGame({ game_id, userId, websocketUrl }) {
         setIsYourTurn(calculateIsYourTurn(newTurn, players, userId)); // Update if it's the player's turn
         localStorage.setItem(`game_${game_id}_turn`, newTurn);
         calculateCurrentPlayerId(newTurn, message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "GameWon") {
         setIsGameOver(true);
         setWinner(message.payload.player_name);
       } else if (message.type === "MovSuccess") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
       } else if (message.type === "MoveUnMade") {
         setBoard(message.payload.board);
         setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
+      } else if (message.type === "FigureMade") {
+        setPlayers(message.payload.players);
+        setTime(message.payload.turn_timer);
+        setForbColor(message.payload.forbidden_color);
+      } else if (message.type === "FigureBlocked") {
+        setBoard(message.payload.board);
+        setPlayers(message.payload.players);
+        setForbColor(message.payload.forbidden_color);
+      } else if (message.type === "ChatMessage") {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: message.payload.player_id,
+            type: message.payload.player_id === "1" ? "msgLog" : "message",
+            msgInfo: `${message.payload.player_name} (${message.payload.time}): `,
+            text: `${message.payload.message}`,
+          },
+        ]);
+      } else {
+        console.log("Tipo de mensaje desconocido:", message.type);
       }
     };
   };
@@ -120,7 +151,7 @@ function StartGame({ game_id, userId, websocketUrl }) {
     if (game_id && players.length > 0) {
       setIsYourTurn(calculateIsYourTurn(turnNumber, players, userId));
     }
-  }, [turnNumber, players, userId]);
+  }, [turnNumber, players, userId, board]);
 
   // Inicializacion y cierre del WebSocket
   useEffect(() => {
@@ -163,58 +194,80 @@ function StartGame({ game_id, userId, websocketUrl }) {
   ) : (
     <MovementProvider>
       <MovCardProvider>
-        <div className="gameContainer">
-          <div className="boardContainer">
-            <Board board={board} isYourTurn={isYourTurn} />
-          </div>
-          {Array.isArray(players) && players.length > 0 && (
-            <>
-              <div key={0} className="player">
-                <Cards
-                  playerData={players.find(
-                    (player) => player.unique_id === userId
-                  )}
+        <FigCardProvider>
+          <BlockFigCardProvider>
+            <div className="gameContainer">
+              <div className="boardContainer">
+                <Board
+                  board={board}
+                  isYourTurn={isYourTurn}
+                  forbiddenColor={forbColor}
+                />
+              </div>
+              {Array.isArray(players) && players.length > 0 && (
+                <>
+                  <div key={0} className="player">
+                    <Cards
+                      playerData={players.find(
+                        (player) => player.unique_id === userId
+                      )}
+                      isYourTurn={isYourTurn}
+                    />
+                  </div>
+                  {players
+                    .filter((player) => player.unique_id !== userId)
+                    .map((player, index) => (
+                      <div key={index + 1} className={`opponent-${index + 1}`}>
+                        {player && (
+                          <Cards playerData={player} isYourTurn={isYourTurn} />
+                        )}
+                      </div>
+                    ))}
+                </>
+              )}
+              <div className="optionsButtonContainer">
+                <LeaveGame playerId={userId} gameId={game_id} />
+                <EndTurn
+                  playerId={userId}
+                  gameId={game_id}
+                  currentTurn={turnNumber}
+                  isYourTurn={isYourTurn}
+                />
+                <CancelMove
+                  playerId={userId}
+                  gameId={game_id}
+                  isYourTurn={isYourTurn}
+                  partialMovementsMade={partialMovementsMade}
+                />
+                <TurnTimer
+                  initialTime={time}
+                  playerId={userId}
+                  gameId={game_id}
                   isYourTurn={isYourTurn}
                 />
               </div>
-              {players
-                .filter((player) => player.unique_id !== userId)
-                .map((player, index) => (
-                  <div key={index + 1} className={`opponent-${index + 1}`}>
-                    {player && (
-                      <Cards playerData={player} isYourTurn={isYourTurn} />
-                    )}
-                  </div>
-                ))}
-            </>
-          )}
-          <div className="optionsButtonContainer">
-            <LeaveGame playerId={userId} gameId={game_id} />
-            <EndTurn
-              playerId={userId}
-              gameId={game_id}
-              currentTurn={turnNumber}
-              isYourTurn={isYourTurn}
-            />
-            <CancelMove
-              playerId={userId}
-              gameId={game_id}
-              isYourTurn={isYourTurn}
-              partialMovementsMade={partialMovementsMade}
-            />
-          </div>
-          {isGameOver && (
-            <VictoryScreen isGameOver={isGameOver} winner={winner} />
-          )}
-          <div className="gameInfo">
-            <GameInfo
-              turnNumber={turnNumber}
-              players={players}
-              currentPlayerId={currentPlayerId}
-              userId={userId}
-            />
-          </div>
-        </div>
+              {isGameOver && (
+                <VictoryScreen isGameOver={isGameOver} winner={winner} />
+              )}
+              <div className="gameInfo">
+                <GameInfo
+                  turnNumber={turnNumber}
+                  players={players}
+                  currentPlayerId={currentPlayerId}
+                  userId={userId}
+                />
+                <ForbiddenColorDisplay color={forbColor} />
+              </div>
+              <div className="chatContainer">
+                <Chat
+                  messages={messages}
+                  setMessages={setMessages}
+                  socketRef={socketRef}
+                />
+              </div>
+            </div>
+          </BlockFigCardProvider>
+        </FigCardProvider>
       </MovCardProvider>
     </MovementProvider>
   );

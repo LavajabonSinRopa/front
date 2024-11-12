@@ -59,7 +59,7 @@
   pointer-events: none;
 }
 
-@keyframes moverFondo {
+@keyframes moverFondoHome {
   0% {
     background-position: 0 0; /* Posición inicial */
   }
@@ -79,7 +79,7 @@
   background-size: 100px 150px; /* Establece el tamaño de la imagen de fondo */
   background-repeat: repeat; /* Repite la imagen si es necesario */
   background-color: #5dc8af;
-  animation: moverFondo 5s linear infinite; /* Aplica la animación */
+  animation: moverFondoHome 5s linear infinite; /* Aplica la animación */
 }
 
 .frame {

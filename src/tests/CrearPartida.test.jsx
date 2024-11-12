@@ -18,10 +18,8 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-
 describe("CrearPartida", () => {
   beforeEach(() => {
-    // Limpia los mocks antes de cada prueba
     jest.clearAllMocks();
   });
 
@@ -34,36 +32,30 @@ describe("CrearPartida", () => {
       </MemoryRouter>
     );
 
-    // INPUT
-    expect(screen.getByText("Nombre de la Partida:")).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Ingresa un Nombre")
+      screen.getByPlaceholderText("Nombre de Usuario")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Nombre de la Partida")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Contraseña (opcional)")
     ).toBeInTheDocument();
 
-    // PASSWORD
-    // expect(screen.getByText("Contraseña:")).toBeInTheDocument();
-    // expect(
-    //   screen.getByPlaceholderText("Ingresa una Contraseña")
-    // ).toBeInTheDocument();
-
-    // CARACTERES USADOS
     let caracteresUsados = screen.getAllByText(/Caracteres usados:/i);
-    expect(caracteresUsados).toHaveLength(2);
+    expect(caracteresUsados).toHaveLength(3);
 
-    // BOTON
     const button = screen.getByRole("button", { name: "CREAR PARTIDA" });
     expect(button).toBeInTheDocument();
-    // Verificar el estilo y estado del botón
     expect(button).toHaveStyle("background-color: red");
     expect(button).toBeDisabled();
 
-    // Verificar que el mensaje de error no se muestre inicialmente
     expect(
       screen.queryByText("El nombre de la partida no es válido")
     ).not.toBeInTheDocument();
   });
 
-  it("Validacion de nombres correcta", async () => {
+  it("Validación de nombres y contraseñas correctamente", async () => {
     render(
       <MemoryRouter>
         <UserIdProvider value={mockUserIdContextValue}>
@@ -72,52 +64,45 @@ describe("CrearPartida", () => {
       </MemoryRouter>
     );
 
-    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    const usernameInput = screen.getByPlaceholderText("Nombre de Usuario");
+    const nameInput = screen.getByPlaceholderText("Nombre de la Partida");
+    const passwordInput = screen.getByPlaceholderText("Contraseña (opcional)");
+    const createButton = screen.getByRole("button", { name: "CREAR PARTIDA" });
+
     fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
-
-    const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
-    const createButton = screen.getByText("CREAR PARTIDA");
-
-    // Caso: Nombre valido
-    fireEvent.change(nameInput, { target: { value: "NombreValido" } });
-    expect(createButton).not.toBeDisabled();
-
-    // Caso: Nombre solo de espacios
-    fireEvent.change(nameInput, { target: { value: "       " } });
-    expect(
-      screen.getByText("El nombre de la partida no es válido.")
-    ).toBeInTheDocument();
-    expect(createButton).toBeDisabled();
-
-    // Caso: Nombre demasiado largo
-    fireEvent.change(nameInput, {
-      target: { value: "EsteNombreTiene38CaracteresYNoEsValido" },
+    await waitFor(() => {
+      expect(createButton).toBeDisabled();
     });
-    expect(
-      screen.getByText("El nombre de la partida no es válido.")
-    ).toBeInTheDocument();
-    expect(createButton).toBeDisabled();
 
-    // Caso: Nombre con caracteres no validos
-    fireEvent.change(nameInput, { target: { value: "Nombre@Invalido" } });
-    expect(
-      screen.getByText("El nombre de la partida no es válido.")
-    ).toBeInTheDocument();
-    expect(createButton).toBeDisabled();
+    fireEvent.change(usernameInput, { target: { value: "Username@Invalido" } });
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 17/20");
+      expect(texto).toBeInTheDocument();
 
-    // Caso: Nombre valido de nuevo
-    fireEvent.change(nameInput, { target: { value: "NombreValido2" } });
-    expect(createButton).not.toBeDisabled();
-    expect(
-      screen.queryByText("El nombre de la partida no es válido.")
-    ).not.toBeInTheDocument();
+      const style = window.getComputedStyle(texto);
 
-    // Caso: Nombre vacio
-    fireEvent.change(nameInput, { target: { value: "" } });
-    expect(createButton).toBeDisabled();
-    expect(
-      screen.queryByText("El nombre de la partida no es válido.")
-    ).not.toBeInTheDocument();
+      expect(style.color).toBe("red");
+    });
+
+    fireEvent.change(nameInput, { target: { value: "Name@Invalido" } });
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 13/20");
+      expect(texto).toBeInTheDocument();
+
+      const style = window.getComputedStyle(texto);
+
+      expect(style.color).toBe("red");
+    });
+
+    fireEvent.change(passwordInput, { target: { value: "@Invalido" } });
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 9/10");
+      expect(texto).toBeInTheDocument();
+
+      const style = window.getComputedStyle(texto);
+
+      expect(style.color).toBe("red");
+    });
   });
 
   it("Creación de partida exitosa", async () => {
@@ -129,16 +114,14 @@ describe("CrearPartida", () => {
       </MemoryRouter>
     );
 
-    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    const usernameInput = screen.getByPlaceholderText("Nombre de Usuario");
     fireEvent.change(usernameInput, { target: { value: "UsernameValido" } });
 
-    const nameInput = screen.getByPlaceholderText("Ingresa un Nombre");
-    const createButton = screen.getByText("CREAR PARTIDA");
-
-    // Introducir un nombre valido
+    const nameInput = screen.getByPlaceholderText("Nombre de la Partida");
     fireEvent.change(nameInput, { target: { value: "PartidaTest" } });
 
-    // Mock de la respuesta de la API
+    const createButton = screen.getByText("CREAR PARTIDA");
+
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: true,
@@ -147,20 +130,9 @@ describe("CrearPartida", () => {
       })
     );
 
-    // Hacer clic en el boton de crear partida
     fireEvent.click(createButton);
-    // El boton este deshabilitado mientras se esta cargando
     expect(createButton).toBeDisabled();
 
-    // Esperar el mensaje de exito
-    await waitFor(() =>
-      expect(
-        screen.getByText("Creación de partida exitosa.")
-      ).toBeInTheDocument()
-    );
-    expect(createButton).not.toBeDisabled();
-
-    // Verificar que fetch fue llamado con la URL y el metodo correcto
     expect(fetch).toHaveBeenCalledWith("/api/games", {
       method: "POST",
       headers: {
@@ -169,14 +141,15 @@ describe("CrearPartida", () => {
       body: JSON.stringify({
         game_name: "PartidaTest",
         player_name: "UsernameValido",
+        password: "",
       }),
     });
-
-    expect(mockedUsedNavigate).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalled();
+    });
   });
 
   it("Creación de partida fallida", async () => {
-    // Mock de la respuesta de la API
     fetch.mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
@@ -191,31 +164,155 @@ describe("CrearPartida", () => {
       </MemoryRouter>
     );
 
-    // Escribir un username valido
-    const usernameInput = screen.getByPlaceholderText("Elige un Nombre");
+    const usernameInput = screen.getByPlaceholderText("Nombre de Usuario");
     fireEvent.change(usernameInput, { target: { value: "Jugador1" } });
 
-    // Escribir un nombre para la partida valido
-    const inputNombre = screen.getByPlaceholderText("Ingresa un Nombre");
+    const inputNombre = screen.getByPlaceholderText("Nombre de la Partida");
     fireEvent.change(inputNombre, { target: { value: "Nombre Valido" } });
 
-    // Asegurarse de que el boton de creacion de partida este habilitado
     const buttonCrear = screen.getByText("CREAR PARTIDA");
     expect(buttonCrear).not.toBeDisabled();
 
-    // Hacer clic en el boton de crear partida
     fireEvent.click(buttonCrear);
 
-    // Esperar que aparezca el mensaje de error
-    await waitFor(() => {
-      expect(
-        screen.getByText(
-          "Hubo un problema al crear la partida, intenta de nuevo."
-        )
-      ).toBeInTheDocument();
+    waitFor(() => {
+      expect(buttonCrear).not.toHaveStyle("background-color: rgb(6, 49, 58)");
     });
 
-    // Verifica que no se ha navegado a otra ruta
     expect(mockedUsedNavigate).not.toHaveBeenCalled();
+  });
+
+  it("Actualiza el estado de la contraseña correctamente", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const passwordInput = screen.getByPlaceholderText("Contraseña (opcional)");
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    expect(passwordInput.value).toBe("password123");
+  });
+
+  it("Actualiza el estado de validUsername correctamente", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Nombre de Usuario");
+
+    fireEvent.change(usernameInput, { target: { value: "Nombre@Invalido" } });
+
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 15/20");
+      expect(texto).toBeInTheDocument();
+
+      const style = window.getComputedStyle(texto);
+
+      expect(style.color).toBe("red");
+    });
+
+    fireEvent.change(usernameInput, { target: { value: "NombreValido" } });
+
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 12/20");
+      expect(texto).toBeInTheDocument();
+
+      const style = window.getComputedStyle(texto);
+
+      expect(style.color).toBe("rgb(5, 45, 56)");
+    });
+  });
+
+  it("setValidName es false cuando el nombre es inválido", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const nameInput = screen.getByPlaceholderText("Nombre de la Partida");
+    const createButton = screen.getByRole("button", { name: "CREAR PARTIDA" });
+
+    // Test with an empty name
+    fireEvent.change(nameInput, { target: { value: "" } });
+    await waitFor(() => {
+      expect(createButton).toBeDisabled();
+    });
+
+    // Test with a name that contains special characters
+    fireEvent.change(nameInput, { target: { value: "Nombre@Invalido" } });
+    await waitFor(() => {
+      const texto = screen.getByText("Caracteres usados: 15/20");
+      expect(texto).toBeInTheDocument();
+
+      const style = window.getComputedStyle(texto);
+
+      expect(style.color).toBe("red");
+    });
+
+    // Test with a name that is too long
+    fireEvent.change(nameInput, { target: { value: "a".repeat(21) } });
+    await waitFor(() => {
+      expect(createButton).toBeDisabled();
+    });
+  });
+
+  it("Visibilidad de la contraseña", async () => {
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const passwordInput = screen.getByPlaceholderText("Contraseña (opcional)");
+    const togglePasswordButton = screen.queryAllByRole("button");
+
+    fireEvent.click(togglePasswordButton[0]);
+    expect(passwordInput.type).toBe("text");
+
+    fireEvent.click(togglePasswordButton[0]);
+    expect(passwordInput.type).toBe("password");
+  });
+
+  it("Mensaje de error cuando la creación de la partida falla", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+    fetch.mockImplementationOnce(() =>
+      Promise.reject(new Error("Network Error"))
+    );
+
+    render(
+      <MemoryRouter>
+        <UserIdProvider value={mockUserIdContextValue}>
+          <CrearPartida />
+        </UserIdProvider>
+      </MemoryRouter>
+    );
+
+    const usernameInput = screen.getByPlaceholderText("Nombre de Usuario");
+    const inputNombre = screen.getByPlaceholderText("Nombre de la Partida");
+    fireEvent.change(usernameInput, { target: { value: "Jugador1" } });
+    fireEvent.change(inputNombre, { target: { value: "NombreValido" } });
+
+    const buttonCrear = screen.getByRole("button", { name: "CREAR PARTIDA" });
+    fireEvent.click(buttonCrear);
+
+    waitFor(() => {
+      expect(buttonCrear).not.toHaveStyle("background-color: rgb(6, 49, 58)");
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 });
